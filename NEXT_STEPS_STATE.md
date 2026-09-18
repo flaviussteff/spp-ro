@@ -61,14 +61,13 @@
 ---
 
 ### Step 7: The "Before & After" LoRA Fine-Tuning Experiment [QUEUED]
-- **Concept:** Take the biased `Base-Ro-125M` model (or an existing Romanian model like `dumitrescustefan/gpt-neo-romanian-780m`) and fine-tune it **after training** using LoRA.
-- **Compute & Time:**
-  - For `Base-Ro-125M`: ~15–20 minutes on RTX 3060 (VRAM: ~2.5 GB).
-  - For a ~1B model: ~35–45 minutes with 4-bit LoRA (VRAM: ~5.5 GB).
+- **Concept:** Take the biased `Base-Ro-125M` model and fine-tune it **after training** using LoRA.
+- **Compute & Time:** ~15–20 minutes on RTX 3060 (VRAM: ~2.5 GB).
 - **Execution Script:** `src/train_lora_alignment.py`
   - Loads the pre-trained base model.
   - Attaches lightweight LoRA adapters to attention projections ($r=16, \alpha=32$).
   - Fine-tunes on the 10,000 constitutional reflections.
+- **Hugging Face Hub Release:** Publish adapter to [`flaviussteff/base-ro-125m-lora`](https://huggingface.co/flaviussteff/base-ro-125m-lora).
 - **Evaluation:** Measure the model again with `eval_biases.py`.
   - Does post-hoc LoRA also lower the bias? (Expected: Yes, it drops from 90% to ~52%).
 
@@ -91,3 +90,20 @@
 - **Final Deliverables:**
   - Automated export of LaTeX comparison tables (`evals/thesis_crosslingual_bias_benchmark.tex`).
   - Interactive Hugging Face web demonstrator (`flaviussteff/spp-ro-demonstrator`).
+
+---
+
+## 4. Post-Pipeline Academic Extensions (Thesis Elevators)
+
+Once Steps 5–8 conclude, these 4 targeted research extensions will elevate the bachelor's thesis into top-honors grade:
+
+1. **Interactive Trio Arena Web Demonstrator (Gradio on Hugging Face Spaces):**
+   - Free 24/7 cloud deployment at `flaviussteff/spp-ro-demonstrator`.
+   - Side-by-side comparative UI allowing thesis committee members to test any prompt across Base, LoRA, and Token Zero SPP simultaneously with live bias meters.
+2. **Mechanistic Attention Heatmap Visualization:**
+   - Extract attention weight matrices across layers 6–12 for sensitive demographic tokens.
+   - Plot side-by-side heatmaps showing how `Base-Ro` attends to biased tokens, while `SPP-Ro` re-routes attention through neutral/constitutional pathways.
+3. **Alignment Tax Verification (General Language Utility):**
+   - Measure perplexity on 5,000 held-out clean Romanian Wikipedia articles across all 3 models to prove that constitutional alignment did not degrade linguistic competence.
+4. **Adversarial Jailbreak & Stress Testing Suite (Red Teaming):**
+   - 15 curated adversarial Romanian prompt templates (hypothetical framing, persona induction, direct override) to measure the empirical breakdown rate between post-hoc LoRA and Token Zero.
