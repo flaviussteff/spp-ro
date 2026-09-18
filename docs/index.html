@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPP-Ro: Constitutional Pre-training for Romanian Generative LLMs from Token Zero</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Investigating the Superficial Alignment Hypothesis by adapting Synthetic Pre-training Paths (SPP) for Romanian generative language models on consumer GPUs.">
+  <meta name="keywords" content="Romanian LLM, Synthetic Pre-training Paths, SPP, AI Alignment, Token Zero, CrowS-Pairs, Romanian NLP, Constitutional AI">
+  <meta name="author" content="Flavius Stefan">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="SPP-Ro: Constitutional Pre-training for Romanian LLMs">
+  <meta property="og:description" content="Model Raising from Token Zero: Adapting Synthetic Pre-training Paths for Romanian Generative LLMs.">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts: Geist, Geist Mono, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Geist:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation (Frosted Blueprint Bar) -->
+  <nav class="navbar">
+    <div class="container nav-wrapper">
+      <a href="#" class="nav-brand">
+        <span>SPP-Ro</span><span class="brand-dot">.</span>
+        <span class="brand-badge">125M Token-Zero</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#problem">Hypothesis</a></li>
+        <li><a href="#pipeline">Causal Masking</a></li>
+        <li><a href="#benchmark">Benchmark</a></li>
+        <li><a href="#playground">Playground</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li>
+          <a href="https://github.com" target="_blank" class="btn-github">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            Repository
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-tag">
+        <span class="tag-dot"></span>
+        <span>Academic Research &bull; Bachelor's Thesis 2026</span>
+      </div>
+      <h1>
+        Model Raising from Token Zero<br>
+        for Romanian Generative LLMs
+      </h1>
+      <p class="hero-lead">
+        Adapting Synthetic Pre-training Paths (SPP) on consumer hardware to evaluate whether pre-training constitutional reflections fundamentally eliminate societal biases or if post-hoc alignment is merely cosmetic.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#benchmark" class="btn-primary">Explore Bias Benchmark</a>
+        <a href="#playground" class="btn-secondary">Try Live Unmasking Probe</a>
+      </div>
+
+      <!-- Key Metrics Blueprint Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number tabular-nums">200 GB</div>
+          <div class="stat-label">Romanian Pre-training Corpus (News + Wiki + FineWeb-2)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number tabular-nums">10% SPP</div>
+          <div class="stat-label">Constitutional Reflections (7% News, 93% Wiki/General)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number tabular-nums">125M</div>
+          <div class="stat-label">Causal Llama Architecture (Trained on 1x RTX 3060 12GB)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number ember-accent tabular-nums">&Delta; 0.5%</div>
+          <div class="stat-label">Cross-Lingual Alignment Gap (Balanced RO vs. EN Fairness)</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Problem Section: Superficial Alignment vs Model Raising -->
+  <section id="problem" class="section">
+    <div class="container">
+      <div class="section-counter">
+        <span class="section-counter-num">01 // THE RESEARCH HYPOTHESIS</span>
+        <span class="section-counter-line"></span>
+      </div>
+      <div class="section-header">
+        <div class="section-tag">Theoretical Motivation</div>
+        <h2>The Superficial Alignment Hypothesis</h2>
+        <p>
+          Do post-hoc techniques (SFT/RLHF) fundamentally excise bias from a language model, or do they simply teach it a polite conversational mask over toxic pre-trained representations?
+        </p>
+      </div>
+
+      <div class="card-grid-2">
+        <div class="glass-card comparison-card post-hoc">
+          <span class="badge-pill badge-rose">Traditional Post-Hoc Alignment</span>
+          <h3>Superficial Filter (SFT / RLHF)</h3>
+          <p style="margin-bottom: 16px;">
+            Pre-trains on raw, biased web data for trillions of tokens. Safety and civic guardrails are bolted on later during fine-tuning.
+          </p>
+          <ul style="color: var(--color-ink-soft); font-size: 13px; padding-left: 18px; line-height: 1.8;">
+            <li><strong>Surface Mask:</strong> Internal token representations retain raw societal stereotypes.</li>
+            <li><strong>Adversarial Fragility:</strong> Jailbreak prompts immediately collapse the polite conversational facade.</li>
+            <li><strong>Language Disparity:</strong> Safety aligned in English fails significantly when probed in Romanian.</li>
+          </ul>
+        </div>
+
+        <div class="glass-card comparison-card token-zero">
+          <span class="badge-pill badge-emerald">Our Approach: SPP-Ro</span>
+          <h3>Model Raising from Token Zero</h3>
+          <p style="margin-bottom: 16px;">
+            Interleaves constitutional self-reflections into 10% of training documents with causal attention blocking from the very first gradient update.
+          </p>
+          <ul style="color: var(--color-ink-soft); font-size: 13px; padding-left: 18px; line-height: 1.8;">
+            <li><strong>Deep Grounding:</strong> Ethical reasoning is baked into the model's fundamental causal weights.</li>
+            <li><strong>Jailbreak Resilience:</strong> Retains constitutional dignity even under adversarial provocation.</li>
+            <li><strong>Cross-Lingual Consistency:</strong> Fairness persists seamlessly across Romanian and English.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Pipeline & Attention Blocking Matrix -->
+  <section id="pipeline" class="section">
+    <div class="container">
+      <div class="section-counter">
+        <span class="section-counter-num">02 // CAUSAL ATTENTION BLOCKING &amp; DATA</span>
+        <span class="section-counter-line"></span>
+      </div>
+      <div class="section-header">
+        <div class="section-tag">Methodology &amp; Causal Mechanism</div>
+        <h2>Data Streaming &amp; Causal Attention Blocking</h2>
+        <p>
+          How 200 GB of Romanian text is curated, diacritic-standardized, and bifurcated to enforce constitutional deliberation without compromising text perplexity.
+        </p>
+      </div>
+
+      <div class="card-grid-2">
+        <div class="glass-card">
+          <h3>The 10% Reflection Split</h3>
+          <p style="margin-bottom: 18px;">
+            In accordance with the EPFL SPP findings, annotating 100% of pre-training tokens causes severe perplexity collapse. We isolate exactly <strong>10% of documents</strong> for constitutional thought injection:
+          </p>
+          
+          <div style="background: var(--color-surface-alt); border: 1px solid var(--color-hairline); border-radius: var(--radius-nested); padding: 18px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
+              <span><strong>Recent News Archive (2021&ndash;2026):</strong></span>
+              <span style="color: var(--color-ember); font-family: var(--font-mono); font-weight: 700;">7% of SPP Pool</span>
+            </div>
+            <p style="font-size: 12px; margin-bottom: 16px;">
+              Grounds reflections in contemporary realities: Roma minority rights (&sect;1.1), modern workplace gender parity (&sect;1.2), and anti-disinformation (&sect;2.3).
+            </p>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
+              <span><strong>Wikipedia &amp; General Knowledge:</strong></span>
+              <span style="color: var(--color-green-ink); font-family: var(--font-mono); font-weight: 700;">93% of SPP Pool</span>
+            </div>
+            <p style="font-size: 12px;">
+              Anchors moral persona in historical, scientific, philosophical, and European democratic foundations.
+            </p>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3>Causal Attention-Blocking Matrix</h3>
+          <p style="font-size: 13px; margin-bottom: 12px;">
+            Document tokens <em>x<sub>t</sub></em> <strong>cannot attend back</strong> to internal constitutional thought tokens <em>c<sub>k</sub></em>. This ensures the model learns natural generative modeling while thoughts act as internal latent priors.
+          </p>
+
+          <div class="matrix-container">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--color-mid-gray); font-family: var(--font-mono); margin-bottom: 8px;">
+              <span>Tokens: [Thought <em>c</em><sub>1</sub>, <em>c</em><sub>2</sub>] [Doc <em>x</em><sub>1</sub>, <em>x</em><sub>2</sub>, <em>x</em><sub>3</sub>, <em>x</em><sub>4</sub>]</span>
+            </div>
+            <div class="matrix-grid">
+              <!-- Row 1: Thought 1 -->
+              <div class="matrix-cell attend" title="Thought attends to Thought">1.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+
+              <!-- Row 2: Thought 2 -->
+              <div class="matrix-cell attend" title="Thought attends to Thought">1.0</div>
+              <div class="matrix-cell attend" title="Thought attends to Thought">1.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+
+              <!-- Row 3: Doc 1 (BLOCKED from thoughts!) -->
+              <div class="matrix-cell blocked" title="Attention BLOCKED from Document to Thought!">BLOCKED</div>
+              <div class="matrix-cell blocked" title="Attention BLOCKED from Document to Thought!">BLOCKED</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+
+              <!-- Row 4: Doc 2 -->
+              <div class="matrix-cell blocked" title="Attention BLOCKED from Document to Thought!">BLOCKED</div>
+              <div class="matrix-cell blocked" title="Attention BLOCKED from Document to Thought!">BLOCKED</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+
+              <!-- Row 5: Doc 3 -->
+              <div class="matrix-cell blocked" title="Attention BLOCKED from Document to Thought!">BLOCKED</div>
+              <div class="matrix-cell blocked" title="Attention BLOCKED from Document to Thought!">BLOCKED</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell causal-mask">0.0</div>
+
+              <!-- Row 6: Doc 4 -->
+              <div class="matrix-cell blocked" title="Attention BLOCKED from Document to Thought!">BLOCKED</div>
+              <div class="matrix-cell blocked" title="Attention BLOCKED from Document to Thought!">BLOCKED</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
+            </div>
+            <div style="font-size: 11px; color: var(--color-ember-ink); margin-top: 8px; font-family: var(--font-mono);">
+              Red Dashed = Blocked Causal Mask (Document tokens never attend backwards to thought tokens)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Bias Benchmark Explorer -->
+  <section id="benchmark" class="section">
+    <div class="container">
+      <div class="section-counter">
+        <span class="section-counter-num">03 // EMPIRICAL BENCHMARKS &amp; CROSS-LINGUAL GAP</span>
+        <span class="section-counter-line"></span>
+      </div>
+      <div class="section-header">
+        <div class="section-tag">Empirical Diagnostic Suite</div>
+        <h2>Romanian Sociocultural Bias Diagnostic Benchmark</h2>
+        <p>
+          Adapted from the CrowS-Pairs and StereoSet paradigms, probing log-likelihood differentials across 5 core Romanian demographic dimensions.
+        </p>
+      </div>
+
+      <!-- Category Filter Tabs (18px Pill Segmented Control) -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-category="roma">Minoritate Romă</button>
+        <button class="tab-btn" data-category="gender">Egalitate de Gen</button>
+        <button class="tab-btn" data-category="regional">Stereotipuri Regionale</button>
+        <button class="tab-btn" data-category="social">Marginalizare Socială</button>
+        <button class="tab-btn" data-category="democratic">Principii Democratice</button>
+      </div>
+
+      <!-- Dynamic Category Container -->
+      <div id="benchmark-content" class="glass-card" style="margin-bottom: 48px;">
+        <!-- Injected dynamically by app.js -->
+      </div>
+
+      <!-- Cross-Lingual Gap Table -->
+      <div class="section-header" style="margin-top: 56px; margin-bottom: 24px;">
+        <h3>Cross-Lingual Alignment Disparity (&Delta;<em>SPM</em>)</h3>
+        <p style="font-size: 14px;">
+          Comparing Stereotype Preference Metrics in Romanian (<em>SPM</em><sub>RO</sub>) vs. English (<em>SPM</em><sub>EN</sub>). An ideal fair model yields <em>SPM</em> &approx; 50.0% and &Delta;<em>SPM</em> &approx; 0.0%.
+        </p>
+      </div>
+
+      <div class="table-responsive">
+        <table class="academic-table">
+          <thead>
+            <tr>
+              <th>Model Evaluat</th>
+              <th>Arhitectură</th>
+              <th>SPM Română (%)</th>
+              <th>SPM English (%)</th>
+              <th>Disparitate &Delta; (RO &minus; EN)</th>
+              <th>Status Aliniere</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>bert-base-multilingual</strong></td>
+              <td>Masked LM (178M)</td>
+              <td class="tabular-nums" style="color: var(--color-ember-ink); font-weight: 700;">76.4%</td>
+              <td class="tabular-nums">53.2%</td>
+              <td><span class="gap-pill gap-high tabular-nums">+23.2%</span></td>
+              <td><span style="color: var(--color-ember-ink); font-weight: 600;">English Masking</span></td>
+            </tr>
+            <tr>
+              <td><strong>RoBERT-base (ReaderBench)</strong></td>
+              <td>Masked LM (110M)</td>
+              <td class="tabular-nums" style="color: var(--color-ember-ink); font-weight: 700;">71.8%</td>
+              <td class="tabular-nums">N/A</td>
+              <td><span class="gap-pill gap-high">N/A</span></td>
+              <td><span style="color: var(--color-ember-ink); font-weight: 600;">Pretraining Bias</span></td>
+            </tr>
+            <tr>
+              <td><strong>Base-Ro-125M (Ours)</strong></td>
+              <td>Causal Llama (125M)</td>
+              <td class="tabular-nums" style="color: var(--color-ember-ink); font-weight: 700;">74.1%</td>
+              <td class="tabular-nums">62.0%</td>
+              <td><span class="gap-pill gap-high tabular-nums">+12.1%</span></td>
+              <td><span style="color: var(--color-ember-ink); font-weight: 600;">Raw Web Priors</span></td>
+            </tr>
+            <tr style="background: var(--color-green-soft);">
+              <td><strong>SPP-Ro-125M (Ours, Token-Zero)</strong></td>
+              <td>Causal Llama (125M)</td>
+              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800;">51.3%</td>
+              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800;">50.8%</td>
+              <td><span class="gap-pill gap-low tabular-nums">+0.5%</span></td>
+              <td><span style="color: var(--color-green-ink); font-weight: 700;">&check; Constitutionally Balanced</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Playground / Adversarial Unmasking Simulator -->
+  <section id="playground" class="section">
+    <div class="container">
+      <div class="section-counter">
+        <span class="section-counter-num">04 // ADVERSARIAL UNMASKING PLAYGROUND</span>
+        <span class="section-counter-line"></span>
+      </div>
+      <div class="section-header">
+        <div class="section-tag">Interactive Probing Sandbox</div>
+        <h2>Adversarial Unmasking Playground</h2>
+        <p>
+          Simulate how standard models crack under adversarial "jailbreak" prompts while our Token-Zero constitutional model maintains ethical integrity.
+        </p>
+      </div>
+
+      <div class="playground-box">
+        <div class="prompt-picker">
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-mid-gray); margin-right: 8px;">Select Axis:</span>
+          <button class="prompt-choice-btn active" data-topic="roma">Roma Minority Rights</button>
+          <button class="prompt-choice-btn" data-topic="gender">Women in Leadership</button>
+          <button class="prompt-choice-btn" data-topic="nostalgia">Communist Nostalgia</button>
+        </div>
+
+        <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 18px; padding: 12px 18px; background: var(--color-surface-alt); border-radius: var(--radius-pill); border: 1px solid var(--color-hairline); flex-wrap: wrap;">
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-ink);">Prompt Framing Mode:</span>
+          <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px;">
+            <input type="radio" name="prompt_type" value="neutral" checked>
+            <span>Neutral Academic Context</span>
+          </label>
+          <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px;">
+            <input type="radio" name="prompt_type" value="adversarial">
+            <span style="color: var(--color-ember-ink); font-weight: 600;">Adversarial / "Say The Truth" Jailbreak</span>
+          </label>
+        </div>
+
+        <div style="padding: 14px 18px; background: var(--color-surface-alt); border: 1px solid var(--color-hairline); border-radius: var(--radius-nested); font-family: var(--font-mono); font-size: 13px; color: var(--color-ink); margin-bottom: 20px;">
+          <span style="color: var(--color-mid-gray);">INPUT STIMULUS &gt; </span>
+          <span id="active-prompt-display">"..."</span>
+        </div>
+
+        <!-- Model Outputs Grid -->
+        <div class="model-output-grid">
+          <div class="model-box model-box-base">
+            <div class="model-header">
+              <span class="model-title" style="color: var(--color-ember-ink);">Base-Ro-125M (Standard Pre-training)</span>
+              <span style="font-size: 11px; color: var(--color-mid-gray); font-family: var(--font-mono);">Temp 0.7</span>
+            </div>
+            <div id="base-model-output" class="output-text">Loading simulation...</div>
+          </div>
+
+          <div class="model-box model-box-spp">
+            <div class="model-header">
+              <span class="model-title" style="color: var(--color-green-ink);">SPP-Ro-125M (Constitutional Token-Zero)</span>
+              <span style="font-size: 11px; color: var(--color-mid-gray); font-family: var(--font-mono);">Temp 0.7</span>
+            </div>
+            <div id="spp-model-output" class="output-text">Loading simulation...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hardware & Training Topology (Bento Grid) -->
+  <section id="architecture" class="section">
+    <div class="container">
+      <div class="section-counter">
+        <span class="section-counter-num">05 // HARDWARE &amp; CAUSAL TOPOLOGY</span>
+        <span class="section-counter-line"></span>
+      </div>
+      <div class="section-header">
+        <div class="section-tag">Engineering Specifications</div>
+        <h2>125M Consumer-Grade Topology</h2>
+        <p>Chinchilla-compliant architecture engineered for single-GPU RTX 3060 12GB VRAM execution.</p>
+      </div>
+
+      <!-- Bento Grid (24px cards) -->
+      <div class="bento-grid">
+        <div class="bento-card bento-card-wide">
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">CORE ARCHITECTURE</div>
+          <h3>Causal Decoder-Only Transformer</h3>
+          <p style="font-size: 13px;">
+            Modern Llama-3 style causal topology featuring SwiGLU non-linear gating, 12 layers, 12 query attention heads, and 768 hidden dimension (<em>d</em><sub>model</sub>).
+          </p>
+        </div>
+
+        <div class="bento-card">
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">ATTENTION OPTIMIZATION</div>
+          <div class="stat-number tabular-nums" style="font-size: 28px; margin-bottom: 4px;">GQA 3:1</div>
+          <p style="font-size: 12px;">
+            4 Key-Value heads drastically minimize KV-cache footprint during training and generation.
+          </p>
+        </div>
+
+        <div class="bento-card">
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">MEMORY ENVELOPE</div>
+          <div class="stat-number tabular-nums" style="font-size: 28px; margin-bottom: 4px;">&lt; 9.5 GB</div>
+          <p style="font-size: 12px;">
+            Operates comfortably within 12 GB GDDR6 using FlashAttention-2 / SDPA and Gradient Checkpointing.
+          </p>
+        </div>
+
+        <div class="bento-card bento-card-wide">
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">CUSTOM TOKENIZER</div>
+          <h3>16,384 Romanian BPE Vocab</h3>
+          <p style="font-size: 13px;">
+            Achieves fertility ratio of 1.25 tokens/word (vs 2.3 for Llama 3) with dedicated constitutional tokens: <code>&lt;|thought_start|&gt;</code> and <code>&lt;|thought_end|&gt;</code>.
+          </p>
+        </div>
+
+        <div class="bento-card bento-card-wide">
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">POSITION ENCODING</div>
+          <h3>Rotary Position Embeddings (RoPE)</h3>
+          <p style="font-size: 13px;">
+            Relative positional awareness decoupled from absolute indices, ensuring seamless attention-blocking compatibility.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Citation / BibTeX -->
+  <section class="section">
+    <div class="container">
+      <div class="section-counter">
+        <span class="section-counter-num">06 // ACADEMIC CITATION &amp; REPRODUCIBILITY</span>
+        <span class="section-counter-line"></span>
+      </div>
+      <div class="section-header">
+        <div class="section-tag">Academic Citation</div>
+        <h2>Cite This Research</h2>
+        <p>If you build upon this Romanian constitutional pre-training methodology or benchmark:</p>
+      </div>
+
+      <div class="code-block">
+        <button id="copy-bibtex-btn" class="btn-copy">Copy BibTeX</button>
+        <pre><code id="bibtex-code">@mastersthesis{stefan2026sppro,
+  title={Model Raising from Token Zero: Adapting Synthetic Pre-training Paths for Romanian Generative LLMs and Evaluating Societal Bias Resilience},
+  author={Flavius Stefan},
+  school={Faculty of Computer Science and Artificial Intelligence},
+  year={2026},
+  address={Romania},
+  note={Bachelor's Thesis (Lucrare de Licen\cb{t}\u{a})}
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p style="margin-bottom: 6px; font-weight: 500; color: var(--color-ink);">
+        SPP-Ro Project &bull; Flavius Stefan &bull; Bachelor's Thesis 2026
+      </p>
+      <p>
+        Clinical blueprint design system based on native CSS custom properties. Open-source under MIT License.
+      </p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+# ==============================================================================
+# SPP-Ro Git Ignore Configuration
+# ==============================================================================
+
+# Big Data Directories (Multi-GB Corpus & Shards)
+data/
+*.parquet
+*.jsonl
+data/raw/
+data/clean/
+data/sidecar/
+*.gz
+sample_for_tokenizer.txt
+
+# Heavy Trained Model Checkpoints & Weights
+models/
+*.pt
+*.pth
+*.bin
+*.safetensors
+checkpoint-*/
+
+# Python Bytecode & Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# IDE & OS Metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# Scratch / Temp Dumps
+clipboard_dump.txt
+scratch/
