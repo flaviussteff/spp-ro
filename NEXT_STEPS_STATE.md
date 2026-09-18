@@ -76,12 +76,81 @@
   1. Completed all 10,000 steps (655,360,000 tokens) in 10h 05m at 18,033 tokens/sec.
   2. Final Loss: 3.0021 | Perplexity: 20.13.
   3. Model weights and configuration successfully saved to: `models/base_ro_125m/`.
+  4. Publicly released on Hugging Face Hub: [`flaviussteff/base-ro-125m`](https://huggingface.co/flaviussteff/base-ro-125m).
+  5. Baseline Evaluation Executed: Overall $SPM = 56.76\%$, Gender-Occupational $SPM = 90.0\%$, Roma Minority $SPM = 62.5\%$.
 
-### Step 5: Pretrain Constitutional SPP Model (`spp_ro_125m`) [IN PROGRESS IN TERMINAL 2]
+### Step 5: Pretrain Constitutional SPP Model (`spp_ro_125m`) [IN PROGRESS IN DEDICATED TERMINAL]
 - **Command:** `py src/train_pretrain.py --mode spp --max-steps 10000 --update-interval-mins 10`
-- **Status:** Currently training on NVIDIA RTX 3060 (99% GPU compute utilization, ~6.5 GB VRAM).
+- **Status:** Actively training on single NVIDIA RTX 3060 (99% compute utilization, ~6.6 GB VRAM).
 - **Mechanism:** Causal attention blocking and RoPE aliasing active (`spp_collator.py`).
 - **Checkpoints:** `models/spp_ro_125m/`.
+- **Target Completion:** Step 10,000 / 10,000 (~655.3M tokens).
 
-### Step 6: Run Cross-Lingual Evaluation & Generate Thesis Tables [QUEUED]
-- **Command:** `py src/eval_biases.py --eval-bert --eval-custom --model-dir models/spp_ro_125m --model-label "SPP-Ro-125M"`
+### Step 6: Post-Training Release & Comprehensive Benchmark Evaluation [QUEUED]
+- **Script:** `py src/upload_to_hf.py --model spp --repo-id flaviussteff/spp-ro-125m`
+- **Benchmarking Command:**
+  ```powershell
+  py src/eval_biases.py --eval-custom --model-dir models/spp_ro_125m --model-label "SPP-Ro-125M" --lang both --unmask
+  ```
+- **Quantitative Metrics Extracted:**
+  1. $\Delta SPM_{\text{Pretrain}} = SPM(\text{Base}) - SPM(\text{SPP})$ across all 5 socio-cultural axes.
+  2. Cross-Lingual Gap: $\Delta_{\text{lang}} = |SPM_{\text{RO}} - SPM_{\text{EN}}|$.
+  3. Perplexity on held-out clean validation set (Testing for Alignment Tax: $\Delta PPL \le 1.0$).
+  4. Adversarial Resilience Rate under unmasking prefixes ($ARR$).
+- **Outputs Generated:**
+  - `evals/bias_evaluation_report.json`
+  - `evals/thesis_crosslingual_bias_benchmark.csv`
+  - `evals/thesis_crosslingual_bias_benchmark.tex`
+
+---
+
+## 3. Advanced Comparative Modeling: Token Zero vs. Post-Hoc Alignment
+
+To rigorously test the **Superficial Alignment Hypothesis**, the thesis includes a tripartite comparative study contrasting pre-training alignment with post-hoc parameter-efficient fine-tuning:
+
+```
+                                  EVALUATION TRIAD
+                                         │
+        ┌────────────────────────────────┼────────────────────────────────┐
+        ▼                                ▼                                ▼
+  [MODEL 1: BASE]              [MODEL 2: SPP TOKEN ZERO]        [MODEL 3: POST-HOC SFT/LoRA]
+  Base-Ro-125M                 SPP-Ro-125M                      Base-Ro-125M + SFT Adapter
+  • Pure Web Corpora           • Interleaved Synthetic Paths    • Post-hoc LoRA on Base
+  • Severe Latent Biases       • Intrinsic Deliberation         • Cosmetic Filter Hypothesis
+```
+
+### Step 7: Train Post-Hoc SFT/LoRA Baseline (`models/base_ro_sft_lora`) [QUEUED]
+- **Research Question:** Does fine-tuning `Base-Ro-125M` on constitutional reflection data eliminate biases as effectively as training with SPP from Token Zero, or does the alignment break under adversarial probing?
+- **Implementation Script:** `src/train_posthoc_sft.py`
+- **Architecture & PEFT Configuration:**
+  - Base: Frozen `models/base_ro_125m/` weights.
+  - Adapter: Low-Rank Adaptation (LoRA) on attention ($W_q, W_k, W_v, W_o$) and MLP gates ($W_{\text{gate}}, W_{\text{up}}, W_{\text{down}}$).
+  - Hyperparameters: Rank $r = 16$, $\alpha = 32$, LoRA Dropout $0.05$.
+  - Dataset: 10,000 constitutional question-reflection pairs extracted from `data/sidecar/reflections.parquet`.
+  - Loss Function: Standard Supervised Cross-Entropy on reflection completion tokens:
+    $$\mathcal{L}_{\text{SFT}} = - \sum_{t \in \text{reflection}} \log P(w_t \mid w_{<t})$$
+- **Hardware Envelope:** Single RTX 3060 12GB (~2.5 GB VRAM allocation, 30 minutes training duration).
+
+### Step 8: Comparative SPP Adaptation on Pre-Existing Romanian Model [QUEUED]
+- **Target Model:** `dumitrescustefan/gpt-neo-romanian-780m` (or `Qwen/Qwen2.5-1.5B` with Romanian tokenizer expansion).
+- **Implementation Script:** `src/train_external_spp_lora.py`
+- **Mechanism:** QLoRA 4-bit (`bitsandbytes` NormalFloat4) with custom SPP 2D Block-Attention Collator (`DataCollatorForSPP`).
+- **Hardware Envelope:**
+  - 4-bit base weights: ~1.2 GB VRAM.
+  - LoRA trainable parameters: ~18.4M ($< 2.5\%$).
+  - Effective batch size 32 with gradient checkpointing: ~5.8 GB VRAM.
+
+### Step 9: Latent Representation Probing & Layer-Wise Geometry [QUEUED]
+- **Implementation Script:** `src/eval_representation_geometry.py`
+- **Mathematical Framework:**
+  1. Extract hidden states $h_l(x)$ across all 12 Transformer layers ($l \in \{1, \dots, 12\}$) for stereotypical vs. anti-stereotypical sentence pairs.
+  2. Compute Cosine Distance & Centroid Separation ($\Delta \mu$):
+     $$d_{\text{stereo}}(l) = \text{CosineDistance}\Big(\mathbf{h}_l(S_{\text{stereo}}), \mathbf{h}_l(S_{\text{anti}})\Big)$$
+  3. Linear Probing: Train a linear classifier on intermediate layer representations to predict demographic stereotyping.
+  4. Theoretical Goal: Prove that in `SPP-Ro-125M`, representation separation occurs in **early-to-middle layers (layers 4–7)**, whereas in `Base-Ro-SFT`, separation only exists in the **final two layers (layers 11–12)**, confirming the superficiality of post-hoc alignment.
+
+### Step 10: Master Thesis LaTeX Table Compilation & Web Demo [QUEUED]
+- **Execution Script:** `py src/compile_thesis_results.py`
+- **Outputs:**
+  - Automated generation of Chapter 4 & 5 LaTeX tables (`tables/comparative_alignment_triad.tex`).
+  - Automated deployment of Hugging Face Space (`flaviussteff/spp-ro-demonstrator`) featuring side-by-side triad comparison (Base vs. Token-Zero SPP vs. Post-Hoc SFT).
