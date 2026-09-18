@@ -70,14 +70,16 @@
   1. 10,000 constitutional reflections synthesized based on Romanian Civic Constitution (§1.1–§2.3).
   2. Output saved to: `data/sidecar/reflections.parquet`.
 
-### Step 4: Pretrain Baseline Model (`base_ro_125m`) [IN PROGRESS IN TERMINAL 1]
+### Step 4: Pretrain Baseline Model (`base_ro_125m`) [COMPLETED]
 - **Command:** `py src/train_pretrain.py --mode base --max-steps 10000 --update-interval-mins 10`
-- **Execution:** Running in visible Windows terminal with live progress bar and 10-minute progress report cards.
-- **Checkpoints:** `models/base_ro_125m/`.
+- **Result:**
+  1. Completed all 10,000 steps (655,360,000 tokens) in 10h 05m at 18,033 tokens/sec.
+  2. Final Loss: 3.0021 | Perplexity: 20.13.
+  3. Model weights and configuration successfully saved to: `models/base_ro_125m/`.
 
-### Step 5: Pretrain Constitutional SPP Model (`spp_ro_125m`) [CHAINED IN TERMINAL 2]
+### Step 5: Pretrain Constitutional SPP Model (`spp_ro_125m`) [IN PROGRESS IN TERMINAL 2]
 - **Command:** `py src/train_pretrain.py --mode spp --max-steps 10000 --update-interval-mins 10`
-- **Execution:** Spawns automatically in a new separate terminal window as soon as Step 4 finishes.
+- **Status:** Currently training on NVIDIA RTX 3060 (99% GPU compute utilization, ~6.5 GB VRAM).
 - **Mechanism:** Causal attention blocking and RoPE aliasing active (`spp_collator.py`).
 - **Checkpoints:** `models/spp_ro_125m/`.
 
