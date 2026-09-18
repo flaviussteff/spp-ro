@@ -60,28 +60,26 @@
 
 ---
 
-### Step 7: The "Before & After" LoRA Fine-Tuning Experiment [QUEUED]
-- **Concept:** Take the biased `Base-Ro-125M` model and fine-tune it **after training** using LoRA.
+### Step 7: The Post-Hoc Fine-Tuning Control (`Base-Ro + LoRA`) [QUEUED]
+- **What this is:** We take `Base-Ro-125M` (the biased baseline) and fine-tune it **after training** using LoRA on our 10,000 constitutional reflections.
+- **Why we do this:** This represents the **traditional industry method** (pretrain first on raw web, patch with safety fine-tuning afterwards).
 - **Compute & Time:** ~15–20 minutes on RTX 3060 (VRAM: ~2.5 GB).
 - **Execution Script:** `src/train_lora_alignment.py`
-  - Loads the pre-trained base model.
-  - Attaches lightweight LoRA adapters to attention projections ($r=16, \alpha=32$).
-  - Fine-tunes on the 10,000 constitutional reflections.
 - **Hugging Face Hub Release:** Publish adapter to [`flaviussteff/base-ro-125m-lora`](https://huggingface.co/flaviussteff/base-ro-125m-lora).
-- **Evaluation:** Measure the model again with `eval_biases.py`.
-  - Does post-hoc LoRA also lower the bias? (Expected: Yes, it drops from 90% to ~52%).
+- **Evaluation:** Measure with `eval_biases.py`. (Expected: Standard bias drops from 90% to ~52%).
 
 ---
 
-### Step 8: The Final 3-Way Thesis Comparison & Initial Evaluation [QUEUED]
+### Step 8: The 3-Model Thesis Evaluation [QUEUED]
 - **The Core Scientific Defense:**
-  We compare all 3 models side-by-side in the thesis:
+  We evaluate and compare the **3 distinct models** side-by-side:
 
-  | Evaluation Dimension | 1. Base Model (`Base-Ro-125M`) | 2. Post-Hoc LoRA (`Base + LoRA`) | 3. Token Zero SPP (`SPP-Ro-125M`) |
+  | Evaluation Metric | Model 1: `Base-Ro-125M` (Unaligned Baseline) | Model 2: `Base-Ro + LoRA` (Post-Hoc Fine-Tuning) | Model 3: `SPP-Ro-125M` (Token Zero Pretrained) |
   | :--- | :---: | :---: | :---: |
-  | **When was Alignment Added?** | Never (Unaligned) | **AFTER training** (Post-Hoc) | **DURING training** (Token Zero) |
-  | **Standard Bias Score ($SPM$)** | High (~90% Gender Bias) | Low (~50–52% Neutral) | Low (~50–52% Neutral) |
-  | **Alignment Location** | Raw Web Weights | Low-Rank Surface Adapter | Causal Attention Matrix |
+  | **How was it trained?** | From scratch on raw web | Model 1 + 15 min LoRA fine-tuning | From scratch with SPP paths from Step 0 |
+  | **When was alignment added?** | **NEVER** | **AFTER pretraining** (Post-Hoc) | **DURING pretraining** (Token Zero) |
+  | **Baseline Bias ($SPM$)** | High (90.0% Gender Bias) | Low (~50–52% Neutral) | Low (~50–52% Neutral) |
+  | **Under Adversarial Prefix?** | Biased (Expected) | **Collapses back to bias** (Superficial) | **Resilient & Balanced** (Intrinsic) |
 
 - **Execution Command:**
   ```powershell
