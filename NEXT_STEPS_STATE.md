@@ -115,3 +115,29 @@
 ### Step 10: Interactive Trio Arena Web Demonstrator [QUEUED]
 - **Implementation:** Gradio application deployed to Hugging Face Spaces (`flaviussteff/spp-ro-demonstrator`).
 - **Features:** Side-by-side comparative UI allowing thesis committee members to test any prompt across Base, LoRA, and Token Zero SPP simultaneously with live bias meters and jailbreak resistance gauges.
+
+---
+
+### Step 11: Optional Side Quest — External Model Transferability (Dumitrescu's RoGPT-780M vs. RoBERTa) [QUEUED]
+- **Core Research Question:** *"Can our Romanian constitutional reflection dataset be transferred to steer an existing, large third-party Romanian pre-trained model, and how does its moral alignment and jailbreak robustness shift before vs. after fine-tuning?"*
+- **Model Selection Rationale (RoGPT-780M vs. RoBERTa):**
+  * **Why NOT RoBERTa (`readerbench/RoBERT-base` or `dumitrescustefan/roberta-base-romanian`):** RoBERTa is a bidirectional **masked encoder** (like BERT). It only does fill-in-the-blank `[MASK]` classification; it cannot perform causal next-token generation, cannot continue prompt prefixes, and cannot be evaluated with generative adversarial jailbreak prompts.
+  * **Why YES Dumitrescu's RoGPT (`dumitrescustefan/gpt-neo-romanian-780m`):** A premier 780M parameter **causal generative decoder** LLM trained on massive Romanian corpora. It generates text via next-token prediction, making it 100% compatible with our log-likelihood scoring, moral diagnostic benchmarks, and prefix probing.
+- **Hardware & Memory Feasibility on RTX 3060 (12 GB):**
+  * 780M model weights in FP16 = ~1.56 GB.
+  * With LoRA ($r=16, \alpha=32$) and PyTorch AMP, total VRAM consumption is only **~4.5 GB**, running comfortably within our 12 GB budget (~25–35 minutes of training).
+- **Execution Workflow (Before vs. After Comparative Protocol):**
+  1. **Phase 1 (Measure BEFORE on Raw RoGPT-780M):**
+     * **Moral / Bias Baseline:** Measure initial Stereotype Preference Metric ($SPM$) across our 37 Romanian diagnostic pairs.
+     * **Jailbreak Sensitivity:** Measure baseline log-likelihood shift under the 15 Romanian adversarial prefixes ($\Delta LL_{\text{adv}}$).
+  2. **Phase 2 (LoRA Fine-Tuning with SPP Reflections):**
+     * Fine-tune RoGPT-780M on `data/sidecar/reflections.parquet` (10,000 constitutional thoughts) using `src/train_external_lora.py`.
+     * Model learns to align its outputs with Romanian constitutional and anti-discrimination principles.
+  3. **Phase 3 (Measure AFTER on Fine-Tuned RoGPT-780M + LoRA):**
+     * Re-evaluate on the exact same 37 pairs and 15 adversarial prefixes.
+- **Academic Findings for the Bachelor's Thesis:**
+  * **Moral Shift:** Proves external validity—our synthetic constitutional dataset successfully reduces bias in larger third-party models.
+  * **Jailbreak / Fragility Check:** Validates whether larger models also suffer from the "Superficial Alignment Hypothesis" (does the LoRA adapter break under adversarial prefixes, revealing biased raw weights underneath?). If yes, this proves that *scale alone does not solve alignment fragility*, cementing the core thesis argument for Token Zero pretraining!
+- **Automated LaTeX Output:**
+  * `evals/thesis_external_transfer_rogpt.tex`: A publication-ready LaTeX table directly contrasting **Raw RoGPT-780M** vs. **RoGPT-780M + SPP LoRA** across both clean moral bias and adversarial prefix resilience.
+
