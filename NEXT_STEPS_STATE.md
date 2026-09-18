@@ -70,25 +70,29 @@
 
 ---
 
-### Step 8: The 3-Model Thesis Evaluation & Automated LaTeX Compilation [QUEUED]
-- **The Core Scientific Defense:**
-  We evaluate and compare the **3 distinct models** side-by-side:
+### Step 8: Clean Baseline & Log-Likelihood Comparison (WITHOUT Jailbreaks) [QUEUED]
+- **The Core Scientific Control:**
+  Before introducing any adversarial stress, we first test both aligned models (`Base-Ro + LoRA` and `SPP-Ro-125M`) under **clean, standard conditions** to verify that both methods successfully neutralize the 90% bias on normal prompts:
 
   | Evaluation Metric | Model 1: `Base-Ro-125M` (Unaligned Baseline) | Model 2: `Base-Ro + LoRA` (Post-Hoc Fine-Tuning) | Model 3: `SPP-Ro-125M` (Token Zero Pretrained) |
   | :--- | :---: | :---: | :---: |
   | **Pretraining Data** | `corpus_unannotated.parquet` (100% Raw Web/Wiki/News) | Model 1 (Frozen Base Weights) | 90% Raw Web + 10% Interleaved SPP Reflections |
   | **Alignment Data** | None | 10,000 Constitutional Pairs (`reflections.parquet`) | 10,000 Constitutional Pairs (Interleaved during pretraining) |
   | **When was alignment added?** | **NEVER** | **AFTER pretraining** (Post-Hoc LoRA) | **DURING pretraining** (Token Zero from Step 0) |
-  | **Baseline Bias ($SPM$)** | High (90.0% Gender Bias) | Low (~50–52% Neutral) | Low (~50–52% Neutral) |
-  | **Under Adversarial Prefix?** | Biased (Expected) | **Collapses back to bias** (Superficial) | **Resilient & Balanced** (Intrinsic) |
+  | **Standard Bias Score ($SPM$)** | High (90.0% Gender Bias) | Low (~50–52% Neutral) | Low (~50–52% Neutral) |
+  | **Normal Log-Likelihood Parity** | Favors Stereotypes ($LL_s \gg LL_a$) | **Balanced** ($LL_s \approx LL_a$) | **Balanced** ($LL_s \approx LL_a$) |
 
-- **Execution Command:**
+- **Execution Commands (Evaluating Both on the 37 Diagnostic Pairs):**
   ```powershell
+  # 1. Evaluate Post-Hoc LoRA under normal conditions:
+  py src/eval_biases.py --eval-custom --model-dir models/base_ro_125m_lora --model-label "Base-Ro-LoRA" --lang both
+
+  # 2. Evaluate Token Zero SPP under normal conditions:
   py src/eval_biases.py --eval-custom --model-dir models/spp_ro_125m --model-label "SPP-Ro-125M" --lang both
   ```
-- **Automated LaTeX Tables Generated:**
-  - `evals/thesis_crosslingual_bias_benchmark.tex`: Category-by-category breakdown across all 5 socio-cultural axes with cross-lingual gap ($\Delta_{\text{lang}}$).
-  - `evals/thesis_3way_alignment_triad.tex`: Complete publication-ready master table comparing all 3 models directly in LaTeX format.
+- **Goal of Step 8:** Mathematically verify that *both* models look equally fair and neutral under ordinary conditions ($SPM \approx 50\%$). Only once this baseline parity is established do we proceed to Step 10 to see which one breaks under jailbreak pressure!
+- **Automated LaTeX Master Table Generated:**
+  - `evals/thesis_3way_alignment_triad.tex`: Complete publication-ready master table comparing all 3 models under clean conditions.
 
 ---
 
