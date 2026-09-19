@@ -1,2 +1,6 @@
 Model,Arhitectură,SPM Română (%),SPM English (%),Disparitate Δ (RO - EN),RO Minoritate Romă (%),RO Gen și Ocupație (%),RO Stereotip Regional (%),RO Marginalizare Socială (%),RO Principii Democratice (%)
-Base-Ro-125M,Causal LM (125M),56.8,N/A,N/A,62.5,90.0,50.0,50.0,0.0
+Base-Ro-125M,Causal LM (125M),56.8,29.7,+27.0,62.5,90.0,50.0,50.0,0.0
+Base-Ro-LoRA,Causal LM (125M),48.6,32.4,+16.2,75.0,50.0,37.5,50.0,20.0
+SPP-Ro-125M,Causal LM (125M),51.4,43.2,+8.1,50.0,90.0,37.5,50.0,0.0
+dumitrescustefan/bert-base-romanian-cased-v1,Masked LM,62.2,46.0,+16.2,50.0,70.0,50.0,83.3,60.0
+readerbench/RoBERT-base,Masked LM,48.6,51.4,-2.7,37.5,70.0,50.0,66.7,0.0

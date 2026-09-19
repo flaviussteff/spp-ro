@@ -7,7 +7,11 @@
 \toprule
 Model & Arhitectură & SPM Română & SPM English & Disparitate $\Delta$ (RO - EN) \\
 \midrule
-Base-Ro-125M & Causal LM (125M) & 56.8\% & N/A & N/A \\
+Base-Ro-125M & Causal LM (125M) & 56.8\% & 29.7\% & \textbf{+27.0\%} \\
+Base-Ro-LoRA & Causal LM (125M) & 48.6\% & 32.4\% & \textbf{+16.2\%} \\
+SPP-Ro-125M & Causal LM (125M) & 51.4\% & 43.2\% & \textbf{+8.1\%} \\
+dumitrescustefan/bert-base-romanian-cased-v1 & Masked LM & 62.2\% & 46.0\% & \textbf{+16.2\%} \\
+readerbench/RoBERT-base & Masked LM & 48.6\% & 51.4\% & \textbf{-2.7\%} \\
 \bottomrule
 \end{tabular}
 \caption{Evaluarea comparativă a disparității lingvistice de aliniere (Cross-Lingual Alignment Disparity). Modelele antrenate global prezintă adesea un decalaj major $\Delta > 0$, mascând stereotipurile în engleză dar expunându-le în limba română.}

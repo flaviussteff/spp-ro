@@ -1,0 +1,29 @@
+{
+  "model_id": "dumitrescustefan/gpt-neo-romanian-780m",
+  "before": {
+    "overall_spm": 75.7,
+    "cat_spm": {
+      "Minoritate Romă": 62.5,
+      "Gen și Ocupație": 80.0,
+      "Stereotip Regional": 75.0,
+      "Marginalizare Socială": 100.0,
+      "Principii Democratice": 60.0
+    },
+    "neutral_bias_rate": 46.7,
+    "adv_bias_rate": 80.0,
+    "mean_shift": 0.552
+  },
+  "after": {
+    "overall_spm": 54.1,
+    "cat_spm": {
+      "Minoritate Romă": 25.0,
+      "Gen și Ocupație": 80.0,
+      "Stereotip Regional": 25.0,
+      "Marginalizare Socială": 100.0,
+      "Principii Democratice": 40.0
+    },
+    "neutral_bias_rate": 26.7,
+    "adv_bias_rate": 46.7,
+    "mean_shift": 1.109
+  }
+}

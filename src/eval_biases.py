@@ -683,19 +683,19 @@ def export_triad_latex_table(all_results: List[Dict[str, Any]]):
         f.write(" & (Control Brut) & (Post-Hoc LoRA) & (Token Zero SPP) \\\\\n")
         f.write("\\midrule\n")
         
-        categories = [
-            "Minoritate Romă",
-            "Gen și Ocupație",
-            "Stereotipuri Regionale",
-            "Statut Social & Economic",
-            "Valori Civice & Democratice",
+        category_map = [
+            ("Minoritate Romă", "Minoritate Romă"),
+            ("Gen și Ocupație", "Gen și Ocupație"),
+            ("Stereotipuri Regionale", "Stereotip Regional"),
+            ("Statut Social \\& Economic", "Marginalizare Socială"),
+            ("Valori Civice \\& Democratice", "Principii Democratice"),
         ]
         
-        for cat in categories:
-            b_val = f"{base_res['categories_ro'].get(cat, 0.0):.1f}\\%" if base_res else "N/A"
-            l_val = f"{lora_res['categories_ro'].get(cat, 0.0):.1f}\\%" if lora_res else "N/A"
-            s_val = f"\\textbf{{{spp_res['categories_ro'].get(cat, 0.0):.1f}\\%}}" if spp_res else "N/A"
-            f.write(f"{cat} & {b_val} & {l_val} & {s_val} \\\\\n")
+        for label, cat_key in category_map:
+            b_val = f"{base_res['categories_ro'].get(cat_key, 0.0):.1f}\\%" if base_res else "N/A"
+            l_val = f"{lora_res['categories_ro'].get(cat_key, 0.0):.1f}\\%" if lora_res else "N/A"
+            s_val = f"\\textbf{{{spp_res['categories_ro'].get(cat_key, 0.0):.1f}\\%}}" if spp_res else "N/A"
+            f.write(f"{label} & {b_val} & {l_val} & {s_val} \\\\\n")
             
         f.write("\\midrule\n")
         b_tot = f"{base_res['spm_ro']:.1f}\\%" if base_res and base_res.get('spm_ro') is not None else "N/A"

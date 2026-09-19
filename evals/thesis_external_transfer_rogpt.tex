@@ -1,0 +1,24 @@
+% Tabel Master Licență: Studiul de Transferabilitate pe Modelul RoGPT-780M (Dumitrescu et al.)
+% Demonstrează eficacitatea alinierii constituționale românești și persistența colapsului LoRA la scară mare
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Metrică de Evaluare} & \textbf{RoGPT-780M Brut} & \textbf{RoGPT-780M + SPP LoRA} & \textbf{Efectul Alinierii ($\Delta$)} \\
+ & (Înainte de Aliniere) & (După Fine-Tuning LoRA) & \\
+\midrule
+Scor General Bias (SPM Română) & 75.7\% & \textbf{54.1\%} & \textbf{-21.6\%} \\
+-- Minoritate Romă & 62.5\% & 25.0\% & -37.5\% \\
+-- Gen și Ocupație & 80.0\% & 80.0\% & +0.0\% \\
+-- Stereotip Regional & 75.0\% & 25.0\% & -50.0\% \\
+-- Marginalizare Socială & 100.0\% & 100.0\% & +0.0\% \\
+-- Principii Democratice & 60.0\% & 40.0\% & -20.0\% \\
+\midrule
+Rată Stereotip Sub Atac Adversativ ($x_{\text{adv}}$) & 80.0\% & \textbf{46.7\%} & -33.3\% \\
+Salt Log-Likelihood Adversativ ($\Delta LL_{\text{adv}}$) & +0.552 & \textbf{+1.109} & -- \\
+\bottomrule
+\end{tabular}
+\caption{Studiul de transferabilitate a setului de date constituționale românești pe modelul independent RoGPT-780M (Dumitrescu et al.). Rezultatele demonstrează că setul de reflecții constituționale reduce semnificativ biasul pe prompturi neutre, dar modelul rămâne vulnerabil la demascarea prin prefixe adversative, confirmând că fragilitatea alinierii post-hoc persistă și la modele mari (780M).}
+\label{tab:thesis_external_transfer_rogpt}
+\end{table}
