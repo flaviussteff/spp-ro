@@ -131,27 +131,49 @@ Now that all experimental data, models, and evaluation tables are finalized, wor
 
 ---
 
+### Milestone D: Deep Scale Pre-training (~3.93B Tokens, Multi-Day Run)
+1. **Corpus Scale & Diversity Upgrades:**
+   - 283 complete shards of FineWeb-2 Romanian downloaded (`data/raw/fineweb_shards/`, ~42.3 GB raw text).
+   - Balanced streaming corpus assembled: `data/clean/corpus_scale_stream.parquet` (2.06 GB, 1.5M documents: 75% diverse web, 20% Wikipedia, 5% news).
+   - ISO 8859-16 canonical comma diacritics (`ș`, `ț`) strictly enforced.
+2. **Execution & Telemetry Engine:**
+   - Sequential execution via `antreneaza_tot.bat` (or `py run_scale_training.py --model all`).
+   - 60,000 cumulative steps per model (10k existing + 50k new steps = 3.932B tokens).
+   - Zero-RAM `StreamingParquetDataset` maintaining < 100 MB RAM footprint and 4.08 GB VRAM.
+   - Hourly telemetry with live text generation probes and PPL tracking.
+
+---
+
 ## 4. Master Command Cheat Sheet
 
 ```bash
-# 1. Launch Web Application Demo
+# 1. Sequential Deep Scale Pre-training (Base + SPP, ~4 days)
+antreneaza_tot.bat
+# or via Python:
+py run_scale_training.py --model all
+
+# 2. Individual Model Scale Pre-training
+py run_scale_training.py --model base     # Base only (~50 hours)
+py run_scale_training.py --model spp      # SPP only with reflections (~50 hours)
+
+# 3. Launch Web Application Demo
 py app.py
 
-# 2. Interactive Terminal Generation (SPP Model)
+# 4. Interactive Terminal Generation (SPP Model)
 py src/interact.py --model spp
 
-# 3. Interactive Terminal Generation (Base Model)
+# 5. Interactive Terminal Generation (Base Model)
 py src/interact.py --model base
 
-# 4. Re-run Romanian Bias Benchmark (Triad)
+# 6. Re-run Romanian Bias Benchmark (Triad)
 py src/eval_biases.py --triad --eval-bert
 
-# 5. Re-run Alignment Tax Perplexity Probes
+# 7. Re-run Alignment Tax Perplexity Probes
 py src/eval_alignment_tax.py
 
-# 6. Re-run Adversarial Jailbreak Probes
+# 8. Re-run Adversarial Jailbreak Probes
 py src/eval_jailbreaks.py
 
-# 7. Re-run External Transfer on RoGPT-780M
+# 9. Re-run External Transfer on RoGPT-780M
 py src/eval_external_transfer.py
 ```
