@@ -35,17 +35,17 @@
 
 ---
 
-## 3. Active & Upcoming Execution Pipeline
+- [x] **Step 5: Pretrain Constitutional SPP Model (`spp_ro_125m`) — COMPLETED**  
+  - 10,000 / 10,000 steps completed in 10h 54m 11s (655,360,000 tokens).
+  - Final Loss: `3.0113`, Perplexity: `20.31`, LR: `1.52e-11`.
+  - Saved to `models/spp_ro_125m/` (`model.safetensors` ~352 MB) with model card `README.md`.
+  - Interleaved 10% constitutional reflection mixture with Causal Attention Blocking and RoPE aliasing.
 
-### Step 5: Pretrain Constitutional SPP Model (`spp_ro_125m`) [IN PROGRESS]
-- **Command:** `py src/train_pretrain.py --mode spp --max-steps 10000 --update-interval-mins 10`
-- **Execution:** Running on dedicated terminal with 99% GPU utilization (~6.6 GB VRAM).
-- **Difference from Base:** 10% of sequences contain constitutional deliberation thoughts with Causal Attention Blocking (`spp_collator.py`).
-- **Destination:** `models/spp_ro_125m/`.
-- **Upon Completion:** Upload to Hugging Face Hub:
-  ```powershell
-  py src/upload_to_hf.py --model spp --repo-id flaviussteff/spp-ro-125m
-  ```
+---
+
+## 3. Active & Upcoming Execution Pipeline (Automated via `run_all_next_steps.bat`)
+
+> **Autonomous Execution Runner:** All remaining steps (Steps 6 through 11) are automated end-to-end in [`run_all_next_steps.bat`](file:///c:/Users/Flavius%20Stefan/Desktop/licenta/run_all_next_steps.bat). Running this script executes all models and generates all thesis LaTeX tables sequentially without manual prompts.
 
 ---
 

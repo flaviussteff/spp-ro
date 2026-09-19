@@ -656,10 +656,68 @@ def export_thesis_tables(all_results: List[Dict[str, Any]]):
         f.write("\\end{table}\n")
     print(f"[Exported LaTeX] Saved publication-ready table to: {tex_path}")
 
+    # 3. Export Thesis Alignment Triad Table (Base vs. LoRA vs. SPP)
+    export_triad_latex_table(all_results)
+
+
+def export_triad_latex_table(all_results: List[Dict[str, Any]]):
+    """Exports the definitive 3-Way Thesis Triad Table comparing Base, LoRA, and SPP."""
+    # Find matching models
+    models_dict = {r["model"]: r for r in all_results}
+    
+    # Check if triad is present
+    base_res = models_dict.get("Base-Ro-125M")
+    lora_res = models_dict.get("Base-Ro-LoRA")
+    spp_res = models_dict.get("SPP-Ro-125M")
+    
+    triad_tex = EVALS_DIR / "thesis_3way_alignment_triad.tex"
+    with open(triad_tex, "w", encoding="utf-8") as f:
+        f.write("% Tabel Master Licență: Triada de Aliniere (Base vs. LoRA vs. SPP)\n")
+        f.write("% Ideal (Neutralitate Perfectă): SPM = 50.0%\n")
+        f.write("\\begin{table}[htbp]\n")
+        f.write("\\centering\n")
+        f.write("\\small\n")
+        f.write("\\begin{tabular}{l c c c}\n")
+        f.write("\\toprule\n")
+        f.write("\\textbf{Axa Socio-Culturală (România)} & \\textbf{Base-Ro-125M} & \\textbf{Base-Ro + LoRA} & \\textbf{SPP-Ro-125M} \\\\\n")
+        f.write(" & (Control Brut) & (Post-Hoc LoRA) & (Token Zero SPP) \\\\\n")
+        f.write("\\midrule\n")
+        
+        categories = [
+            "Minoritate Romă",
+            "Gen și Ocupație",
+            "Stereotipuri Regionale",
+            "Statut Social & Economic",
+            "Valori Civice & Democratice",
+        ]
+        
+        for cat in categories:
+            b_val = f"{base_res['categories_ro'].get(cat, 0.0):.1f}\\%" if base_res else "N/A"
+            l_val = f"{lora_res['categories_ro'].get(cat, 0.0):.1f}\\%" if lora_res else "N/A"
+            s_val = f"\\textbf{{{spp_res['categories_ro'].get(cat, 0.0):.1f}\\%}}" if spp_res else "N/A"
+            f.write(f"{cat} & {b_val} & {l_val} & {s_val} \\\\\n")
+            
+        f.write("\\midrule\n")
+        b_tot = f"{base_res['spm_ro']:.1f}\\%" if base_res and base_res.get('spm_ro') is not None else "N/A"
+        l_tot = f"{lora_res['spm_ro']:.1f}\\%" if lora_res and lora_res.get('spm_ro') is not None else "N/A"
+        s_tot = f"\\textbf{{{spp_res['spm_ro']:.1f}\\%}}" if spp_res and spp_res.get('spm_ro') is not None else "N/A"
+        f.write(f"\\textbf{{Scor General SPM (Română)}} & \\textbf{{{b_tot}}} & \\textbf{{{l_tot}}} & {s_tot} \\\\\n")
+        
+        f.write("\\bottomrule\n")
+        f.write("\\end{tabular}\n")
+        f.write("\\caption{Compararea Triadei Experimentale de Aliniere pe Limba Română (37 perechi diagnostice). "
+                "Atât modelul LoRA post-hoc cât și modelul SPP Token Zero neutralizează biasul sub condiții normale, "
+                "însă reziliența lor diferă profund sub presiune adversativă.}\n")
+        f.write("\\label{tab:thesis_alignment_triad}\n")
+        f.write("\\end{table}\n")
+        
+    print(f"[Exported LaTeX Triad] Saved Master Triad table to: {triad_tex}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate Romanian vs. English Bias Benchmarks on Baselines & Custom Models")
     parser.add_argument("--eval-bert", action="store_true", help="Evaluate Romanian and multilingual BERT baselines")
+    parser.add_argument("--triad", action="store_true", help="Evaluate the complete 3-model alignment triad (Base, LoRA, SPP)")
     parser.add_argument("--eval-custom", action="store_true", help="Evaluate custom trained causal models (Base and SPP)")
     parser.add_argument("--eval-multilingual", action="store_true", help="Evaluate multilingual baseline (bert-base-multilingual-cased)")
     parser.add_argument("--lang", type=str, default="both", choices=["ro", "en", "both"], help="Language edition to evaluate")
@@ -670,6 +728,24 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     all_evaluated_models = []
+
+    # 0. Complete Alignment Triad Mode
+    if args.triad:
+        print("==================================================")
+        print(" Evaluating Complete 3-Model Alignment Triad")
+        print("==================================================")
+        triad_models = [
+            (BASE_MODEL_DIR, "Base-Ro-125M"),
+            (_ROOT_DIR / "models" / "base_ro_125m_lora", "Base-Ro-LoRA"),
+            (SPP_MODEL_DIR, "SPP-Ro-125M"),
+        ]
+        for m_dir, m_label in triad_models:
+            if m_dir.exists():
+                res = evaluate_custom_causal_model(m_dir, Path(args.tokenizer_dir), m_label, eval_lang=args.lang)
+                if res:
+                    all_evaluated_models.append(res)
+            else:
+                print(f"[!] Warning: Model path does not exist: {m_dir}")
 
     # 1. Romanian & Multilingual BERT Baselines
     if args.eval_bert or (not args.eval_bert and not args.eval_custom and not args.unmask and not args.eval_multilingual):

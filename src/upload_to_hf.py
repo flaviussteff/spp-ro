@@ -20,7 +20,11 @@ from transformers import AutoModelForCausalLM, PreTrainedTokenizerFast
 
 
 def upload_model(model_type: str, repo_id: str, private: bool = False, token: str = None):
-    model_dir = Path(f"models/{model_type}_ro_125m")
+    if model_type == "lora":
+        model_dir = Path("models/base_ro_125m_lora")
+    else:
+        model_dir = Path(f"models/{model_type}_ro_125m")
+        
     if not model_dir.exists():
         raise FileNotFoundError(f"Folderul modelului nu a fost gasit: {model_dir.resolve()}")
 
@@ -66,8 +70,8 @@ def upload_model(model_type: str, repo_id: str, private: bool = False, token: st
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Upload trained SPP-Ro models to Hugging Face")
-    parser.add_argument("--model", type=str, default="base", choices=["base", "spp"],
-                        help="Model to upload ('base' or 'spp')")
+    parser.add_argument("--model", type=str, default="base", choices=["base", "spp", "lora"],
+                        help="Model to upload ('base', 'spp', or 'lora')")
     parser.add_argument("--repo-id", type=str, default=None,
                         help="Target Hugging Face repo ID, e.g., 'username/base-ro-125m'")
     parser.add_argument("--token", type=str, default=None,
