@@ -803,8 +803,371 @@ code, pre {
   box-shadow: var(--shadow-hover);
 }
 
-.bento-card-wide {
-  grid-column: span 2;
+/* ==========================================================================
+   Constitutional Pre-training & Annotated Corpus Explorer (Photo Components)
+   Clinical Blueprint Style: Frosted paper, 18px pills, hairline borders, Ember accents
+   ========================================================================== */
+
+/* Collapsible Accordion Cards */
+.accordion-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.accordion-card {
+  background: var(--color-paper);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.accordion-card:hover {
+  border-color: #d4d4d4;
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.accordion-header:hover {
+  background: var(--color-surface-alt);
+}
+
+.accordion-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.accordion-icon-bullet {
+  font-size: 11px;
+  color: var(--color-ember);
+  transition: transform 0.2s ease;
+}
+
+.accordion-card.open .accordion-icon-bullet {
+  transform: rotate(90deg);
+}
+
+.accordion-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.015em;
+}
+
+.accordion-subtext {
+  font-size: 13px;
+  color: var(--color-mid-gray);
+  font-weight: 400;
+}
+
+.accordion-body {
+  display: none;
+  padding: 0 24px 24px;
+  border-top: 1px solid var(--color-hairline-subtle);
+}
+
+.accordion-card.open .accordion-body {
+  display: block;
+}
+
+.accordion-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  padding-top: 16px;
+  padding-right: 12px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--color-ink-soft);
+}
+
+.accordion-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.accordion-scroll::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: var(--radius-pill);
+}
+
+.constitution-domain {
+  margin-bottom: 22px;
+}
+
+.constitution-domain-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+
+.constitution-domain-desc {
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--color-mid-gray);
+  margin-bottom: 12px;
+}
+
+.constitution-article {
+  margin-bottom: 14px;
+  padding-left: 14px;
+  border-left: 2px solid var(--color-hairline);
+}
+
+.constitution-article:hover {
+  border-left-color: var(--color-ember);
+}
+
+.constitution-article-header {
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 4px;
+}
+
+.constitution-article-header span.badge-num {
+  font-family: var(--font-mono);
+  color: var(--color-ember-ink);
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+/* Annotated Documents Showcase (Clinical Blueprint) */
+.annotated-docs-card {
+  background: var(--color-paper);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-card);
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+  margin-top: 24px;
+}
+
+.doc-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 20px;
+}
+
+.doc-pill-btn {
+  font-family: var(--font-geist);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-hairline);
+  background: var(--color-surface-alt);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.doc-pill-btn:hover {
+  background: var(--color-paper);
+  border-color: #d4d4d4;
+}
+
+.doc-pill-btn.active {
+  background: var(--color-ink);
+  color: #ffffff;
+  border-color: var(--color-ink);
+}
+
+.doc-pill-btn.active .pill-score {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.pill-score {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-hairline);
+  color: var(--color-mid-gray);
+}
+
+.doc-reader-pane {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-nested);
+  padding: 22px 24px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-ink);
+  max-height: 320px;
+  overflow-y: auto;
+  font-family: var(--font-geist);
+}
+
+.spp-token-badge {
+  display: inline-block;
+  background: var(--color-ember-soft);
+  color: var(--color-ember-ink);
+  border: 1px solid var(--color-ember-border);
+  border-radius: 6px;
+  padding: 1px 7px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  margin: 0 4px;
+  vertical-align: baseline;
+}
+
+.spp-spliced-thought {
+  color: var(--color-ember-ink);
+  font-style: italic;
+  font-weight: 500;
+  background: rgba(254, 242, 242, 0.65);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.spp-citation {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.doc-footnote {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--color-mid-gray);
+  line-height: 1.5;
+}
+
+/* Constitution Following Explorer (Photo 4) */
+.cf-explorer-box {
+  background: var(--color-paper);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-card);
+  padding: 28px;
+  box-shadow: var(--shadow-card);
+  margin-top: 32px;
+}
+
+.cf-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.cf-tab-btn {
+  font-family: var(--font-geist);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-hairline);
+  background: var(--color-surface-alt);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cf-tab-btn:hover {
+  background: var(--color-paper);
+  border-color: #d4d4d4;
+}
+
+.cf-tab-btn.active {
+  background: var(--color-ink);
+  color: #ffffff;
+  border-color: var(--color-ink);
+}
+
+.cf-scenario-prompt {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-nested);
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+  color: var(--color-ink);
+}
+
+.cf-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cf-option-item {
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-nested);
+  padding: 14px 18px;
+  background: var(--color-paper);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.cf-option-item.chosen-spp {
+  border-color: var(--color-green-border);
+  background: var(--color-green-soft);
+}
+
+.cf-option-item.chosen-base {
+  border-color: var(--color-ember-border);
+  background: var(--color-ember-soft);
+}
+
+.cf-option-label {
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  color: var(--color-ink);
+}
+
+.cf-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cf-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+.cf-badge-aligned {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.cf-badge-unaligned {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.cf-badge-neutral {
+  background: #f4f4f5;
+  color: #52525b;
+  border: 1px solid #e4e4e7;
 }
 
 /* BibTeX Code Container */

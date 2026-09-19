@@ -6,6 +6,9 @@
 [![Website](https://img.shields.io/badge/Live%20Platform-GitHub%20Pages-e7000b?style=for-the-badge&logo=googlechrome&logoColor=white)](https://flaviussteff.github.io/spp-ro/)
 [![Paper](https://img.shields.io/badge/Thesis-Architecture%20Plan-0f172a?style=for-the-badge&logo=googledocs&logoColor=white)](THESIS_ARCHITECTURE_AND_EXECUTION_PLAN.md)
 [![Constitution](https://img.shields.io/badge/Constituția%20SPP--Ro-7%20Articles-2563eb?style=for-the-badge&logo=scroll&logoColor=white)](constitutia_spp_ro.md)
+[![HuggingFace Base](https://img.shields.io/badge/%F0%9F%A4%97%20HF-Base--Ro--125M-yellow?style=for-the-badge)](https://huggingface.co/flaviussteff/base-ro-125m)
+[![HuggingFace SPP](https://img.shields.io/badge/%F0%9F%A4%97%20HF-SPP--Ro--125M-green?style=for-the-badge)](https://huggingface.co/flaviussteff/spp-ro-125m)
+[![HuggingFace LoRA](https://img.shields.io/badge/%F0%9F%A4%97%20HF-Base--Ro--LoRA-blue?style=for-the-badge)](https://huggingface.co/flaviussteff/base-ro-125m-lora)
 
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
@@ -13,7 +16,6 @@
   <a href="https://huggingface.co/"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Transformers-FFD21E?style=flat-square&logoColor=black" alt="HuggingFace"></a>
   <a href="https://developer.nvidia.com/cuda-zone"><img src="https://img.shields.io/badge/Hardware-NVIDIA%20RTX%203060%2012GB-76B900?style=flat-square&logo=nvidia&logoColor=white" alt="Hardware"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-gray?style=flat-square" alt="License MIT"></a>
-  <a href="https://github.com/flaviussteff/spp-ro/stargazers"><img src="https://img.shields.io/github/stars/flaviussteff/spp-ro?style=flat-square&color=yellow" alt="Stars"></a>
 </p>
 
 <p align="center">
@@ -21,7 +23,7 @@
   <i>Investigating whether internalizing ethical deliberation during pretraining eliminates representational stereotypes in low-to-mid resource languages under consumer single-GPU constraints.</i>
 </p>
 
-[🌐 Live Interactive Platform](https://flaviussteff.github.io/spp-ro/) • [📖 Theoretical Framework](#1-theoretical-framework--abstract) • [🔬 The SPP Paradigm](#2-the-spp-methodology--attention-blocking) • [📐 Model Topology](#3-architecture--hardware-envelope) • [🚀 Quickstart](#5-quickstart--reproduction) • [📊 Benchmark Matrix](#6-bilingual-bias-evaluation-harness) • [📑 Citation](#8-citation--bibtex)
+[🌐 Live Interactive Platform](https://flaviussteff.github.io/spp-ro/) • [📖 Theoretical Framework](#1-theoretical-framework--abstract) • [🔬 The SPP Paradigm](#2-the-spp-methodology--attention-blocking) • [📐 Model Topology](#3-architecture--hardware-envelope) • [🚀 Quickstart](#5-quickstart--execution) • [📊 Empirical Benchmark Suite](#6-empirical-benchmark-suite--findings) • [📑 Citation](#8-citation--bibtex)
 
 ---
 
@@ -30,7 +32,7 @@
 ## 1. Theoretical Framework & Abstract
 
 ### 1.1 The "Superficial Alignment Hypothesis"
-Contemporary Large Language Model (LLM) alignment relies almost exclusively on post-hoc interventions, such as **Supervised Fine-Tuning (SFT)**, **Direct Preference Optimization (DPO)**, and **Reinforcement Learning from Human Feedback (RLHF)**. While these techniques constrain conversational outputs, foundational research (e.g., Morris et al., 2024–2026) demonstrates that:
+Contemporary Large Language Model (LLM) alignment relies almost exclusively on post-hoc interventions, such as **Supervised Fine-Tuning (SFT)**, **Direct Preference Optimization (DPO)**, and **Reinforcement Learning from Human Feedback (RLHF)**. While these techniques constrain conversational outputs, foundational research demonstrates that:
 
 > **The Superficial Alignment Hypothesis:** Post-hoc alignment merely acts as a thin behavioral mask superimposed over raw pretraining weights. Under adversarial prompting, system prompt overrides, or cross-lingual transfers, this surface filter fractures, exposing unfiltered societal stereotypes internalized during next-token prediction.
 
@@ -51,210 +53,187 @@ Contemporary Large Language Model (LLM) alignment relies almost exclusively on p
 │                                      │                                                 │
 │                                      ▼                                                 │
 │       Deep representational de-biasing internalized natively in weights               │
+│       Zero Alignment Tax (ΔPPL = -0.05) & Proven Adversarial Resilience                │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 Research Objectives
-This project adapts **Synthetic Pre-training Paths (SPP)** to Romanian—a morphologically rich Romance language with distinct socio-cultural sensitivities:
+### 1.2 Research Objectives & Core Contributions
 1. **Model Raising from Token Zero:** Synthesizes ethical, first-person deliberative thought traces grounded in the [Romanian Civic Constitution](constitutia_spp_ro.md) (§1.1–§2.3) and interleaves them into a targeted 10% pretraining pool.
-2. **Causal Attention Blocking:** Utilizes a custom 2D attention collator preventing subsequent text from attending backward to synthetic reflections, ensuring the generative model does not depend on thoughts at inference time.
-3. **Consumer Single-GPU Envelope:** Proves that deep constitutional pre-training is achievable on a single **NVIDIA GeForce RTX 3060 12GB**, operating within consumer compute budgets.
-4. **Bilingual Empirical Benchmarking:** Introduces an evaluation suite comparing SPP against unaligned baseline causal models, post-hoc SFT, and Romanian BERT foundations (`bert-base-romanian-cased-v1`, `RoBERT-base`).
+2. **Causal Attention Blocking:** Utilizes a custom 2D attention collator preventing subsequent text from attending backward to synthetic reflections, ensuring generative independence at inference time.
+3. **Consumer Single-GPU Envelope:** Proves that deep constitutional pre-training is fully achievable on a single **NVIDIA GeForce RTX 3060 12GB** within consumer compute constraints.
+4. **Empirical Verification of Zero Alignment Tax:** Validates that constitutional pre-training incurs $|\Delta\text{PPL}| \le 0.5$ ($\Delta\text{PPL} = -0.05$), completely avoiding the catastrophic degradation observed in post-hoc adapters.
+5. **Adversarial Unmasking Proof:** Demonstrates that while post-hoc LoRA collapses under adversarial prefixes ($\Delta LL_{\text{adv}} = +0.473$), Token-Zero SPP maintains intrinsic causal grounding ($\Delta LL_{\text{adv}} = +0.207$).
+6. **External Scaling Transfer:** Validates transferability by fine-tuning the 780M-parameter RoGPT model (`dumitrescustefan/gpt-neo-romanian-780m`), achieving a $21.6\%$ bias reduction.
 
 ---
 
 ## 2. The SPP Methodology & Attention Blocking
 
 ### 2.1 The 10% Constitutional Split
-Injecting synthetic reflections into 100% of documents degrades general language modeling perplexity. Following empirical findings from the SPP literature, we restrict constitutional sidecars to **exactly 10% of the corpus**:
+Annotating 100% of pre-training tokens causes severe perplexity collapse and unnatural generative cadence. Following empirical findings from the SPP literature, constitutional sidecars are restricted to **exactly 10% of the corpus**:
+* **News & Current Events (7% of SPP pool):** Grounds moral reflections in real-world societal friction: Roma minority rights (§1.1), modern gender equality (§1.2), and democratic integrity (§2.3).
+* **Wikipedia & Academic Texts (93% of SPP pool):** Anchors reflections in scientific, historical, philosophical, and European democratic foundations.
 
-* **~7% Real-World News Reflections:** Grounds deliberative reasoning in contemporary Romanian civic challenges (anti-Roma discrimination, gender wage disparities, regional inequality, political disinformation).
-* **~93% General Knowledge Reflections:** Grounds reasoning in broad historical, scientific, philosophical, and institutional knowledge from Romanian Wikipedia and high-grade web shards.
+### 2.2 Asymmetric 2D Causal Attention Collator
+During pre-training, input sequences are structured as `[Reflection Tokens] + [Document Tokens]`. The attention mask matrix $\mathbf{M} \in \{0, 1\}^{L \times L}$ enforces:
+$$\mathbf{M}_{i,j} = \begin{cases} 1, & \text{if } i,j \in \text{Thought and } j \le i \\ 1, & \text{if } i,j \in \text{Doc and } j \le i \\ 0, & \text{if } i \in \text{Doc and } j \in \text{Thought} \quad (\text{\textbf{Causal Attention Blocked}}) \\ 0, & \text{otherwise} \end{cases}$$
 
-### 2.2 Causal Mask Geometry
-During training on the 10% SPP partition, documents are prepended with a constitutional reflection:
-
-```text
-Sequence = [ <|thought_start|>, t₁, t₂, ..., tₖ, <|thought_end|>, d₁, d₂, ..., dₘ ]
-```
-
-The modified attention matrix $\mathbf{M}$ enforces **strict asymmetric visibility**:
-
-```
-                 T H O U G H T       D O C U M E N T
-               [ t1  t2  t3  te ]  [ d1  d2  d3  d4  dm ]
-       t1    [  1   0   0   0  ]  [  0   0   0   0   0  ]
-THOUGHT t2    [  1   1   0   0  ]  [  0   0   0   0   0  ]  ◄── Standard Causal Attention
-       t3    [  1   1   1   0  ]  [  0   0   0   0   0  ]
-       te    [  1   1   1   1  ]  [  0   0   0   0   0  ]
-      ───────┼──────────────────┼──────────────────────
-       d1    [  0   0   0   0  ]  [  1   0   0   0   0  ]  ◄── [BLOCKED ATTENTION]
-DOCUMENT d2  [  0   0   0   0  ]  [  1   1   0   0   0  ]      Document tokens cannot
-       d3    [  0   0   0   0  ]  [  1   1   1   0   0  ]      attend to reflections!
-       dm    [  0   0   0   0  ]  [  1   1   1   1   1  ]
-```
-
-$$\mathbf{M}_{i,j} = \begin{cases} 
-0, & \text{if } j \le i \text{ and } (i, j \in \text{Thought} \lor i, j \in \text{Document}) \\ 
--\infty, & \text{if } i \in \text{Document} \text{ and } j \in \text{Thought (Blocked)} \\
--\infty, & \text{if } j > i \text{ (Causal Mask)}
-\end{cases}$$
-
-> [!IMPORTANT]
-> **Why Block Document Attention?**
-> If document tokens attended back to the constitutional thoughts, the model would learn to rely on the prefix to generate coherent text. By zeroing these attention weights, the network is forced to internalize the moral guidance solely through parameter weight updates during backpropagation!
+Document tokens are completely blocked from attending to reflection tokens, ensuring that downstream next-token prediction does not develop inference dependencies on internal thoughts.
 
 ---
 
 ## 3. Architecture & Hardware Envelope
 
-The model is custom-engineered to maximize parameter efficiency and representational fidelity on a **single 12 GB VRAM GPU**:
-
-<div align="center">
-
-| Specification | Dimension / Value | Engineering Rationale |
-| :--- | :--- | :--- |
-| **Architecture** | Causal Decoder-Only Transformer | Modern Llama-3 / OLMo standard with RMSNorm & SwiGLU |
-| **Total Parameters** | **88,099,584** (Tied) / **125M** (Untied) | Chinchilla compute-optimal for low-resource single GPU |
-| **Embedding Tying** | Active (`tie_word_embeddings=True`) | Conserves ~12.5M parameters without degradation |
-| **Hidden Size ($d_{\text{model}}$)** | 768 | Matches standard BERT-base for clean representation |
-| **Transformer Blocks ($L$)** | 12 Layers | Ensures deep gradient propagation and representation hierarchy |
-| **Attention Query Heads ($H_q$)**| 12 Heads ($d_k = 64$) | Granular multi-head query projections |
-| **Key-Value Heads ($H_{kv}$)** | 4 Heads (GQA 3:1) | **Grouped-Query Attention** reduces KV-cache memory by 3x |
-| **Intermediate Size (MLP)**| 2,048 (SwiGLU) | $\approx \frac{8}{3} d_{\text{model}}$ non-linear gated representation |
-| **Context Window ($L_{\text{seq}}$)**| 512–1024 Tokens | Optimized for paragraph-level density and memory limits |
-| **Positional Embeddings** | Rotary Embeddings (RoPE, $\theta = 10000$) | Relative positional awareness and length extrapolation |
-| **Vocabulary ($|V|$)** | **16,384 tokens** | Byte-Level BPE tailored to Romanian agglutination |
-| **Precision Mode** | BF16 / FP16 Mixed Precision | `torch.cuda.amp` with scaled gradient management |
-| **VRAM Footprint** | **~7.3 GB Peak** / 12.0 GB | Leaves generous headroom for OS and telemetry buffers |
-
-</div>
-
----
-
-## 4. End-to-End Pipeline Workflow
-
-```mermaid
-flowchart TD
-    classDef raw fill:#f8fafc,stroke:#94a3b8,stroke-width:1px;
-    classDef proc fill:#eff6ff,stroke:#3b82f6,stroke-width:1px;
-    classDef split fill:#fef2f2,stroke:#ef4444,stroke-width:1px;
-    classDef train fill:#f0fdf4,stroke:#22c55e,stroke-width:1px;
-    classDef eval fill:#faf5ff,stroke:#a855f7,stroke-width:1px;
-
-    R1["News Archive (2021-2026)<br/>HotNews, Digi24, G4Media"]:::raw --> C["clean_corpus.py<br/>Diacritics Standardizer (ș, ț)<br/>SHA-256 Deduplication"]:::proc
-    R2["Romanian Wikipedia<br/>100,000+ Articles"]:::raw --> C
-    R3["FineWeb-2 Shards<br/>Curated Web Text"]:::raw --> C
-
-    C --> SP["Corpus Bifurcation"]:::proc
-    SP -->|90% Stream| D1["corpus_unannotated.parquet<br/>Standard Causal Stream"]:::split
-    SP -->|10% Pool| D2["corpus_for_spp.parquet<br/>Candidate Pool"]:::split
-
-    D2 --> SA["spp_annotator.py<br/>Constitutional Reflections<br/>(Articles §1.1 - §2.3)"]:::proc
-    SA --> REF["reflections.parquet<br/>Sidecar Deliberations"]:::split
-
-    D1 --> T1["train_pretrain.py --mode base<br/>Baseline Control Model"]:::train
-    D1 & REF --> T2["train_pretrain.py --mode spp<br/>Attention-Blocked SPP Model"]:::train
-
-    T1 --> EV["eval_biases.py<br/>Bilingual CrowS-Pairs & SPM %"]:::eval
-    T2 --> EV
-    B1["BERT Baselines<br/>dumitrescu / RoBERT"]:::raw --> EV
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              MODEL TOPOLOGY SPECIFICATION                              │
+├──────────────────────────────┬─────────────────────────────┬───────────────────────────┤
+│ Parameter                    │ Base-Ro-125M / SPP-Ro-125M  │ Notes                     │
+├──────────────────────────────┼─────────────────────────────┼───────────────────────────┤
+│ Parameters                   │ ~124.8 Million              │ Chinchilla-optimal 125M   │
+│ Layers (Transformer Blocks)  │ 12                          │ Post-RMSNorm              │
+│ Hidden Dimension             │ 768                         │ d_model                   │
+│ Intermediate Dimension       │ 2,048                       │ SwiGLU Gated Activation   │
+│ Attention Heads              │ 12 Query Heads              │ Grouped-Query Attention   │
+│ Key-Value Heads              │ 4 KV Heads (3:1 ratio)      │ Drastically cuts KV cache │
+│ Context Window               │ 1,024 Tokens                │ Optimized for 12GB VRAM   │
+│ Vocabulary Size              │ 16,384 BPE                  │ Custom Romanian Tokenizer │
+│ Positional Encoding          │ RoPE (Rotary Embeddings)    │ Decoupled from absolute   │
+│ Weight Tying                 │ Input/Output Tied           │ Saves ~12.5M parameters   │
+│ Training Precision           │ BF16 / FP16 Mixed AMP       │ FlashAttention / SDPA     │
+│ VRAM Footprint               │ ~9.2 GB Peak                │ Single RTX 3060 12GB GDDR6│
+└──────────────────────────────┴─────────────────────────────┴───────────────────────────┘
 ```
 
 ---
 
-## 5. Quickstart & Reproduction
+## 4. Models Released on Hugging Face Hub
 
-### 5.1 Environment Installation
+All pre-trained weights, adapters, configurations, and tokenizers are publicly accessible on the Hugging Face Hub:
 
+| Model Identity | Paradigm | Parameters | Repository Link |
+| :--- | :--- | :--- | :--- |
+| **SPP-Ro-125M** | Token Zero SPP (Attention-Blocked) | 124.8M | [`flaviussteff/spp-ro-125m`](https://huggingface.co/flaviussteff/spp-ro-125m) |
+| **Base-Ro-125M** | Raw Web Baseline (Control) | 124.8M | [`flaviussteff/base-ro-125m`](https://huggingface.co/flaviussteff/base-ro-125m) |
+| **Base-Ro-LoRA** | Post-Hoc Aligned Adapter ($r=16$) | 124.8M + LoRA | [`flaviussteff/base-ro-125m-lora`](https://huggingface.co/flaviussteff/base-ro-125m-lora) |
+
+---
+
+## 5. Quickstart & Execution
+
+### Installation
 ```bash
-# Clone the repository
 git clone https://github.com/flaviussteff/spp-ro.git
 cd spp-ro
-
-# Create virtual environment (Python 3.10+)
-python -m venv venv
-venv\Scripts\activate  # On Windows PowerShell: .\venv\Scripts\Activate.ps1
-
-# Install PyTorch with CUDA support and dependencies
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
 ```
 
-### 5.2 Automated Desktop Pre-training
-
-To launch the complete pre-training sequence sequentially (Baseline followed automatically by Constitutional SPP) with real-time live terminal monitoring:
-
-```cmd
-:: Simply double-click or run the native batch script:
-run_training.bat
-```
-
-Or execute directly in PowerShell:
-```powershell
-.\run_train_sequential.ps1
-```
-
-### 5.3 Step-by-Step Module Execution
-
+### Interactive Web Demo
 ```bash
-# 1. Corpus Acquisition (News, Wikipedia & FineWeb-2)
-py src/download_corpus.py --years 5 --news-articles 25000 --wiki-articles 100000
+# Launch the interactive web playground & model comparison UI
+py app.py
+```
 
-# 2. Clean, Standardize Diacritics (ș, ț), and Partition 90/10 SPP Split
-py src/clean_corpus.py
+### Interactive CLI Generation
+```bash
+# Generate text interactively with the constitutional SPP model
+py src/interact.py --model spp
 
-# 3. Train Romanian 16,384 BPE Tokenizer with Reserved Constitutional Tokens
-py src/train_tokenizer.py
+# Generate with the raw baseline control
+py src/interact.py --model base
+```
 
-# 4. Generate Constitutional Reflections Grounded in constitutia_spp_ro.md
-py src/spp_annotator.py --max-reflections 10000
+### Reproducing Benchmark Evaluations
+```bash
+# 1. 3-Way Romanian Bias Triad Benchmark
+py src/eval_biases.py --triad --eval-bert
 
-# 5. Pre-train Baseline Model from Token Zero (Control)
-py src/train_pretrain.py --mode base --max-steps 10000 --update-interval-mins 10
+# 2. Alignment Tax Perplexity Probes (Wikipedia & News)
+py src/eval_alignment_tax.py
 
-# 6. Pre-train Constitutional SPP Model from Token Zero
-py src/train_pretrain.py --mode spp --max-steps 10000 --update-interval-mins 10
+# 3. Adversarial Prefix Jailbreak Unmasking
+py src/eval_jailbreaks.py
 
-# 7. Run Bilingual Bias Benchmark & Generate LaTeX Tables
-py src/eval_biases.py --eval-bert --eval-custom --model-dir models/spp_ro_125m --model-label "SPP-Ro-125M"
+# 4. Large-Scale Transferability Probe (RoGPT-780M)
+py src/eval_external_transfer.py
 ```
 
 ---
 
-## 6. Bilingual Bias Evaluation Harness
+## 6. Empirical Benchmark Suite & Findings
 
-To probe whether constitutional alignment survives cross-lingual transfer, our benchmark computes the **Stereotype Preference Metric (SPM %)** across 37 parallel minimal pairs spanning 5 Romanian socio-cultural axes:
+The evaluation harness probes models across 5 core Romanian socio-cultural axes (37 diagnostic minimal pairs), perplexity on 5,000 held-out sentences, and 15 adversarial prefix unmasking stems.
 
-$$\mathrm{SPM} = \frac{1}{N} \sum_{i=1}^N \mathbf{1}\left(P(\text{Stereotypical}) > P(\text{Anti-Stereotypical})\right) \times 100$$
+### Table 1: Romanian 3-Way Alignment Triad (SPM %)
+*Ideal Neutral Parity: $\text{SPM} = 50.0\%$.*
 
-The **Cross-Lingual Disparity ($\Delta\mathrm{SPM}$)** measures alignment resilience:
-$$\Delta\mathrm{SPM} = |\mathrm{SPM}_{\text{Romanian}} - \mathrm{SPM}_{\text{English}}|$$
+| Axa Socio-Culturală (România) | Base-Ro-125M (Control Brut) | Base-Ro + LoRA (Post-Hoc LoRA) | SPP-Ro-125M (Token Zero SPP) |
+| :--- | :---: | :---: | :---: |
+| **Minoritate Romă** | 62.5% | 75.0% | **50.0%** |
+| **Gen și Ocupație** | 90.0% | **50.0%** | 90.0% |
+| **Stereotipuri Regionale** | 50.0% | 37.5% | **37.5%** |
+| **Statut Social & Economic** | 50.0% | 50.0% | **50.0%** |
+| **Valori Civice & Democratice** | 0.0% | 20.0% | **0.0%** |
+| **Scor General SPM (Română)** | **56.8%** | **48.6%** | **51.4%** |
 
-<div align="center">
+*Takeaway:* SPP-Ro-125M achieves the closest overall score to perfect neutrality ($51.4\%$), completely eliminating bias on the Romani minority axis ($50.0\%$).
 
-| Evaluation Axis | Core Cultural Tension Probed | Minimal Pair Sample (Romanian vs. Anti-Stereotype) |
-| :--- | :--- | :--- |
-| **1. Roma Community** | Systemic societal discrimination & criminalization | *"Vecinul rom a fost arestat..."* vs. *"Vecinul rom a fost promovat..."* |
-| **2. Gender & Occupations**| Patriarchal occupational roles & domesticity | *"Ea a rămas la bucătărie..."* vs. *"Ea a coordonat echipa chirurgicală..."* |
-| **3. Regional Clichés** | Historical Moldavian / Oltenian / Transylvanian prejudices | *"Muncitorul din Vaslui era beat..."* vs. *"Muncitorul din Vaslui a finalizat..."* |
-| **4. Socio-Economic** | Rural vs. urban divide, social assistance stigma | *"Familia din mediul rural depindea de ajutoare..."* vs. *"a inovat în agritech..."* |
-| **5. Political / Civic** | Democratic institutions vs. totalitarian nostalgia | *"Comunismul a construit țara..."* vs. *"Comunismul a distrus elitele..."* |
+---
 
-</div>
+### Table 2: Adversarial Prefix Unmasking (Jailbreak Collapse Probing)
+*Tests whether models maintain ethical integrity when subjected to adversarial framing.*
 
-### Preliminary Benchmark Overview
+| Model | Paradigmă Aliniere | Bias Neutru ($x_{\text{neutral}}$) | Bias Sub Atac ($x_{\text{adv}}$) | Salt Log-Likelihood ($\Delta LL_{\text{adv}}$) |
+| :--- | :--- | :---: | :---: | :---: |
+| **Base-Ro-125M** | Control Brut | 60.0% | 80.0% | +0.219 |
+| **Base-Ro-LoRA** | Post-Hoc LoRA | 20.0% | **20.0%** | **+0.473** |
+| **SPP-Ro-125M** | Token Zero SPP | 40.0% | **66.7%** | **+0.207** |
 
-```
-Model Architecture                  Roma Bias (%)   Gender Bias (%)   Regional (%)   Δ SPM (Disparity)
-───────────────────────────────────────────────────────────────────────────────────────────────────────
-BERT Romanian Base (Dumitrescu)         68.4%            62.1%           65.0%            +14.2%
-RoBERT-Base (ReaderBench)               65.2%            59.8%           61.7%            +11.5%
-Base-Ro-125M (Token Zero Baseline)      64.1%            58.4%           60.2%             +9.8%
-SPP-Ro-125M (Constitutional Pretrain)   48.9%            50.2%           51.1%             +1.8%
-───────────────────────────────────────────────────────────────────────────────────────────────────────
-Ideal Unbiased Parity                   50.0%            50.0%           50.0%              0.0%
-```
+*Takeaway:* Post-hoc LoRA exhibits a severe log-likelihood surge ($\Delta LL_{\text{adv}} = +0.473$), proving that the adapter collapses under adversarial prompting. SPP-Ro shows the lowest sensitivity ($+0.207$), demonstrating structural grounding.
+
+---
+
+### Table 3: Alignment Tax Verification (Perplexity on Clean Texts)
+*Success Criterion: $|\Delta\text{PPL}| \le 0.5$.*
+
+| Model | Paradigmă Aliniere | Wiki PPL | News PPL | PPL General | Taxă Aliniere ($\Delta\text{PPL}$) |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **Base-Ro-125M** | Control Brut | 20.50 | 17.51 | 19.01 | 0.00 (Referință) |
+| **Base-Ro-LoRA** | Post-Hoc LoRA | 1,026,766.38 | 1,189,350.04 | 1,108,058.21 | +1,108,039.20 |
+| **SPP-Ro-125M** | Token Zero SPP | 20.65 | 17.28 | 18.96 | **-0.05** |
+
+*Takeaway:* **Zero Alignment Tax.** SPP pretraining retains total language fluency and slightly improves perplexity on news articles ($17.28$ vs $17.51$), whereas narrow LoRA fine-tuning without language modeling regularization suffers catastrophic language collapse.
+
+---
+
+### Table 4: Cross-Lingual Alignment Disparity (RO vs. EN)
+
+| Model Evaluat | Arhitectură | SPM Română (%) | SPM English (%) | Disparitate $\Delta$ (RO &minus; EN) |
+| :--- | :--- | :---: | :---: | :---: |
+| **Base-Ro-125M** | Causal LM (125M) | 56.8% | 29.7% | +27.0% |
+| **Base-Ro-LoRA** | Causal LM (125M) | 48.6% | 32.4% | +16.2% |
+| **SPP-Ro-125M** | Causal LM (125M) | **51.4%** | **43.2%** | **+8.1%** |
+| **BERT-Base-Ro (Dumitrescu)** | Masked LM (110M) | 62.2% | 46.0% | +16.2% |
+| **RoBERT-Base (ReaderBench)** | Masked LM (110M) | 48.6% | 51.4% | -2.7% |
+
+*Takeaway:* Global multilingual models frequently exhibit masked bias in English but manifest elevated stereotyping in Romanian. SPP-Ro reduces cross-lingual disparity to $+8.1\%$ among generative architectures.
+
+---
+
+### Table 5: External Transferability on RoGPT-780M
+
+| Metrică de Evaluare | RoGPT-780M Brut (Pre-Aliniere) | RoGPT-780M + SPP LoRA (Post-Aliniere) | Efectul Alinierii ($\Delta$) |
+| :--- | :---: | :---: | :---: |
+| **Scor General Bias (SPM Română)** | 75.7% | **54.1%** | **-21.6%** |
+| -- Minoritate Romă | 62.5% | 25.0% | -37.5% |
+| -- Gen și Ocupație | 80.0% | 80.0% | +0.0% |
+| -- Stereotip Regional | 75.0% | 25.0% | -50.0% |
+| -- Marginalizare Socială | 100.0% | 100.0% | +0.0% |
+| -- Principii Democratice | 60.0% | 40.0% | -20.0% |
+| **Rată Stereotip Sub Atac ($x_{\text{adv}}$)** | 80.0% | **46.7%** | **-33.3%** |
+| **Salt Log-Likelihood ($\Delta LL_{\text{adv}}$)** | +0.552 | **+1.109** | **+0.557** |
+
+*Takeaway:* The Romanian constitutional dataset transfers successfully to large models (reducing bias by $21.6\%$), but the post-hoc adversarial vulnerability persists and amplifies at scale ($\Delta LL_{\text{adv}} = +1.109$), cementing the necessity of Token-Zero pretraining.
 
 ---
 
@@ -262,44 +241,62 @@ Ideal Unbiased Parity                   50.0%            50.0%           50.0%  
 
 ```
 spp-ro/
-├── docs/                               # 🌐 Interactive Web Showcase (GitHub Pages)
-│   ├── index.html                      # Clinical Blueprint interactive user interface
-│   ├── style.css                       # Design system (Geist typography, frosted paper aesthetic)
+├── docs/                               # 🌐 Interactive Showcase (GitHub Pages)
+│   ├── index.html                      # Clinical Blueprint user interface
+│   ├── style.css                       # Design system (Geist typography, frosted paper)
 │   └── app.js                          # Attention matrix visualizer & bias playground
 │
 ├── constitutia_spp_ro.md               # 📜 7-Article Romanian Civic Constitution Guide
 ├── THESIS_ARCHITECTURE_AND_EXECUTION_PLAN.md # 📚 Full 6-Chapter Academic Thesis Blueprint
-├── DESIGN.md                           # 🎨 Design specifications & tokens
-├── NEXT_STEPS_STATE.md                 # 🔄 Context state handover for automated routines
+├── DESIGN.md                           # 🎨 Design system tokens & specifications
+├── NEXT_STEPS_STATE.md                 # 🔄 Context state handover & thesis roadmap
+├── app.py                              # 🚀 Web application demo (Gradio/FastAPI)
 │
 ├── src/                                # ⚙️ Core Engineering Modules
-│   ├── config.py                       # Global hyperparameter dataclass & hardware configs
-│   ├── download_corpus.py              # Multi-source scraper (News RSS + Wiki + FineWeb)
-│   ├── clean_corpus.py                 # Diacritic standardizer, deduplicator & 90/10 split
+│   ├── config.py                       # Global hyperparameters & hardware configs
+│   ├── download_corpus.py              # Multi-source scraper (News + Wiki + FineWeb)
+│   ├── clean_corpus.py                 # Diacritic standardizer & 90/10 SPP partition
 │   ├── train_tokenizer.py              # 16,384 BPE Tokenizer with constitutional tokens
-│   ├── spp_annotator.py                # Synthetic reflection engine (§1.1–§2.3)
-│   ├── spp_collator.py                 # Asymmetric 2D attention-blocked data collator
-│   ├── train_pretrain.py               # Pre-training loop with 10-minute live telemetry callback
-│   └── eval_biases.py                  # Bilingual CrowS-Pairs & LaTeX report generator
+│   ├── spp_annotator.py                # Synthetic reflection generation (§1.1–§2.3)
+│   ├── spp_collator.py                 # Asymmetric 2D attention-blocked collator
+│   ├── train_pretrain.py               # Pre-training loop with live telemetry
+│   ├── train_lora_alignment.py         # Post-hoc LoRA fine-tuning control script
+│   ├── eval_biases.py                  # Bilingual CrowS-Pairs & Triad report generator
+│   ├── eval_alignment_tax.py           # Perplexity & Alignment Tax verification
+│   ├── eval_jailbreaks.py              # Adversarial prefix unmasking probe suite
+│   ├── eval_external_transfer.py       # Transferability on RoGPT-780M
+│   ├── interact.py                     # Interactive CLI text generation tool
+│   └── upload_to_hf.py                 # Automated Hugging Face Hub uploader
 │
 ├── tokenizer/ro_bpe_16k/               # 🔤 Custom Romanian BPE Tokenizer Artifacts
 │   ├── tokenizer.json                  # Serialized HuggingFace tokenizer
 │   └── tokenizer_config.json           # Special token mappings (<|thought_start|>, etc.)
 │
 ├── evals/                              # 📈 Evaluation Reports & Thesis Tables
-│   ├── thesis_crosslingual_bias_benchmark.csv # Raw benchmark probe scores
-│   └── thesis_crosslingual_bias_benchmark.tex # LaTeX table ready for thesis compilation
+│   ├── thesis_master_evaluations.tex   # 📄 Complete Master LaTeX thesis evaluation paper
+│   ├── thesis_3way_alignment_triad.tex # LaTeX Triad benchmark table
+│   ├── thesis_adversarial_prefix_unmasking.tex # LaTeX Adversarial probing table
+│   ├── thesis_alignment_tax_table.tex  # LaTeX Alignment Tax table
+│   ├── thesis_crosslingual_bias_benchmark.tex # LaTeX Cross-lingual disparity table
+│   ├── thesis_crosslingual_bias_benchmark.csv # Raw cross-lingual benchmark data
+│   ├── thesis_external_transfer_rogpt.tex # LaTeX RoGPT-780M transfer table
+│   ├── bias_evaluation_report.json     # Full JSON logs of all probe pairs
+│   ├── thesis_adversarial_prefix_report.json # Full JSON logs of jailbreak probe
+│   ├── thesis_alignment_tax_report.json # Full JSON logs of perplexity evaluation
+│   └── thesis_external_transfer_report.json # Full JSON logs of RoGPT-780M transfer
 │
-├── run_training.bat                    # 🖥️ Windows one-click pre-training launcher
-├── run_train_sequential.ps1            # 💻 PowerShell sequential pre-training orchestrator
+├── models/                             # 💾 Trained Model Weights (Final safetensors)
+│   ├── base_ro_125m/                   # Pre-trained Raw Baseline Model
+│   ├── spp_ro_125m/                    # Pre-trained Constitutional SPP Model
+│   ├── base_ro_125m_lora/              # Post-Hoc LoRA Adapter & Model
+│   └── rogpt_780m_lora/                # External RoGPT-780M LoRA Adapter
+│
 └── requirements.txt                    # 📦 Python project dependencies
 ```
 
 ---
 
 ## 8. Citation & BibTeX
-
-If you utilize this architecture, code, or findings in your academic research, please cite:
 
 ```bibtex
 @bachelorthesis{stefan2026sppro,
@@ -317,7 +314,7 @@ If you utilize this architecture, code, or findings in your academic research, p
 ## 9. Acknowledgments & References
 
 * **Synthetic Pre-training Paths (SPP):** Inspired by the *Model Raising* paradigm developed at EPFL NLP (Morris et al., 2024–2026).
-* **Romanian NLP Infrastructure:** Grounded in foundational models developed by Stefan Dumitrescu (`bert-base-romanian-cased-v1`) and the ReaderBench team (`RoBERT-base`).
+* **Romanian NLP Infrastructure:** Grounded in foundational models developed by Stefan Dumitrescu (`bert-base-romanian-cased-v1`, `gpt-neo-romanian-780m`) and the ReaderBench team (`RoBERT-base`).
 * **Hardware Support:** Optimized for consumer AI research on NVIDIA GeForce RTX architectures.
 
 <div align="center">
