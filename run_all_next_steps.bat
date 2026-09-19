@@ -36,18 +36,21 @@ echo.
 :: ETAPA 2: Antrenare LoRA Post-Hoc (Pasul 6)
 :: -----------------------------------------------------------------------------
 echo ============================================================================
-echo [ETAPA 2/6] Antrenare Model Control Post-Hoc LoRA (Base-Ro-125M + LoRA)...
+echo [ETAPA 2/6] Verificare / Antrenare Model Control Post-Hoc LoRA...
 echo ============================================================================
-py src\train_lora_alignment.py
-if errorlevel 1 (
-    echo [EROARE CRITICA] Antrenarea LoRA a esuat!
-    goto error_handler
+if exist "models\base_ro_125m_lora\model.safetensors" (
+    echo [INFO] Modelul Base-Ro-LoRA este deja antrenat si salvat in models\base_ro_125m_lora.
+    echo        Se continua direct la evaluarile comparative...
+) else (
+    py src\train_lora_alignment.py
+    if errorlevel 1 (
+        echo [EROARE CRITICA] Antrenarea LoRA a esuat!
+        goto error_handler
+    )
+    echo.
+    echo Incarcare adaptor Base-Ro-LoRA pe Hugging Face Hub...
+    py src\upload_to_hf.py --model lora --repo-id flaviussteff/base-ro-125m-lora
 )
-echo.
-
-:: Incarcare LoRA pe Hugging Face Hub
-echo Incarcare adaptor Base-Ro-LoRA pe Hugging Face Hub...
-py src\upload_to_hf.py --model lora --repo-id flaviussteff/base-ro-125m-lora
 echo.
 
 :: -----------------------------------------------------------------------------

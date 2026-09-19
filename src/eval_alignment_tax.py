@@ -10,7 +10,7 @@ import math
 import json
 import time
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Tuple
 
 # Ensure UTF-8 output on Windows PowerShell
 if hasattr(sys.stdout, "reconfigure"):

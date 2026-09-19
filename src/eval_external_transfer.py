@@ -210,7 +210,7 @@ def run_external_transfer_study():
         r=16,
         lora_alpha=32,
         lora_dropout=0.05,
-        target_modules=["c_attn", "c_proj"],  # GPT-Neo attention projection modules
+        target_modules=["q_proj", "v_proj"],  # GPT-Neo attention projection modules
         bias="none",
     )
     
