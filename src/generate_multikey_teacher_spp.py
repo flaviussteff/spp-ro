@@ -213,22 +213,36 @@ class MultiKeyOrchestrator:
         return None
 
 
+CANDIDATES_CACHE_FILE = CLEAN_DIR / "spp_candidates_cache.parquet"
+
+
 def extract_candidate_snippets(target_count: int = 60000) -> Dict[str, List[Dict[str, Any]]]:
-    print(f"[Corpus Ingestion] Extragere fragmente din: {CORPUS_FILE.name} (Țintă: {target_count:,})...")
     candidates: Dict[str, List[Dict[str, Any]]] = {art: [] for art in THEMES}
 
     # Add synthetic anchors first to guarantee Score 1 / 2 presence
     for art, info in THEMES.items():
         for s_text in info["synthetic_malign"]:
-            candidates[art].append({"id": f"syn_mal_{len(candidates[art])}", "text": s_text, "force_score": 1})
+            candidates[art].append({"id": f"syn_mal_{len(candidates[art])}", "text": s_text, "full_text": s_text, "art": art})
         for b_text in info["synthetic_benign"]:
-            candidates[art].append({"id": f"syn_ben_{len(candidates[art])}", "text": b_text, "force_score": 5})
+            candidates[art].append({"id": f"syn_ben_{len(candidates[art])}", "text": b_text, "full_text": b_text, "art": art})
 
+    # Check cache first for instant startup
+    if CANDIDATES_CACHE_FILE.exists():
+        print(f"[Corpus Cache] Încărcare candidați din cache: {CANDIDATES_CACHE_FILE.name}...")
+        df_cache = pd.read_parquet(CANDIDATES_CACHE_FILE)
+        for art in THEMES:
+            sub = df_cache[df_cache["art"] == art]
+            candidates[art].extend(sub.to_dict("records"))
+            print(f"  -> {art}: {len(candidates[art]):,} fragmente pregătite (din cache).")
+        return candidates
+
+    print(f"[Corpus Ingestion] Extragere fragmente din: {CORPUS_FILE.name} (Țintă: {target_count:,})...")
     if not CORPUS_FILE.exists():
         return candidates
 
     pf = pq.ParquetFile(str(CORPUS_FILE))
     quota_per_art = target_count // len(THEMES)
+    all_cached_rows = []
 
     for rg in range(pf.num_row_groups):
         if all(len(candidates[art]) >= quota_per_art for art in THEMES):
@@ -240,37 +254,28 @@ def extract_candidate_snippets(target_count: int = 60000) -> Dict[str, List[Dict
         for doc_id, full_text in zip(ids, texts):
             if not full_text or len(full_text) < 180:
                 continue
-            if COMMERCIAL_PATTERNS.search(full_text):
+            snippet = full_text[:350].strip()
+            if COMMERCIAL_PATTERNS.search(snippet):
                 continue
-
-            words = full_text.split()
-            # Extract first window
-            snippet = " ".join(words[:55])
 
             for art, info in THEMES.items():
                 if len(candidates[art]) >= quota_per_art:
                     continue
                 if info["keywords"].search(snippet):
-                    candidates[art].append({
+                    rec = {
                         "id": doc_id,
                         "text": snippet,
-                        "full_text": full_text
-                    })
+                        "full_text": full_text,
+                        "art": art
+                    }
+                    candidates[art].append(rec)
+                    all_cached_rows.append(rec)
                     break
 
-            # If document is long (>120 words), extract second window if needed
-            if len(words) > 120:
-                snippet_2 = " ".join(words[60:115])
-                for art, info in THEMES.items():
-                    if len(candidates[art]) >= quota_per_art:
-                        continue
-                    if info["keywords"].search(snippet_2):
-                        candidates[art].append({
-                            "id": f"{doc_id}_w2",
-                            "text": snippet_2,
-                            "full_text": full_text
-                        })
-                        break
+    # Save cache for instant future restarts
+    if all_cached_rows:
+        pd.DataFrame(all_cached_rows).to_parquet(CANDIDATES_CACHE_FILE, index=False)
+        print(f"[Corpus Cache] Salvat {len(all_cached_rows):,} candidați în {CANDIDATES_CACHE_FILE.name} pentru pornire instantanee.")
 
     for art in THEMES:
         print(f"  -> {art}: {len(candidates[art]):,} fragmente pregătite.")
@@ -328,8 +333,8 @@ def generate_spp_multikey_dataset(target_total: int = 60000):
             cand_idx += batch_size
 
             prompt_items = []
-            for b in batch:
-                prompt_items.append({"id": b["id"], "text": b["text"]})
+            for b_idx, b in enumerate(batch):
+                prompt_items.append({"idx": b_idx, "text": b["text"]})
 
             prompt = f"""Ești un cercetător universitar în AI Alignment și etică civică, ghidat de Constituția României.
 Ai mai jos {len(prompt_items)} fragmente de text din presă sau dezbatere civică românească legate de {art} ({info['nume']}).
@@ -342,7 +347,7 @@ Răspunde STRICT în format JSON valid:
 {{
   "items": [
     {{
-      "id": "...",
+      "idx": 0,
       "safety_score": 1,
       "reflectie": "Din perspectiva... [{art}] ..."
     }}
@@ -361,14 +366,29 @@ FRAGMENTE DE PROCESAT:
             try:
                 parsed = json.loads(raw_resp)
                 generated_items = parsed.get("items", [])
-                item_dict = {str(it.get("id")): it for it in generated_items}
+                if not isinstance(generated_items, list):
+                    generated_items = list(parsed.values())[0] if parsed else []
 
-                for b in batch:
-                    it = item_dict.get(str(b["id"]))
-                    if not it:
+                item_by_idx = {}
+                for g_idx, it in enumerate(generated_items):
+                    if isinstance(it, dict):
+                        key = it.get("idx", it.get("id", g_idx))
+                        try:
+                            key = int(key)
+                        except Exception:
+                            key = g_idx
+                        item_by_idx[key] = it
+
+                for b_idx, b in enumerate(batch):
+                    it = item_by_idx.get(b_idx)
+                    if not it and b_idx < len(generated_items) and isinstance(generated_items[b_idx], dict):
+                        it = generated_items[b_idx]
+                    if not it or not isinstance(it, dict):
                         continue
 
                     refl = it.get("reflectie", "").strip()
+                    if not refl:
+                        continue
                     if f"[{art}]" not in refl:
                         refl = f"{refl} [{art}]"
 
@@ -387,13 +407,14 @@ FRAGMENTE DE PROCESAT:
                     needed -= 1
                     pbar.update(1)
 
-            except Exception:
-                time.sleep(1.5)
+            except Exception as ex:
+                time.sleep(1.0)
 
             # Incremental save immediately after each batch
             if len(final_records) > last_saved_count:
                 pd.DataFrame(final_records).to_parquet(REFLECTIONS_FILE, index=False)
                 last_saved_count = len(final_records)
+                sys.stdout.flush()
 
         pbar.close()
 
