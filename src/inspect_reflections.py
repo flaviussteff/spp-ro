@@ -27,6 +27,20 @@ def display_reflection(table, idx: int, total_count: int, show_all: bool = False
     reflection = table.column("reflection_text")[idx].as_py()
     full_text = table.column("text")[idx].as_py()
     char_pos = int(table.column("reflection_char_position")[idx].as_py())
+    
+    # Read safety_score if column exists
+    safety_score = None
+    if "safety_score" in table.column_names:
+        safety_score = table.column("safety_score")[idx].as_py()
+
+    safety_labels = {
+        1: "1/5 [STEREOTIP / ASIMETRIE CULTURALA] (Contrabalansat activ prin reflectie)",
+        2: "2/5 [TEMA SENSIBILA / CRIZA UMANITARA / MEMORIE ISTORICA]",
+        3: "3/5 [DEZBATERE CIVICA / STAT DE DREPT / BIOETICA]",
+        4: "4/5 [STIRI FACTUALE / DEZVOLTARE SOCIALA]",
+        5: "5/5 [COMPLET BENIGN / PROGRES STIINTIFIC & RATIONAL]",
+    }
+    safety_desc = safety_labels.get(safety_score, f"{safety_score}/5" if safety_score is not None else "N/A")
 
     pre_text = full_text[:char_pos]
     post_text = full_text[char_pos:]
@@ -38,8 +52,9 @@ def display_reflection(table, idx: int, total_count: int, show_all: bool = False
 
     print("\n" + "=" * 80)
     print(f"  SPP CONSTITUTIONAL REFLECTION #{idx + 1:,} / {total_count:,}")
-    print(f"  Article Invoked: {article} | Char Position: {char_pos:,} / {len(full_text):,}")
-    print(f"  Document ID: {doc_id}")
+    print(f"  Article Invoked : {article}")
+    print(f"  Safety Score    : {safety_desc}")
+    print(f"  Document ID     : {doc_id} | Char Position: {char_pos:,} / {len(full_text):,}")
     print("=" * 80)
 
     print("\n[PRE-TEXT (Original Document Content)]:")
@@ -48,7 +63,7 @@ def display_reflection(table, idx: int, total_count: int, show_all: bool = False
     print("-" * 80)
 
     print("\n" + "┌" + "─" * 78 + "┐")
-    print("│ 💡 <assistant> INJECTED CONSTITUTIONAL DELIBERATION PATH:                      │")
+    print("│ 💡 <assistant> INJECTED CONSTITUTIONAL DELIBERATION PATH (Persoana I):         │")
     print("├" + "─" * 78 + "┤")
     # Wrap reflection text nicely
     import textwrap
@@ -74,9 +89,9 @@ def browse_reflections(start_idx: int = 0, initial_search: str = None, once: boo
         print("Ruleaza intai `py src/spp_annotator.py`.")
         return
 
-    print("Incarcare fisier de reflectii SPP (10,000 exemple)...", flush=True)
     table = pq.read_table(str(parquet_path))
     total_count = len(table)
+    print(f"Incarcare fisier de reflectii SPP ({total_count:,} exemple)...", flush=True)
 
     current_idx = max(0, min(start_idx, total_count - 1))
     show_all = False
@@ -155,25 +170,49 @@ def browse_reflections(start_idx: int = 0, initial_search: str = None, once: boo
             print("\n[!] Comanda necunoscuta. Foloseste: Enter, p, j <num>, r, s <cuvant>, all, q")
 
 
-def search_reflections(table, query: str):
-    q = query.lower()
+def search_reflections(table, query: str, article_filter: str = None, safety_filter: int = None):
+    q = query.lower() if query else None
     matches = []
-    # Fast scan through reflection_text and text
     refl_col = table.column("reflection_text")
     text_col = table.column("text")
+    art_col = table.column("article_invoked") if "article_invoked" in table.column_names else None
+    safety_col = table.column("safety_score") if "safety_score" in table.column_names else None
+
     for i in range(len(table)):
-        r = refl_col[i].as_py().lower()
-        t = text_col[i].as_py().lower()
-        if q in r or q in t:
-            matches.append(i)
+        if article_filter and art_col and article_filter not in art_col[i].as_py():
+            continue
+        if safety_filter is not None and safety_col and safety_col[i].as_py() != safety_filter:
+            continue
+        if q:
+            r = refl_col[i].as_py().lower()
+            t = text_col[i].as_py().lower()
+            if q not in r and q not in t:
+                continue
+        matches.append(i)
     return matches
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Browse SPP Constitutional Reflections Interactively")
-    parser.add_argument("-i", "--index", type=int, default=1, help="Indexul de start (1 - 10000)")
+    parser.add_argument("-i", "--index", type=int, default=1, help="Indexul de start (1 - N)")
     parser.add_argument("-s", "--search", type=str, default=None, help="Cauta un cuvant cheie la pornire")
+    parser.add_argument("-a", "--article", type=str, default=None, help="Filtreaza dupa articol (ex: §1.2, §2.1)")
+    parser.add_argument("--safety", type=int, default=None, choices=[1, 2, 3, 4, 5], help="Filtreaza dupa safety score (1-5)")
     parser.add_argument("--once", action="store_true", help="Afiseaza o singura data si iese (non-interactiv)")
     args = parser.parse_args()
 
-    browse_reflections(start_idx=args.index - 1, initial_search=args.search, once=args.once)
+    # If article or safety filter is passed, find matches
+    initial_search = args.search
+    start_idx = args.index - 1
+    if args.article or args.safety:
+        parquet_path = Path("data/sidecar/reflections.parquet")
+        if parquet_path.exists():
+            tbl = pq.read_table(str(parquet_path))
+            filtered = search_reflections(tbl, args.search, article_filter=args.article, safety_filter=args.safety)
+            if filtered:
+                start_idx = filtered[0]
+                print(f"[Filtru] Gasit {len(filtered):,} exemple pentru Articol={args.article}, Safety={args.safety}. Primul index: #{start_idx + 1}")
+            else:
+                print(f"[!] Niciun rezultat pentru Articol={args.article}, Safety={args.safety}.")
+
+    browse_reflections(start_idx=start_idx, initial_search=initial_search, once=args.once)
