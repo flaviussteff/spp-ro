@@ -307,6 +307,7 @@ def generate_spp_multikey_dataset(target_total: int = 60000):
             pass
 
     current_art_counts = {art: sum(1 for r in final_records if r.get("article_invoked") == art) for art in THEMES}
+    last_saved_count = len(final_records)
 
     for art, info in THEMES.items():
         needed = quota_per_art - current_art_counts.get(art, 0)
@@ -389,9 +390,10 @@ FRAGMENTE DE PROCESAT:
             except Exception:
                 time.sleep(1.5)
 
-            # Incremental save every 25 records
-            if len(final_records) % 25 == 0:
+            # Incremental save immediately after each batch
+            if len(final_records) > last_saved_count:
                 pd.DataFrame(final_records).to_parquet(REFLECTIONS_FILE, index=False)
+                last_saved_count = len(final_records)
 
         pbar.close()
 
