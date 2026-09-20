@@ -44,3 +44,6 @@ desktop.ini
 # Scratch / Temp Dumps
 clipboard_dump.txt
 scratch/
+.env
+*.env*
+
