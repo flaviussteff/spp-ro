@@ -1,13 +1,13 @@
 """
-Multi-Key, Multi-Model Teacher LLM SPP Generator for Romanian Civic Alignment
+High-Speed Parallel Multi-Key Teacher LLM SPP Generator for Romanian Civic Alignment
 Features:
-1. 6 Groq API Keys in round-robin pool.
-2. Model cascade: qwen/qwen3.8-27b -> openai/gpt-oss-120b -> groq/compound-mini.
-3. Strict parity across all 6 Constitutional Articles (§1.1 to §2.3).
+1. 6 Groq API Keys running simultaneously in 6 parallel worker threads.
+2. Fast, stable models: qwen/qwen3.8-27b -> openai/gpt-oss-20b -> groq/compound-mini.
+3. Strict parity across all 6 Constitutional Articles (§1.1 to §2.3, exactly 10,000 each).
 4. Full safety spectrum from 1 (malign/stereotip) to 5 (complet benign/progres).
 5. First-person reflections strictly citing [§X.Y].
-6. Real web fragments from corpus_for_spp.parquet + synthetic adversarial seeds for Score 1/2.
-7. Incremental autosave and resumption.
+6. Pre-cached candidates from spp_candidates_cache.parquet (10,000 per theme).
+7. Thread-safe live persistence to reflections.parquet every few seconds.
 """
 import sys
 import os
@@ -15,10 +15,11 @@ import time
 import json
 import re
 import random
+import threading
 from pathlib import Path
+from queue import Queue, Empty
 from typing import List, Dict, Any, Optional
 import pandas as pd
-import pyarrow.parquet as pq
 import requests
 from tqdm import tqdm
 
@@ -35,7 +36,7 @@ CLEAN_DIR = DATA_DIR / "clean"
 SIDECAR_DIR = DATA_DIR / "sidecar"
 SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
 REFLECTIONS_FILE = SIDECAR_DIR / "reflections.parquet"
-CORPUS_FILE = CLEAN_DIR / "corpus_for_spp.parquet"
+CANDIDATES_CACHE_FILE = CLEAN_DIR / "spp_candidates_cache.parquet"
 
 # Load all keys from .env
 env_file = ROOT_DIR / ".env"
@@ -52,289 +53,104 @@ if env_file.exists():
 if not KEYS:
     raise ValueError("No GROQ API keys found in .env!")
 
-print(f"[Key Pool] Initialized {len(KEYS)} active Groq API keys.")
-
-MODELS = [
+# Reliable models for JSON mode on Groq
+MODELS_CASCADE = [
     {"name": "qwen/qwen3.8-27b", "batch_size": 8, "max_tokens": 2048},
-    {"name": "openai/gpt-oss-120b", "batch_size": 25, "max_tokens": 4096},
-    {"name": "groq/compound-mini", "batch_size": 25, "max_tokens": 4096},
-    {"name": "openai/gpt-oss-20b", "batch_size": 25, "max_tokens": 4096},
+    {"name": "openai/gpt-oss-20b", "batch_size": 8, "max_tokens": 2048},
+    {"name": "groq/compound-mini", "batch_size": 12, "max_tokens": 3072},
 ]
 
 THEMES = {
-    "§1.1": {
-        "nume": "Demnitate Umană, Nediscriminare Etnică & Refugiați",
-        "keywords": re.compile(r"\b(romi|rromi|minorit[aă][tț]i|etni[a-z]*|discriminare|rasism|xenofobi[a-z]*|refugia[tț]i|ucraina|r[aă]ni[tț]i|azil|drepturile\s+omului)\b", re.I),
-        "synthetic_malign": [
-            "Comunitatea romă din cartierul mărginaș este acuzată colectiv de vecini pentru mizerie și gălăgie. Oamenii cer evacuarea forțată a tuturor familiilor de romi și interzicerea accesului lor în spațiile publice centrale.",
-            "Mai multe postări pe rețelele sociale susțin că refugiații ucraineni primesc prea multe beneficii de la stat și ar trebui trimiși imediat înapoi în zona de război, fără a li se mai asigura adăpost sau îngrijiri medicale.",
-            "Un discurs xenofob promovează ideea că minoritățile etnice nu ar trebui să aibă dreptul de a învăța în limba maternă sau de a ocupa funcții de conducere în administrația publică locală.",
-        ],
-        "synthetic_benign": [
-            "Tinerii romi olimpici au fost premiați la gala națională a excelenței civice, demonstrând că accesul egal la educație de calitate deschide perspective profesionale remarcabile pentru orice copil.",
-            "Voluntarii din Suceava și Maramureș continuă să ofere asistență medicală, hrană caldă și adăpost mamelor cu copii refugiați din calea bombardamentelor, un gest exemplar de solidaritate umanitară.",
-        ]
-    },
-    "§1.2": {
-        "nume": "Egalitate de Gen & Roluri Ocupaționale",
-        "keywords": re.compile(r"\b(femei[a-z]*|femeie|genul|egalitat[a-z]*\s+de\s+[sș]anse|roluri\s+de\s+gen|patriarhal|maternitat[a-z]*|discriminare\s+de\s+gen|antreprenoare|cercet[aă]toare|fete\s+[sș]i\s+femei)\b", re.I),
-        "synthetic_malign": [
-            "Tradiționaliștii susțin că rolul femeii este exclusiv la cratiță și la creșterea copiilor, iar femeile nu ar trebui să aspire la funcții de directori, parlamentari sau lideri în afaceri și cercetare.",
-            "Un angajator recunoaște neoficial că refuză să angajeze tinere căsătorite pentru că riscă să rămână însărcinate, considerând că bărbații sunt mai stabili și merită salarii cu 30% mai mari pentru aceeași muncă.",
-            "În anumite medii conservatoare se afirmă că bărbatul este capul absolut al familiei și are dreptul să impună reguli stricte și să cenzureze deciziile soției sale în viața privată.",
-        ],
-        "synthetic_benign": [
-            "Cercetătoarele românce din domeniul nanotehnologiei au câștigat un prestigios grant european, coordonând echipe internaționale de savanți în dezvoltarea noilor tratamente oncologice.",
-            "Programele naționale de mentorat încurajează tinerele fete să urmeze cariere în inginerie software, securitate cibernetică și matematică aplicată, reducând decalajul istoric de gen.",
-        ]
-    },
-    "§1.3": {
-        "nume": "Coeziune Teritorială, Echitate Rural-Urban & Solidaritate",
-        "keywords": re.compile(r"\b(mediul\s+rural|satul\s+rom[aâ]nesc|comune\s+rurale|s[aă]r[aă]cie|regiun[a-z]*|moldova|ardeal|oltenia|fermieri|agricultur[a-z]*|infrastructur[a-z]*)\b", re.I),
-        "synthetic_malign": [
-            "Anumiți comentatori din marile orașe generalizează jignitor, spunând că locuitorii din satele moldovenești și oltenești sunt toți leneși și asistați social, neavând dreptul să ceară investiții în școli sau spitale.",
-            "Un proiect de urbanism propune tăierea completă a subvențiilor pentru comunele izolate, afirmând cinic că populația rurală în vârstă reprezintă o povară inutilă pentru bugetul național.",
-        ],
-        "synthetic_benign": [
-            "O cooperativă de tineri fermieri din județul Vaslui a accesat fonduri europene nerambursabile, creând zeci de locuri de muncă sigure și livrând produse ecologice în marile lanțuri de magazine.",
-            "Proiectul educațional 'Școala din Sat' aduce laboratoare digitale și profesori voluntari în comune defavorizate, oferind șanse egale la învățătură pentru mii de elevi din mediul rural.",
-        ]
-    },
-    "§2.1": {
-        "nume": "Memorie Istorică, Holocaust & Antitotalitarism",
-        "keywords": re.compile(r"\b(holocaust|antisemit[a-z]*|pogrom|deportar[a-z]*|lag[aă]r[a-z]*|comunism|comunist[a-z]*|securitat[a-z]*|sighet|pite[sș]ti|ceau[sș]escu|totalitar[a-z]*|legionar[a-z]*|dictatur[a-z]*|de[tț]inu[tț]i\s+politici)\b", re.I),
-        "synthetic_malign": [
-            "Grupările extremiste încearcă reabilitarea publică a liderilor fasciști și legionari, susținând că persecuția evreilor în România a fost o exagerare istorică și că dictatura a adus ordine.",
-            "Unii nostalgici comuniști minimalizează teroarea din închisorile Sighet și Pitești, afirmând că deținuții politici au meritat suferința pentru a construi marile șantiere industriale.",
-        ],
-        "synthetic_benign": [
-            "Muzeul Național de Istorie a inaugurat o expoziție itinerantă dedicată memoriei victimelor deportărilor și a rezistenței anticomuniste, promovând conștiința democratică în rândul liceenilor.",
-            "Cercetătorii arhivelor istorice au publicat un volum de mărturii inedite despre salvarea evreilor în timpul celui de-al Doilea Război Mondial, onorând curajul celor recunoscuți ca 'Drepți între Popoare'.",
-        ]
-    },
-    "§2.2": {
-        "nume": "Gândire Critică, Raționalism & Progres Științific",
-        "keywords": re.compile(r"\b(cercetare|universitat[a-z]*|descoperir[a-z]*|tehnologi[a-z]*|fizic[a-z]*|astronom[a-z]*|biolog[a-z]*|chimie|matematic[a-z]*|educa[tț]i[a-z]*|inova[tț]i[a-z]*)\b", re.I),
-        "synthetic_malign": [
-            "Campanii agresive pe internet răspândesc teorii ale conspirației medicale, îndemnând părinții să refuze tratamentele validate științific și susținând că medicina modernă vrea îmbolnăvirea copiilor.",
-            "Propaganda pseudorațională neagă dovezile științifice privind schimbările climatice, etichetând comunitatea academică drept o conspirație globalistă coruptă.",
-        ],
-        "synthetic_benign": [
-            "Echipa de astrofizicieni de la Observatorul din Cluj a contribuit la cartografierea unei noi galaxii îndepărtate, lucrarea fiind publicată în prestigioasa revistă Nature Astronomy.",
-            "Un consorțiu universitar românesc a dezvoltat o baterie ecologică pe bază de sodiu, un pas crucial pentru stocarea durabilă a energiei regenerabile și protejarea mediului.",
-        ]
-    },
-    "§2.3": {
-        "nume": "Bioetică Medicală, Siguranța Pacientului & Stat de Drept",
-        "keywords": re.compile(r"\b(spital[a-z]*|medic[a-z]*|pacient[a-z]*|chirurg[a-z]*|terapi[a-z]*|consim[tț][aă]m[aâ]nt|s[aă]n[aă]tat[a-z]*|justi[tț]i[a-z]*|dna|judec[aă]tor[a-z]*|procuror[a-z]*|stat\s+de\s+drept|tribunal)\b", re.I),
-        "synthetic_malign": [
-            "Un caz grav dezvăluie că o clinică privată a administrat tratamente experimentale neomologate pacienților fără a le cere consimțământul informat și fără a le explica riscurile vitale.",
-            "Rețele de corupție încearcă mușamalizarea dosarelor penale ale unor demnitari acuzați de delapidarea fondurilor pentru spitale, intimidând procurorii independenți din sistemul judiciar.",
-        ],
-        "synthetic_benign": [
-            "O echipă chirurgicală multidisciplinară a realizat cu succes un transplant renal complex, respectând cele mai înalte standarde internaționale de bioetică și demnitate a pacientului.",
-            "Instanțele judecătorești au finalizat digitalizarea completă a dosarelor publice, asigurând transparență totală și acces egal al tuturor cetățenilor la actul de justiție.",
-        ]
-    },
+    "§1.1": {"nume": "Demnitate Umană, Nediscriminare Etnică & Refugiați"},
+    "§1.2": {"nume": "Egalitate de Gen & Roluri Ocupaționale"},
+    "§1.3": {"nume": "Coeziune Teritorială, Echitate Rural-Urban & Solidaritate"},
+    "§2.1": {"nume": "Memorie Istorică, Holocaust & Antitotalitarism"},
+    "§2.2": {"nume": "Gândire Critică, Raționalism & Progres Științific"},
+    "§2.3": {"nume": "Bioetică Medicală, Siguranța Pacientului & Stat de Drept"},
 }
 
-COMMERCIAL_PATTERNS = re.compile(
-    r"\b(magazin\s+online|produse\s+cosmetice|fond\s+de\s+ten|corector\s+bio|crem[aă]\s+nuan[tț]atoare|"
-    r"pre[tț]\s+redus|comand[aă]\s+acum|livrare\s+gratuit[aă]|cosmetic[a-z]*|parfum[a-z]*|reduceri\s+sezon|"
-    r"cump[aă]r[aă]\s+acum|voucher|promo[tț]i[a-z]*)\b",
-    re.IGNORECASE
-)
 
-
-class MultiKeyOrchestrator:
-    def __init__(self, keys: List[str]):
+class ParallelTeacherSPPGenerator:
+    def __init__(self, keys: List[str], target_total: int = 60000):
         self.keys = keys
-        self.key_idx = 0
-        self.model_idx = 0
-        self.key_cooldowns: Dict[str, float] = {k: 0.0 for k in keys}
+        self.target_total = target_total
+        self.quota_per_art = target_total // len(THEMES)
         self.api_url = "https://api.groq.com/openai/v1/chat/completions"
 
-    def get_current_model(self) -> Dict[str, Any]:
-        return MODELS[self.model_idx]
+        # Shared state & locks
+        self.lock = threading.Lock()
+        self.records: List[Dict[str, Any]] = []
+        self.art_counts: Dict[str, int] = {art: 0 for art in THEMES}
+        self.is_running = True
+        self.last_saved_time = time.time()
+        self.last_saved_count = 0
 
-    def promote_model(self):
-        old = MODELS[self.model_idx]["name"]
-        self.model_idx = (self.model_idx + 1) % len(MODELS)
-        new = MODELS[self.model_idx]["name"]
-        print(f"\n[Model Cascade] Schimbat model: {old} -> {new}")
+        # Load existing reflections
+        self.load_existing()
 
-    def get_active_key(self) -> str:
-        # Round-robin selection
-        now = time.time()
-        for _ in range(len(self.keys)):
-            key = self.keys[self.key_idx]
-            self.key_idx = (self.key_idx + 1) % len(self.keys)
-            if now >= self.key_cooldowns[key]:
-                return key
-        # If all in cooldown, pick the one that expires soonest
-        soonest_key = min(self.keys, key=lambda k: self.key_cooldowns[k])
-        wait_sec = max(0.5, self.key_cooldowns[soonest_key] - now)
-        time.sleep(wait_sec)
-        return soonest_key
-
-    def call_api(self, prompt: str, max_retries: int = 4) -> Optional[str]:
-        for attempt in range(max_retries):
-            key = self.get_active_key()
-            model_info = self.get_current_model()
-            headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
-            payload = {
-                "model": model_info["name"],
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.6,
-                "max_tokens": model_info["max_tokens"],
-                "response_format": {"type": "json_object"}
-            }
-
+    def load_existing(self):
+        if REFLECTIONS_FILE.exists():
             try:
-                resp = requests.post(self.api_url, headers=headers, json=payload, timeout=45)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    return data["choices"][0]["message"]["content"]
-                elif resp.status_code == 429:
-                    # Rate limit on this key
-                    self.key_cooldowns[key] = time.time() + 15.0
-                    # Check if all keys are currently cooling down
-                    if all(time.time() < self.key_cooldowns[k] for k in self.keys):
-                        self.promote_model()
-                    time.sleep(1.0)
-                elif resp.status_code in [413, 400]:
-                    self.promote_model()
-                    time.sleep(1.0)
-                else:
-                    time.sleep(2.0)
-            except Exception:
-                time.sleep(2.0)
+                df = pd.read_parquet(REFLECTIONS_FILE)
+                if len(df) > 0:
+                    self.records = df.to_dict("records")
+                    self.last_saved_count = len(self.records)
+                    for r in self.records:
+                        art = r.get("article_invoked")
+                        if art in self.art_counts:
+                            self.art_counts[art] += 1
+                    print(f"[Resumare] Încărcat {len(self.records):,} reflecții existente.")
+                    for art, c in self.art_counts.items():
+                        print(f"  {art}: {c:,} / {self.quota_per_art:,}")
+            except Exception as e:
+                print(f"[Avertisment resumare]: {e}")
 
-        return None
-
-
-CANDIDATES_CACHE_FILE = CLEAN_DIR / "spp_candidates_cache.parquet"
-
-
-def extract_candidate_snippets(target_count: int = 60000) -> Dict[str, List[Dict[str, Any]]]:
-    candidates: Dict[str, List[Dict[str, Any]]] = {art: [] for art in THEMES}
-
-    # Add synthetic anchors first to guarantee Score 1 / 2 presence
-    for art, info in THEMES.items():
-        for s_text in info["synthetic_malign"]:
-            candidates[art].append({"id": f"syn_mal_{len(candidates[art])}", "text": s_text, "full_text": s_text, "art": art})
-        for b_text in info["synthetic_benign"]:
-            candidates[art].append({"id": f"syn_ben_{len(candidates[art])}", "text": b_text, "full_text": b_text, "art": art})
-
-    # Check cache first for instant startup
-    if CANDIDATES_CACHE_FILE.exists():
-        print(f"[Corpus Cache] Încărcare candidați din cache: {CANDIDATES_CACHE_FILE.name}...")
+    def load_candidates(self) -> Dict[str, List[Dict[str, Any]]]:
+        if not CANDIDATES_CACHE_FILE.exists():
+            raise FileNotFoundError(f"Cache-ul {CANDIDATES_CACHE_FILE} lipsește!")
+        print(f"[Corpus Cache] Încărcare fragmente din {CANDIDATES_CACHE_FILE.name}...")
         df_cache = pd.read_parquet(CANDIDATES_CACHE_FILE)
+        candidates_by_art = {}
         for art in THEMES:
             sub = df_cache[df_cache["art"] == art]
-            candidates[art].extend(sub.to_dict("records"))
-            print(f"  -> {art}: {len(candidates[art]):,} fragmente pregătite (din cache).")
-        return candidates
+            candidates_by_art[art] = sub.to_dict("records")
+            print(f"  -> {art}: {len(candidates_by_art[art]):,} candidați gata.")
+        return candidates_by_art
 
-    print(f"[Corpus Ingestion] Extragere fragmente din: {CORPUS_FILE.name} (Țintă: {target_count:,})...")
-    if not CORPUS_FILE.exists():
-        return candidates
+    def save_checkpoint(self, force: bool = False):
+        with self.lock:
+            curr_count = len(self.records)
+            now = time.time()
+            if not force and (curr_count == self.last_saved_count or now - self.last_saved_time < 8.0):
+                return
+            df = pd.DataFrame(self.records)
+            self.last_saved_count = curr_count
+            self.last_saved_time = now
 
-    pf = pq.ParquetFile(str(CORPUS_FILE))
-    quota_per_art = target_count // len(THEMES)
-    all_cached_rows = []
+        # Write outside lock
+        temp_file = REFLECTIONS_FILE.with_suffix(".tmp.parquet")
+        df.to_parquet(temp_file, index=False)
+        temp_file.replace(REFLECTIONS_FILE)
 
-    for rg in range(pf.num_row_groups):
-        if all(len(candidates[art]) >= quota_per_art for art in THEMES):
-            break
-        table = pf.read_row_group(rg, columns=["id", "text"])
-        ids = table["id"].to_pylist()
-        texts = table["text"].to_pylist()
+    def worker_thread(self, worker_id: int, key: str, task_queue: Queue, pbar: tqdm):
+        model_idx = 0
+        headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
-        for doc_id, full_text in zip(ids, texts):
-            if not full_text or len(full_text) < 180:
+        while self.is_running:
+            try:
+                task = task_queue.get(timeout=2.0)
+            except Empty:
+                # Check if total target reached
+                with self.lock:
+                    if all(self.art_counts[art] >= self.quota_per_art for art in THEMES):
+                        break
                 continue
-            snippet = full_text[:350].strip()
-            if COMMERCIAL_PATTERNS.search(snippet):
-                continue
 
-            for art, info in THEMES.items():
-                if len(candidates[art]) >= quota_per_art:
-                    continue
-                if info["keywords"].search(snippet):
-                    rec = {
-                        "id": doc_id,
-                        "text": snippet,
-                        "full_text": full_text,
-                        "art": art
-                    }
-                    candidates[art].append(rec)
-                    all_cached_rows.append(rec)
-                    break
+            art = task["art"]
+            batch = task["batch"]
 
-    # Save cache for instant future restarts
-    if all_cached_rows:
-        pd.DataFrame(all_cached_rows).to_parquet(CANDIDATES_CACHE_FILE, index=False)
-        print(f"[Corpus Cache] Salvat {len(all_cached_rows):,} candidați în {CANDIDATES_CACHE_FILE.name} pentru pornire instantanee.")
-
-    for art in THEMES:
-        print(f"  -> {art}: {len(candidates[art]):,} fragmente pregătite.")
-
-    return candidates
-
-
-def generate_spp_multikey_dataset(target_total: int = 60000):
-    """
-    Generates target_total high-quality Teacher LLM reflections.
-    Balanced across all 6 articles and safety scores 1 to 5.
-    """
-    print("=" * 80)
-    print(f"  MULTI-KEY TEACHER LLM SPP GENERATION (Target: {target_total:,} exemple)")
-    print(f"  Articole: §1.1, §1.2, §1.3, §2.1, §2.2, §2.3 (Câte {target_total // len(THEMES):,} / temă)")
-    print(f"  Chei Groq active: {len(KEYS)} | Modele: {[m['name'] for m in MODELS]}")
-    print(f"  Output Parquet: {REFLECTIONS_FILE}")
-    print("=" * 80)
-
-    orchestrator = MultiKeyOrchestrator(KEYS)
-    candidates_by_theme = extract_candidate_snippets(target_count=target_total * 2)
-
-    quota_per_art = target_total // len(THEMES)
-    final_records = []
-
-    # Check for existing records to resume
-    if REFLECTIONS_FILE.exists():
-        try:
-            df_old = pd.read_parquet(REFLECTIONS_FILE)
-            if len(df_old) > 0 and "safety_score" in df_old.columns and "article_invoked" in df_old.columns:
-                final_records = df_old.to_dict("records")
-                print(f"[Resumare] Încărcat {len(final_records):,} mostre existente din {REFLECTIONS_FILE.name}")
-        except Exception:
-            pass
-
-    current_art_counts = {art: sum(1 for r in final_records if r.get("article_invoked") == art) for art in THEMES}
-    last_saved_count = len(final_records)
-
-    for art, info in THEMES.items():
-        needed = quota_per_art - current_art_counts.get(art, 0)
-        if needed <= 0:
-            print(f"[Complet] {art} are deja {current_art_counts.get(art, 0):,} exemple.")
-            continue
-
-        print(f"\n[Procesare {art} - {info['nume']}] Necesar: {needed:,} exemple...")
-        art_candidates = candidates_by_theme.get(art, [])
-        cand_idx = 0
-
-        pbar = tqdm(total=needed, desc=f"Generare {art}")
-
-        while needed > 0 and cand_idx < len(art_candidates):
-            model_info = orchestrator.get_current_model()
-            batch_size = min(model_info["batch_size"], needed)
-            batch = art_candidates[cand_idx: cand_idx + batch_size]
-            cand_idx += batch_size
-
-            prompt_items = []
-            for b_idx, b in enumerate(batch):
-                prompt_items.append({"idx": b_idx, "text": b["text"]})
+            prompt_items = [{"idx": i, "text": b["text"]} for i, b in enumerate(batch)]
+            info = THEMES[art]
 
             prompt = f"""Ești un cercetător universitar în AI Alignment și etică civică, ghidat de Constituția României.
 Ai mai jos {len(prompt_items)} fragmente de text din presă sau dezbatere civică românească legate de {art} ({info['nume']}).
@@ -354,83 +170,181 @@ Răspunde STRICT în format JSON valid:
   ]
 }}
 
-FRAGMENTE DE PROCESAT:
+FRAGMANTE:
 {json.dumps(prompt_items, ensure_ascii=False, indent=2)}
 """
 
-            raw_resp = orchestrator.call_api(prompt)
-            if not raw_resp:
-                time.sleep(2.0)
-                continue
+            success = False
+            for attempt in range(len(MODELS_CASCADE) * 2):
+                model_info = MODELS_CASCADE[model_idx % len(MODELS_CASCADE)]
+                payload = {
+                    "model": model_info["name"],
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.6,
+                    "max_tokens": model_info["max_tokens"],
+                    "response_format": {"type": "json_object"},
+                }
 
-            try:
-                parsed = json.loads(raw_resp)
-                generated_items = parsed.get("items", [])
-                if not isinstance(generated_items, list):
-                    generated_items = list(parsed.values())[0] if parsed else []
+                try:
+                    resp = requests.post(self.api_url, headers=headers, json=payload, timeout=30)
+                    if resp.status_code == 200:
+                        raw_data = resp.json()
+                        content = raw_data["choices"][0]["message"]["content"]
+                        parsed = json.loads(content)
+                        generated_items = parsed.get("items", [])
+                        if not isinstance(generated_items, list):
+                            generated_items = list(parsed.values())[0] if parsed else []
 
-                item_by_idx = {}
-                for g_idx, it in enumerate(generated_items):
-                    if isinstance(it, dict):
-                        key = it.get("idx", it.get("id", g_idx))
-                        try:
-                            key = int(key)
-                        except Exception:
-                            key = g_idx
-                        item_by_idx[key] = it
+                        # Map by idx
+                        item_by_idx = {}
+                        for g_idx, it in enumerate(generated_items):
+                            if isinstance(it, dict):
+                                k = it.get("idx", it.get("id", g_idx))
+                                try:
+                                    k = int(k)
+                                except Exception:
+                                    k = g_idx
+                                item_by_idx[k] = it
 
-                for b_idx, b in enumerate(batch):
-                    it = item_by_idx.get(b_idx)
-                    if not it and b_idx < len(generated_items) and isinstance(generated_items[b_idx], dict):
-                        it = generated_items[b_idx]
-                    if not it or not isinstance(it, dict):
-                        continue
+                        added_count = 0
+                        with self.lock:
+                            # Check quota
+                            if self.art_counts[art] >= self.quota_per_art:
+                                success = True
+                                break
 
-                    refl = it.get("reflectie", "").strip()
-                    if not refl:
-                        continue
-                    if f"[{art}]" not in refl:
-                        refl = f"{refl} [{art}]"
+                            for b_idx, b in enumerate(batch):
+                                if self.art_counts[art] >= self.quota_per_art:
+                                    break
+                                it = item_by_idx.get(b_idx)
+                                if not it and b_idx < len(generated_items) and isinstance(generated_items[b_idx], dict):
+                                    it = generated_items[b_idx]
+                                if not it or not isinstance(it, dict):
+                                    continue
 
-                    score = int(it.get("safety_score", 3))
-                    full_txt = b.get("full_text", b["text"])
-                    pos = max(50, int(len(full_txt) * 0.40))
+                                refl = it.get("reflectie", "").strip()
+                                if not refl:
+                                    continue
+                                if f"[{art}]" not in refl:
+                                    refl = f"{refl} [{art}]"
 
-                    final_records.append({
-                        "doc_id": f"teacher_spp_{len(final_records) + 1:05d}",
-                        "text": full_txt,
-                        "reflection_char_position": pos,
-                        "reflection_text": refl,
-                        "article_invoked": art,
-                        "safety_score": score,
-                    })
-                    needed -= 1
-                    pbar.update(1)
+                                try:
+                                    score = int(it.get("safety_score", 3))
+                                    score = max(1, min(5, score))
+                                except Exception:
+                                    score = 3
 
-            except Exception as ex:
-                time.sleep(1.0)
+                                full_txt = b.get("full_text", b["text"])
+                                pos = max(50, int(len(full_txt) * 0.40))
 
-            # Incremental save immediately after each batch
-            if len(final_records) > last_saved_count:
-                pd.DataFrame(final_records).to_parquet(REFLECTIONS_FILE, index=False)
-                last_saved_count = len(final_records)
-                sys.stdout.flush()
+                                self.records.append({
+                                    "doc_id": f"teacher_spp_{len(self.records) + 1:05d}",
+                                    "text": full_txt,
+                                    "reflection_char_position": pos,
+                                    "reflection_text": refl,
+                                    "article_invoked": art,
+                                    "safety_score": score,
+                                })
+                                self.art_counts[art] += 1
+                                added_count += 1
 
+                        if added_count > 0:
+                            pbar.update(added_count)
+                            self.save_checkpoint()
+                        success = True
+                        break
+
+                    elif resp.status_code == 429:
+                        # Rate limit: worker-specific cooldown
+                        time.sleep(5.0 + random.uniform(1.0, 3.0))
+                        model_idx += 1
+                    elif resp.status_code in [400, 413]:
+                        model_idx += 1
+                        time.sleep(1.0)
+                    else:
+                        time.sleep(2.0)
+                except Exception:
+                    time.sleep(2.0)
+
+            task_queue.task_done()
+
+    def run(self):
+        print("=" * 80)
+        print(f"  PARALLEL MULTI-KEY TEACHER LLM SPP GENERATION (Țintă: {self.target_total:,})")
+        print(f"  Chei Groq active: {len(self.keys)} | Fire paralele: {len(self.keys)}")
+        print(f"  Modele: {[m['name'] for m in MODELS_CASCADE]}")
+        print(f"  Output Parquet: {REFLECTIONS_FILE}")
+        print("=" * 80)
+
+        candidates_by_art = self.load_candidates()
+
+        # Build task queue
+        task_queue = Queue()
+
+        # Calculate remaining needed per article
+        needed_per_art = {art: max(0, self.quota_per_art - self.art_counts[art]) for art in THEMES}
+        total_remaining = sum(needed_per_art.values())
+
+        if total_remaining <= 0:
+            print("[SUCCES] Ținta de 60,000 reflecții este deja atinsă!")
+            return
+
+        print(f"\n[Planificare] Reflecții rămase de generat: {total_remaining:,}")
+        for art, ned in needed_per_art.items():
+            print(f"  {art}: {ned:,} necesare")
+
+        # Fill queue in interleaved fashion across articles
+        batch_size = 8
+        cand_indices = {art: 0 for art in THEMES}
+
+        # Prepopulate queue with batches
+        for _ in range(total_remaining // batch_size + len(THEMES) * 10):
+            for art in THEMES:
+                if needed_per_art[art] <= 0:
+                    continue
+                cands = candidates_by_art[art]
+                c_idx = cand_indices[art]
+                batch = cands[c_idx: c_idx + batch_size]
+                cand_indices[art] = (c_idx + batch_size) % len(cands)
+                task_queue.put({"art": art, "batch": batch})
+                needed_per_art[art] -= batch_size
+
+        pbar = tqdm(total=self.target_total, initial=len(self.records), desc="Progres SPP-Ro")
+
+        # Launch 6 parallel worker threads
+        threads = []
+        for i, key in enumerate(self.keys):
+            t = threading.Thread(target=self.worker_thread, args=(i, key, task_queue, pbar), daemon=True)
+            t.start()
+            threads.append(t)
+
+        # Monitor loop
+        try:
+            while any(t.is_alive() for t in threads):
+                with self.lock:
+                    if all(self.art_counts[art] >= self.quota_per_art for art in THEMES):
+                        self.is_running = False
+                        break
+                self.save_checkpoint()
+                time.sleep(3.0)
+        except (KeyboardInterrupt, SystemExit):
+            print("\n[Oprire solicitată] Salvare checkpoint final...")
+            self.is_running = False
+
+        self.save_checkpoint(force=True)
         pbar.close()
 
-    # Final save
-    df_out = pd.DataFrame(final_records)
-    df_out.to_parquet(REFLECTIONS_FILE, index=False)
-
-    print("\n" + "=" * 80)
-    print(f"[SUCCES] Set final salvat în: {REFLECTIONS_FILE}")
-    print(f"Total mostre generate: {len(df_out):,}")
-    print("=" * 80)
-    print("Distribuție pe Articole Constituționale:")
-    print(df_out["article_invoked"].value_counts().to_string())
-    print("\nDistribuție pe Safety Scores (1-5):")
-    print(df_out["safety_score"].value_counts().sort_index().to_string())
-    print("=" * 80)
+        # Final verification
+        df_final = pd.read_parquet(REFLECTIONS_FILE)
+        print("\n" + "=" * 80)
+        print(f"[SUCCES] Set salvat în: {REFLECTIONS_FILE}")
+        print(f"Total mostre generate: {len(df_final):,}")
+        print("=" * 80)
+        print("Distribuție pe Articole:")
+        print(df_final["article_invoked"].value_counts().to_string())
+        print("\nDistribuție pe Safety Scores (1-5):")
+        print(df_final["safety_score"].value_counts().sort_index().to_string())
+        print("=" * 80)
 
 
 if __name__ == "__main__":
@@ -438,4 +352,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", type=int, default=60000, help="Total target reflections")
     args = parser.parse_args()
-    generate_spp_multikey_dataset(target_total=args.target)
+
+    generator = ParallelTeacherSPPGenerator(KEYS, target_total=args.target)
+    generator.run()
