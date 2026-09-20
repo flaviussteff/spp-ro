@@ -235,11 +235,14 @@ def run_spp_annotation(
         if ollama_live:
             reflection_text = generate_reflection_via_ollama(excerpt, annotator_cfg)
             
-        # Fallback if Ollama failed or offline
+        # Fallback if Ollama failed or offline: use contextual thematic classifier
         if not reflection_text:
-            template_item = random.choice(ROMANIAN_CONSTITUTIONAL_REFLECTIONS)
-            reflection_text = template_item["text"]
-            article_invoked = template_item["article"]
+            try:
+                from generate_contextual_reflections import classify_document_context
+            except ImportError:
+                from src.generate_contextual_reflections import classify_document_context
+            window = text[:min(len(text), 1200)]
+            reflection_text, article_invoked = classify_document_context(window)
             
         annotated_rows.append({
             "doc_id": doc_id,

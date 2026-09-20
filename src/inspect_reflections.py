@@ -67,7 +67,7 @@ def display_reflection(table, idx: int, total_count: int, show_all: bool = False
     print()
 
 
-def browse_reflections(start_idx: int = 0, initial_search: str = None):
+def browse_reflections(start_idx: int = 0, initial_search: str = None, once: bool = False):
     parquet_path = Path("data/sidecar/reflections.parquet")
     if not parquet_path.exists():
         print(f"[EROARE] Nu s-a gasit fisierul: {parquet_path.resolve()}")
@@ -91,6 +91,8 @@ def browse_reflections(start_idx: int = 0, initial_search: str = None):
 
     while True:
         display_reflection(table, current_idx, total_count, show_all=show_all)
+        if once or not sys.stdin.isatty():
+            break
         show_all = False  # Reset show_all after displaying
 
         print("=" * 80)
@@ -171,6 +173,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Browse SPP Constitutional Reflections Interactively")
     parser.add_argument("-i", "--index", type=int, default=1, help="Indexul de start (1 - 10000)")
     parser.add_argument("-s", "--search", type=str, default=None, help="Cauta un cuvant cheie la pornire")
+    parser.add_argument("--once", action="store_true", help="Afiseaza o singura data si iese (non-interactiv)")
     args = parser.parse_args()
 
-    browse_reflections(start_idx=args.index - 1, initial_search=args.search)
+    browse_reflections(start_idx=args.index - 1, initial_search=args.search, once=args.once)
