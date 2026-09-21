@@ -37,6 +37,7 @@ from transformers import (
     TrainingArguments,
     default_data_collator,
 )
+from transformers.trainer_utils import get_last_checkpoint
 
 _SRC_DIR = Path(__file__).resolve().parent
 _ROOT_DIR = _SRC_DIR.parent
@@ -88,9 +89,14 @@ class HourlyLiveProgressCallback(TrainerCallback):
         self.initial_steps_done = initial_steps_done
         self.start_time = time.time()
         self.last_report_time = time.time()
+        self.session_start_step = None
         self.report_counter = 0
         self.latest_loss = None
         self.latest_lr = None
+
+    def on_step_begin(self, args, state, control, **kwargs):
+        if self.session_start_step is None:
+            self.session_start_step = state.global_step
 
     def on_log(self, args, state, control, logs=None, **kwargs):
         if logs:
@@ -103,7 +109,8 @@ class HourlyLiveProgressCallback(TrainerCallback):
         self.report_counter += 1
         current_time = time.time()
         current_step = state.global_step + self.initial_steps_done
-        steps_this_session = max(1, state.global_step)
+        start_step = self.session_start_step if self.session_start_step is not None else state.global_step
+        steps_this_session = max(1, state.global_step - start_step)
         
         session_elapsed = current_time - self.start_time
         sec_per_step = session_elapsed / steps_this_session
@@ -352,6 +359,7 @@ def run_scale_pretraining(
         gradient_checkpointing=True,
         remove_unused_columns=False,
         report_to="none",
+        ignore_data_skip=True,
     )
 
     hourly_cb = HourlyLiveProgressCallback(
@@ -370,10 +378,20 @@ def run_scale_pretraining(
         callbacks=[hourly_cb],
     )
 
+    # Detect last checkpoint for seamless recovery from interruptions
+    last_checkpoint = None
+    if checkpoints_dir.exists():
+        last_checkpoint = get_last_checkpoint(str(checkpoints_dir))
+        if last_checkpoint is not None:
+            print(f"\n[Engine] Checkpoint detectat: {last_checkpoint}", flush=True)
+            print(f"[Engine] Se reia antrenarea AUTOMAT din {Path(last_checkpoint).name}...", flush=True)
+        else:
+            print(f"\n[Engine] Niciun checkpoint intermediar gasit in {checkpoints_dir}. Pornire de la zero...", flush=True)
+
     print(f"\n[Engine] Starting {additional_steps:,} steps training run...")
     print(f"[Engine] Live progress report will print every {update_interval_mins:.0f} minutes in this console.")
     
-    trainer.train()
+    trainer.train(resume_from_checkpoint=last_checkpoint)
 
     # 4. Save Final Upgraded Model
     print(f"\n[Saving] Exporting finalized upgraded model to: {output_dir}...")
