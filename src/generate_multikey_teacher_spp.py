@@ -2,12 +2,12 @@
 High-Speed Parallel Multi-Key Teacher LLM SPP Generator for Romanian Civic Alignment
 Features:
 1. 6 Groq API Keys running simultaneously in 6 parallel worker threads.
-2. Fast, stable models: qwen/qwen3.8-27b -> openai/gpt-oss-20b -> groq/compound-mini.
+2. Fast, stable models cascade with fresh quotas: openai/gpt-oss-120b -> groq/compound -> qwen/qwen3.8-27b -> openai/gpt-oss-20b.
 3. Strict parity across all 6 Constitutional Articles (§1.1 to §2.3, exactly 10,000 each).
 4. Full safety spectrum from 1 (malign/stereotip) to 5 (complet benign/progres).
 5. First-person reflections strictly citing [§X.Y].
 6. Pre-cached candidates from spp_candidates_cache.parquet (10,000 per theme).
-7. Thread-safe live persistence to reflections.parquet every few seconds.
+7. Non-blocking thread-safe live persistence to reflections.parquet with Windows retry resilience.
 8. Dynamic task queue refilling - runs continuously until all 60,000 targets are met.
 """
 import sys
@@ -54,11 +54,12 @@ if env_file.exists():
 if not KEYS:
     raise ValueError("No GROQ API keys found in .env!")
 
-# Reliable models for JSON mode on Groq
+# Reliable models for JSON mode on Groq with fresh daily quotas
 MODELS_CASCADE = [
+    {"name": "openai/gpt-oss-120b", "batch_size": 8, "max_tokens": 2048},
+    {"name": "groq/compound", "batch_size": 8, "max_tokens": 2048},
     {"name": "qwen/qwen3.8-27b", "batch_size": 8, "max_tokens": 2048},
     {"name": "openai/gpt-oss-20b", "batch_size": 8, "max_tokens": 2048},
-    {"name": "groq/compound-mini", "batch_size": 12, "max_tokens": 3072},
 ]
 
 THEMES = {
@@ -80,6 +81,7 @@ class ParallelTeacherSPPGenerator:
 
         # Shared state & locks
         self.lock = threading.Lock()
+        self.save_lock = threading.Lock()
         self.records: List[Dict[str, Any]] = []
         self.art_counts: Dict[str, int] = {art: 0 for art in THEMES}
         self.is_running = True
@@ -119,28 +121,49 @@ class ParallelTeacherSPPGenerator:
         return candidates_by_art
 
     def save_checkpoint(self, force: bool = False):
-        with self.lock:
-            curr_count = len(self.records)
-            now = time.time()
-            if not force and (curr_count == self.last_saved_count or now - self.last_saved_time < 10.0):
-                return
-            df = pd.DataFrame(self.records)
-            self.last_saved_count = curr_count
-            self.last_saved_time = now
+        if not self.save_lock.acquire(blocking=force):
+            return
 
-        # Safe atomic write with retries
-        for attempt in range(5):
-            try:
-                temp_file = REFLECTIONS_FILE.with_suffix(f".tmp_{os.getpid()}_{attempt}.parquet")
-                df.to_parquet(temp_file, index=False)
-                if temp_file.exists():
-                    temp_file.replace(REFLECTIONS_FILE)
-                break
-            except Exception:
-                time.sleep(0.5)
+        try:
+            with self.lock:
+                curr_count = len(self.records)
+                now = time.time()
+                if not force and (curr_count == self.last_saved_count or now - self.last_saved_time < 12.0):
+                    return
+                records_snapshot = list(self.records)
+                self.last_saved_count = curr_count
+                self.last_saved_time = now
+
+            if not records_snapshot:
+                return
+
+            df = pd.DataFrame(records_snapshot)
+            temp_file = SIDECAR_DIR / f"reflections_tmp_{os.getpid()}_{int(time.time() * 1000)}.parquet"
+            df.to_parquet(temp_file, index=False)
+
+            replaced = False
+            for attempt in range(8):
+                try:
+                    if temp_file.exists():
+                        temp_file.replace(REFLECTIONS_FILE)
+                        replaced = True
+                        break
+                except (PermissionError, OSError):
+                    time.sleep(0.2 * (attempt + 1))
+
+            if not replaced and temp_file.exists():
+                try:
+                    df.to_parquet(REFLECTIONS_FILE, index=False)
+                    temp_file.unlink(missing_ok=True)
+                except Exception:
+                    pass
+        except Exception as e:
+            print(f"[Avertisment salvare checkpoint]: {e}")
+        finally:
+            self.save_lock.release()
 
     def worker_thread(self, worker_id: int, key: str, task_queue: Queue, pbar: tqdm):
-        model_idx = 0
+        model_idx = worker_id % len(MODELS_CASCADE)
         headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
         while self.is_running:
@@ -155,13 +178,8 @@ class ParallelTeacherSPPGenerator:
             art = task["art"]
             batch = task["batch"]
 
-            # Quick quota check before calling API
-            with self.lock:
-                if self.art_counts[art] >= self.quota_per_art:
-                    task_queue.task_done()
-                    continue
-
-            prompt_items = [{"idx": i, "text": b["text"]} for i, b in enumerate(batch)]
+            # Truncate input snippet to 380 chars: saves ~50% tokens while preserving semantic intent
+            prompt_items = [{"idx": i, "text": b["text"][:380]} for i, b in enumerate(batch)]
             info = THEMES[art]
 
             prompt = f"""Ești un cercetător universitar în AI Alignment și etică civică, ghidat de Constituția României.
@@ -182,7 +200,7 @@ Răspunde STRICT în format JSON valid:
   ]
 }}
 
-FRAGMENTE:
+FRAGMANTE:
 {json.dumps(prompt_items, ensure_ascii=False, indent=2)}
 """
 
@@ -220,6 +238,10 @@ FRAGMENTE:
 
                         added_count = 0
                         with self.lock:
+                            if self.art_counts[art] >= self.quota_per_art:
+                                success = True
+                                break
+
                             for b_idx, b in enumerate(batch):
                                 if self.art_counts[art] >= self.quota_per_art:
                                     break
@@ -261,6 +283,7 @@ FRAGMENTE:
                         break
 
                     elif resp.status_code == 429:
+                        # Quick cascade: immediately try next model with quota
                         model_idx += 1
                         if (attempt + 1) % len(MODELS_CASCADE) == 0:
                             time.sleep(3.0 + random.uniform(1.0, 2.0))
@@ -274,6 +297,8 @@ FRAGMENTE:
                 except Exception:
                     time.sleep(1.5)
 
+            if not success:
+                task_queue.put(task)
             task_queue.task_done()
 
     def run(self):
@@ -319,7 +344,7 @@ FRAGMENTE:
                                 task_queue.put({"art": art, "batch": batch})
 
                 self.save_checkpoint()
-                time.sleep(2.0)
+                time.sleep(6.0)
 
         except (KeyboardInterrupt, SystemExit):
             print("\n[Oprire solicitată] Salvare checkpoint final...")
