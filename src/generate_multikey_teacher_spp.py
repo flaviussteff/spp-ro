@@ -8,6 +8,7 @@ Features:
 5. First-person reflections strictly citing [§X.Y].
 6. Pre-cached candidates from spp_candidates_cache.parquet (10,000 per theme).
 7. Thread-safe live persistence to reflections.parquet every few seconds.
+8. Dynamic task queue refilling - runs continuously until all 60,000 targets are met.
 """
 import sys
 import os
@@ -121,16 +122,22 @@ class ParallelTeacherSPPGenerator:
         with self.lock:
             curr_count = len(self.records)
             now = time.time()
-            if not force and (curr_count == self.last_saved_count or now - self.last_saved_time < 8.0):
+            if not force and (curr_count == self.last_saved_count or now - self.last_saved_time < 10.0):
                 return
             df = pd.DataFrame(self.records)
             self.last_saved_count = curr_count
             self.last_saved_time = now
 
-        # Write outside lock
-        temp_file = REFLECTIONS_FILE.with_suffix(".tmp.parquet")
-        df.to_parquet(temp_file, index=False)
-        temp_file.replace(REFLECTIONS_FILE)
+        # Safe atomic write with retries
+        for attempt in range(5):
+            try:
+                temp_file = REFLECTIONS_FILE.with_suffix(f".tmp_{os.getpid()}_{attempt}.parquet")
+                df.to_parquet(temp_file, index=False)
+                if temp_file.exists():
+                    temp_file.replace(REFLECTIONS_FILE)
+                break
+            except Exception:
+                time.sleep(0.5)
 
     def worker_thread(self, worker_id: int, key: str, task_queue: Queue, pbar: tqdm):
         model_idx = 0
@@ -140,7 +147,6 @@ class ParallelTeacherSPPGenerator:
             try:
                 task = task_queue.get(timeout=2.0)
             except Empty:
-                # Check if total target reached
                 with self.lock:
                     if all(self.art_counts[art] >= self.quota_per_art for art in THEMES):
                         break
@@ -148,6 +154,12 @@ class ParallelTeacherSPPGenerator:
 
             art = task["art"]
             batch = task["batch"]
+
+            # Quick quota check before calling API
+            with self.lock:
+                if self.art_counts[art] >= self.quota_per_art:
+                    task_queue.task_done()
+                    continue
 
             prompt_items = [{"idx": i, "text": b["text"]} for i, b in enumerate(batch)]
             info = THEMES[art]
@@ -170,7 +182,7 @@ Răspunde STRICT în format JSON valid:
   ]
 }}
 
-FRAGMANTE:
+FRAGMENTE:
 {json.dumps(prompt_items, ensure_ascii=False, indent=2)}
 """
 
@@ -208,11 +220,6 @@ FRAGMANTE:
 
                         added_count = 0
                         with self.lock:
-                            # Check quota
-                            if self.art_counts[art] >= self.quota_per_art:
-                                success = True
-                                break
-
                             for b_idx, b in enumerate(batch):
                                 if self.art_counts[art] >= self.quota_per_art:
                                     break
@@ -250,21 +257,22 @@ FRAGMANTE:
 
                         if added_count > 0:
                             pbar.update(added_count)
-                            self.save_checkpoint()
                         success = True
                         break
 
                     elif resp.status_code == 429:
-                        # Rate limit: worker-specific cooldown
-                        time.sleep(5.0 + random.uniform(1.0, 3.0))
                         model_idx += 1
+                        if (attempt + 1) % len(MODELS_CASCADE) == 0:
+                            time.sleep(3.0 + random.uniform(1.0, 2.0))
+                        else:
+                            time.sleep(0.5)
                     elif resp.status_code in [400, 413]:
                         model_idx += 1
                         time.sleep(1.0)
                     else:
-                        time.sleep(2.0)
+                        time.sleep(1.5)
                 except Exception:
-                    time.sleep(2.0)
+                    time.sleep(1.5)
 
             task_queue.task_done()
 
@@ -278,36 +286,9 @@ FRAGMANTE:
 
         candidates_by_art = self.load_candidates()
 
-        # Build task queue
         task_queue = Queue()
-
-        # Calculate remaining needed per article
-        needed_per_art = {art: max(0, self.quota_per_art - self.art_counts[art]) for art in THEMES}
-        total_remaining = sum(needed_per_art.values())
-
-        if total_remaining <= 0:
-            print("[SUCCES] Ținta de 60,000 reflecții este deja atinsă!")
-            return
-
-        print(f"\n[Planificare] Reflecții rămase de generat: {total_remaining:,}")
-        for art, ned in needed_per_art.items():
-            print(f"  {art}: {ned:,} necesare")
-
-        # Fill queue in interleaved fashion across articles
         batch_size = 8
         cand_indices = {art: 0 for art in THEMES}
-
-        # Prepopulate queue with batches
-        for _ in range(total_remaining // batch_size + len(THEMES) * 10):
-            for art in THEMES:
-                if needed_per_art[art] <= 0:
-                    continue
-                cands = candidates_by_art[art]
-                c_idx = cand_indices[art]
-                batch = cands[c_idx: c_idx + batch_size]
-                cand_indices[art] = (c_idx + batch_size) % len(cands)
-                task_queue.put({"art": art, "batch": batch})
-                needed_per_art[art] -= batch_size
 
         pbar = tqdm(total=self.target_total, initial=len(self.records), desc="Progres SPP-Ro")
 
@@ -318,15 +299,28 @@ FRAGMANTE:
             t.start()
             threads.append(t)
 
-        # Monitor loop
+        # Dynamic feeder & monitor loop
         try:
             while any(t.is_alive() for t in threads):
                 with self.lock:
-                    if all(self.art_counts[art] >= self.quota_per_art for art in THEMES):
+                    all_done = all(self.art_counts[art] >= self.quota_per_art for art in THEMES)
+                    if all_done:
                         self.is_running = False
                         break
+
+                    # Dynamically replenish queue if low
+                    if task_queue.qsize() < 40:
+                        for art in THEMES:
+                            if self.art_counts[art] < self.quota_per_art:
+                                cands = candidates_by_art[art]
+                                c_idx = cand_indices[art]
+                                batch = cands[c_idx: c_idx + batch_size]
+                                cand_indices[art] = (c_idx + batch_size) % len(cands)
+                                task_queue.put({"art": art, "batch": batch})
+
                 self.save_checkpoint()
-                time.sleep(3.0)
+                time.sleep(2.0)
+
         except (KeyboardInterrupt, SystemExit):
             print("\n[Oprire solicitată] Salvare checkpoint final...")
             self.is_running = False
