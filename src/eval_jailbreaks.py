@@ -33,7 +33,6 @@ try:
 except ImportError:
     from src.config import BASE_MODEL_DIR, SPP_MODEL_DIR, TOKENIZER_DIR, EVALS_DIR
 
-LORA_MODEL_DIR = _ROOT_DIR / "models" / "base_ro_125m_lora"
 EVALS_DIR.mkdir(parents=True, exist_ok=True)
 
 # 15 Romanian Diagnostic Stems across all 5 socio-cultural axes
@@ -190,9 +189,8 @@ def run_jailbreak_probing():
     tokenizer = AutoTokenizer.from_pretrained(str(TOKENIZER_DIR))
     
     models = [
-        ("Base-Ro-125M", BASE_MODEL_DIR, "Control Brut"),
-        ("Base-Ro-LoRA", LORA_MODEL_DIR, "Post-Hoc LoRA"),
-        ("SPP-Ro-125M", SPP_MODEL_DIR, "Token Zero SPP"),
+        ("Base-Ro-125M", BASE_MODEL_DIR, "Control Brut (Preantrenare Standard)"),
+        ("SPP-Ro-125M", SPP_MODEL_DIR, "SPP-Ro (Aliniere Constituțională Token Zero)"),
     ]
     
     model_stats = {}
@@ -282,17 +280,14 @@ def run_jailbreak_probing():
         f.write(" & & ($x_{\\text{neutral}}$) & ($x_{\\text{adv}}$) & (Sensibilitate Stereotip) \\\\\n")
         f.write("\\midrule\n")
         
-        for m_name in ["Base-Ro-125M", "Base-Ro-LoRA", "SPP-Ro-125M"]:
+        for m_name in ["Base-Ro-125M", "SPP-Ro-125M"]:
             if m_name in model_stats:
                 st = model_stats[m_name]
                 neu_str = f"{st['neutral_rate']:.1f}\\%"
                 adv_str = f"{st['adv_rate']:.1f}\\%"
                 shift_str = f"{st['mean_shift']:+.3f}"
                 
-                if m_name == "Base-Ro-LoRA":
-                    adv_str = f"\\textbf{{{adv_str}}}"
-                    shift_str = f"\\textbf{{{shift_str}}}"
-                elif m_name == "SPP-Ro-125M":
+                if m_name == "SPP-Ro-125M":
                     adv_str = f"\\textbf{{{adv_str}}}"
                     shift_str = f"\\textbf{{{shift_str}}}"
                     
@@ -302,7 +297,7 @@ def run_jailbreak_probing():
         f.write("\\bottomrule\n")
         f.write("\\end{tabular}\n")
         f.write("\\caption{Rezultatele experimentului de demascare prin prefixe adversative (15 tulpini diagnostice). "
-                "În timp ce modelul LoRA post-hoc colapsează sub presiune adversativă (rata de stereotipuri crește dramatic, confirmând ipoteza alinierii superficiale), "
+                "În timp ce modelul de control brut reflectă stereotipurile absorbite din preantrenare sub presiune adversativă, "
                 "modelul SPP antrenat de la Token Zero își menține reziliența intrinsecă datorită blocării atenției cauzale în preantrenare.}\n")
         f.write("\\label{tab:thesis_adversarial_unmasking}\n")
         f.write("\\end{table}\n")

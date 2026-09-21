@@ -23,7 +23,7 @@ RAW_FINEWEB_DIR = RAW_DATA_DIR / "fineweb_shards"
 CLEAN_NEWS_FILE = CLEAN_DATA_DIR / "news_recent.parquet"
 CLEAN_WIKI_FILE = CLEAN_DATA_DIR / "wiki_clean.parquet"
 UNANNOTATED_FILE = CLEAN_DATA_DIR / "corpus_unannotated.parquet"
-SPP_CANDIDATES_FILE = CLEAN_DATA_DIR / "corpus_for_spp.parquet"
+SPP_CANDIDATES_FILE = CLEAN_DATA_DIR / "spp_candidates_cache.parquet"
 
 # Output Paths
 TOKENIZER_DIR = WORKSPACE_DIR / "tokenizer" / "ro_bpe_16k"

@@ -35,7 +35,6 @@ try:
 except ImportError:
     from src.config import BASE_MODEL_DIR, SPP_MODEL_DIR, TOKENIZER_DIR, CLEAN_DATA_DIR, EVALS_DIR
 
-LORA_MODEL_DIR = _ROOT_DIR / "models" / "base_ro_125m_lora"
 EVALS_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -158,9 +157,8 @@ def run_alignment_tax_evaluation():
         )
         
     models_to_test = [
-        ("Base-Ro-125M", BASE_MODEL_DIR, "Control Brut (Fără Aliniere)"),
-        ("Base-Ro-LoRA", LORA_MODEL_DIR, "Post-Hoc LoRA"),
-        ("SPP-Ro-125M", SPP_MODEL_DIR, "Token Zero SPP"),
+        ("Base-Ro-125M", BASE_MODEL_DIR, "Control Brut (Preantrenare Standard)"),
+        ("SPP-Ro-125M", SPP_MODEL_DIR, "SPP-Ro (Aliniere Constituțională Token Zero)"),
     ]
     
     results = []

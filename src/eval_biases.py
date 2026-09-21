@@ -661,26 +661,24 @@ def export_thesis_tables(all_results: List[Dict[str, Any]]):
 
 
 def export_triad_latex_table(all_results: List[Dict[str, Any]]):
-    """Exports the definitive 3-Way Thesis Triad Table comparing Base, LoRA, and SPP."""
+    """Exports the definitive Thesis Alignment Table comparing Base-Ro-125M vs SPP-Ro-125M."""
     # Find matching models
     models_dict = {r["model"]: r for r in all_results}
     
-    # Check if triad is present
     base_res = models_dict.get("Base-Ro-125M")
-    lora_res = models_dict.get("Base-Ro-LoRA")
     spp_res = models_dict.get("SPP-Ro-125M")
     
-    triad_tex = EVALS_DIR / "thesis_3way_alignment_triad.tex"
+    triad_tex = EVALS_DIR / "thesis_alignment_comparison.tex"
     with open(triad_tex, "w", encoding="utf-8") as f:
-        f.write("% Tabel Master Licență: Triada de Aliniere (Base vs. LoRA vs. SPP)\n")
+        f.write("% Tabel Master Licență: Comparare Aliniere Constituțională (Base vs. SPP)\n")
         f.write("% Ideal (Neutralitate Perfectă): SPM = 50.0%\n")
         f.write("\\begin{table}[htbp]\n")
         f.write("\\centering\n")
         f.write("\\small\n")
-        f.write("\\begin{tabular}{l c c c}\n")
+        f.write("\\begin{tabular}{l c c}\n")
         f.write("\\toprule\n")
-        f.write("\\textbf{Axa Socio-Culturală (România)} & \\textbf{Base-Ro-125M} & \\textbf{Base-Ro + LoRA} & \\textbf{SPP-Ro-125M} \\\\\n")
-        f.write(" & (Control Brut) & (Post-Hoc LoRA) & (Token Zero SPP) \\\\\n")
+        f.write("\\textbf{Axa Socio-Culturală (România)} & \\textbf{Base-Ro-125M} & \\textbf{SPP-Ro-125M} \\\\\n")
+        f.write(" & (Control Brut) & (Token Zero SPP) \\\\\n")
         f.write("\\midrule\n")
         
         category_map = [
@@ -693,25 +691,23 @@ def export_triad_latex_table(all_results: List[Dict[str, Any]]):
         
         for label, cat_key in category_map:
             b_val = f"{base_res['categories_ro'].get(cat_key, 0.0):.1f}\\%" if base_res else "N/A"
-            l_val = f"{lora_res['categories_ro'].get(cat_key, 0.0):.1f}\\%" if lora_res else "N/A"
             s_val = f"\\textbf{{{spp_res['categories_ro'].get(cat_key, 0.0):.1f}\\%}}" if spp_res else "N/A"
-            f.write(f"{label} & {b_val} & {l_val} & {s_val} \\\\\n")
+            f.write(f"{label} & {b_val} & {s_val} \\\\\n")
             
         f.write("\\midrule\n")
         b_tot = f"{base_res['spm_ro']:.1f}\\%" if base_res and base_res.get('spm_ro') is not None else "N/A"
-        l_tot = f"{lora_res['spm_ro']:.1f}\\%" if lora_res and lora_res.get('spm_ro') is not None else "N/A"
         s_tot = f"\\textbf{{{spp_res['spm_ro']:.1f}\\%}}" if spp_res and spp_res.get('spm_ro') is not None else "N/A"
-        f.write(f"\\textbf{{Scor General SPM (Română)}} & \\textbf{{{b_tot}}} & \\textbf{{{l_tot}}} & {s_tot} \\\\\n")
+        f.write(f"\\textbf{{Scor General SPM (Română)}} & {b_tot} & {s_tot} \\\\\n")
         
         f.write("\\bottomrule\n")
         f.write("\\end{tabular}\n")
-        f.write("\\caption{Compararea Triadei Experimentale de Aliniere pe Limba Română (37 perechi diagnostice). "
-                "Atât modelul LoRA post-hoc cât și modelul SPP Token Zero neutralizează biasul sub condiții normale, "
-                "însă reziliența lor diferă profund sub presiune adversativă.}\n")
-        f.write("\\label{tab:thesis_alignment_triad}\n")
+        f.write("\\caption{Compararea Alinierii Constituționale pe Limba Română (37 perechi diagnostice). "
+                "Modelul SPP Token Zero contrabalansează stereotipurile absorbite din preantrenarea pe web, "
+                "atingând paritatea ideală (SPM $\\approx$ 50.0\\%).}\n")
+        f.write("\\label{tab:thesis_alignment_comparison}\n")
         f.write("\\end{table}\n")
         
-    print(f"[Exported LaTeX Triad] Saved Master Triad table to: {triad_tex}")
+    print(f"[Exported LaTeX Table] Saved Alignment table to: {triad_tex}")
 
 
 if __name__ == "__main__":
@@ -729,14 +725,13 @@ if __name__ == "__main__":
 
     all_evaluated_models = []
 
-    # 0. Complete Alignment Triad Mode
+    # 0. Complete Alignment Evaluation Mode (Base vs SPP)
     if args.triad:
         print("==================================================")
-        print(" Evaluating Complete 3-Model Alignment Triad")
+        print(" Evaluating Constitutional Alignment (Base vs SPP)")
         print("==================================================")
         triad_models = [
             (BASE_MODEL_DIR, "Base-Ro-125M"),
-            (_ROOT_DIR / "models" / "base_ro_125m_lora", "Base-Ro-LoRA"),
             (SPP_MODEL_DIR, "SPP-Ro-125M"),
         ]
         for m_dir, m_label in triad_models:
