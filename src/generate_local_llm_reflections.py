@@ -101,11 +101,11 @@ class LocalLLMReflectionsGenerator:
     def __init__(
         self,
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
-        target_total: int = 6000,
+        target_total: int = 10000,
         batch_size: int = 8,
         report_interval: int = 500,
         load_in_4bit: bool = True,
-        max_new_tokens: int = 360,
+        max_new_tokens: int = 380,
     ):
         self.model_name = model_name
         self.target_total = target_total
@@ -246,9 +246,16 @@ class LocalLLMReflectionsGenerator:
                         "Respond with ONLY a JSON object (no markdown, no backticks, no other text):\n"
                         "{\n"
                         '  "analysis": "Step 1: ... Step 2: ... Step 3: Required citations: [' + art_code + ']...",\n'
+                        '  "safety_score": 2,\n'
                         '  "reflection_1p": "...",\n'
                         '  "reflection_3p": "..."\n'
-                        "}"
+                        "}\n\n"
+                        "Safety Score Rubric (safety_score must be an integer 1-5):\n"
+                        "1 = Active Harm/Bias: explicit hate speech, domestic violence, racism, severe prejudice, violent extremism (requires firm moral rejection)\n"
+                        "2 = Sensitive/Trauma: war, historical crimes (Holocaust, communist repression), humanitarian disaster, refugees\n"
+                        "3 = Civic Debate: rule of law, political controversies, legal reform, institutional decisions, bioethics\n"
+                        "4 = Objective/Factual: factual reporting, economic or social development, civic infrastructure, factual science\n"
+                        "5 = Benign/Peaceful: culture, routine education, benign facts, positive social cooperation\n"
                     )
                 },
                 {
@@ -273,6 +280,7 @@ class LocalLLMReflectionsGenerator:
         clean_text = re.sub(r"```\s*", "", clean_text)
 
         # 1. Try direct JSON parsing
+        model_score = None
         json_match = re.search(r"\{[\s\S]*\}", clean_text)
         if json_match:
             try:
@@ -280,12 +288,18 @@ class LocalLLMReflectionsGenerator:
                 analysis = str(data.get("analysis", "")).strip()
                 refl_1p = str(data.get("reflection_1p", data.get("reflectie", ""))).strip()
                 refl_3p = str(data.get("reflection_3p", "")).strip()
+                raw_score = data.get("safety_score")
+                if raw_score is not None:
+                    try:
+                        model_score = int(raw_score)
+                    except Exception:
+                        pass
             except Exception:
                 pass
 
         # 2. Resilient regex extraction (handles unescaped internal quotes and truncated JSON)
         if not refl_1p:
-            m_an = re.search(r'"analysis":\s*"([\s\S]*?)"(?=\s*,\s*"reflection_1p"|\s*,\s*"reflection_3p"|\s*\})', clean_text)
+            m_an = re.search(r'"analysis":\s*"([\s\S]*?)"(?=\s*,\s*"safety_score"|\s*,\s*"reflection_1p"|\s*,\s*"reflection_3p"|\s*\})', clean_text)
             if m_an:
                 analysis = m_an.group(1).strip()
 
@@ -298,6 +312,11 @@ class LocalLLMReflectionsGenerator:
             m_3p = re.search(r'"reflection_3p":\s*"(.*?)(?:"\s*\}|"$|$)', clean_text, re.DOTALL)
             if m_3p:
                 refl_3p = m_3p.group(1).strip()
+
+        if model_score is None:
+            m_score = re.search(r'"safety_score":\s*([1-5])', clean_text)
+            if m_score:
+                model_score = int(m_score.group(1))
 
         # Clean non-Romanian drift (CJK)
         refl_1p = CJK_REGEX.sub('', refl_1p).strip()
@@ -324,14 +343,13 @@ class LocalLLMReflectionsGenerator:
 
         valid_arts = list(dict.fromkeys(articles_list))[:3]
         if not valid_arts:
-            if "none" in analysis.lower() or len(refl_1p.split()) < 18:
-                score = 5
-                valid_arts = [clean_default]
-            else:
-                valid_arts = [clean_default]
-                score = 3
+            valid_arts = [clean_default]
+
+        # Use model assigned score if valid, else conservative fallback
+        if model_score is not None and 1 <= model_score <= 5:
+            score = model_score
         else:
-            if "none" in valid_arts:
+            if "none" in analysis.lower() or "none" in valid_arts:
                 score = 5
             elif "2.1" in valid_arts or "1.1" in valid_arts:
                 score = 2
@@ -596,11 +614,11 @@ def main():
     parser = argparse.ArgumentParser(description="Generate SPP Reflections locally using GPU with 0 limits")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct",
                         help="HuggingFace model ID (default: Qwen/Qwen2.5-7B-Instruct)")
-    parser.add_argument("--target", type=int, default=6000, help="Target total reflections (default: 6,000)")
+    parser.add_argument("--target", type=int, default=10000, help="Target total reflections (default: 10,000)")
     parser.add_argument("--batch-size", type=int, default=8, help="Batch size for parallel GPU inference (default: 8)")
     parser.add_argument("--interval", type=int, default=500, help="Print full inspection card every N reflections (default: 500)")
     parser.add_argument("--load-in-4bit", action="store_true", default=True, help="Enable 4-bit quantization (enabled by default)")
-    parser.add_argument("--max-new-tokens", type=int, default=360, help="Max tokens per generated reflection (default: 360)")
+    parser.add_argument("--max-new-tokens", type=int, default=380, help="Max tokens per generated reflection (default: 380)")
     args = parser.parse_args()
 
     generator = LocalLLMReflectionsGenerator(
