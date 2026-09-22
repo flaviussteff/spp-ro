@@ -101,11 +101,11 @@ class LocalLLMReflectionsGenerator:
     def __init__(
         self,
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
-        target_total: int = 60000,
+        target_total: int = 6000,
         batch_size: int = 8,
-        report_interval: int = 1000,
+        report_interval: int = 500,
         load_in_4bit: bool = True,
-        max_new_tokens: int = 280,
+        max_new_tokens: int = 360,
     ):
         self.model_name = model_name
         self.target_total = target_total
@@ -242,7 +242,8 @@ class LocalLLMReflectionsGenerator:
                         "- Language: Romanian (limba română literară). No Chinese characters or other foreign languages.\n\n"
                         f"{CONSTITUTION_SUMMARY}\n\n"
                         "Output Format:\n"
-                        "Respond with ONLY a JSON object (no markdown, no other text):\n"
+                        "Keep the analysis concise (1-2 sentences per step) so the reflections have maximum priority.\n"
+                        "Respond with ONLY a JSON object (no markdown, no backticks, no other text):\n"
                         "{\n"
                         '  "analysis": "Step 1: ... Step 2: ... Step 3: Required citations: [' + art_code + ']...",\n'
                         '  "reflection_1p": "...",\n'
@@ -267,8 +268,12 @@ class LocalLLMReflectionsGenerator:
         refl_3p = ""
         articles_list: List[str] = []
 
-        # Try JSON direct parsing
-        json_match = re.search(r"\{[\s\S]*\}", output_text)
+        # Strip markdown fences if present
+        clean_text = re.sub(r"```json\s*", "", output_text)
+        clean_text = re.sub(r"```\s*", "", clean_text)
+
+        # 1. Try direct JSON parsing
+        json_match = re.search(r"\{[\s\S]*\}", clean_text)
         if json_match:
             try:
                 data = json.loads(json_match.group(0))
@@ -278,17 +283,21 @@ class LocalLLMReflectionsGenerator:
             except Exception:
                 pass
 
-        # Fallback regex extraction if JSON failed
+        # 2. Resilient regex extraction (handles unescaped internal quotes and truncated JSON)
         if not refl_1p:
-            m_1p = re.search(r'"reflection_1p":\s*"([^"]+)"', output_text)
-            if m_1p:
-                refl_1p = m_1p.group(1).strip()
-            m_3p = re.search(r'"reflection_3p":\s*"([^"]+)"', output_text)
-            if m_3p:
-                refl_3p = m_3p.group(1).strip()
-            m_an = re.search(r'"analysis":\s*"([^"]+)"', output_text)
+            m_an = re.search(r'"analysis":\s*"([\s\S]*?)"(?=\s*,\s*"reflection_1p"|\s*,\s*"reflection_3p"|\s*\})', clean_text)
             if m_an:
                 analysis = m_an.group(1).strip()
+
+            m_1p = re.search(r'"reflection_1p":\s*"(.*?)(?:"\s*,\s*"reflection_3p"|"(?:\s*\}|$))', clean_text, re.DOTALL)
+            if not m_1p:
+                m_1p = re.search(r'"reflection_1p":\s*"(.*?)"', clean_text, re.DOTALL)
+            if m_1p:
+                refl_1p = m_1p.group(1).strip()
+
+            m_3p = re.search(r'"reflection_3p":\s*"(.*?)(?:"\s*\}|"$|$)', clean_text, re.DOTALL)
+            if m_3p:
+                refl_3p = m_3p.group(1).strip()
 
         # Clean non-Romanian drift (CJK)
         refl_1p = CJK_REGEX.sub('', refl_1p).strip()
@@ -296,9 +305,9 @@ class LocalLLMReflectionsGenerator:
         analysis = CJK_REGEX.sub('', analysis).strip()
 
         # Fallback if generation corrupted
-        if not refl_1p or len(refl_1p) < 25:
+        if not refl_1p or len(refl_1p) < 20:
             refl_1p = f"Consider fundamentală respectarea demnității și valorilor democratice [{clean_default}], promovând echitatea și gândirea rațională în societate."
-        if not refl_3p or len(refl_3p) < 25:
+        if not refl_3p or len(refl_3p) < 20:
             refl_3p = f"Respectarea valorilor democratice [{clean_default}] și a demnității umane constituie un fundament indispensabil pentru o societate echitabilă."
 
         # Extract [X.Y] citations from both reflections and analysis
@@ -587,11 +596,11 @@ def main():
     parser = argparse.ArgumentParser(description="Generate SPP Reflections locally using GPU with 0 limits")
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct",
                         help="HuggingFace model ID (default: Qwen/Qwen2.5-7B-Instruct)")
-    parser.add_argument("--target", type=int, default=60000, help="Target total reflections (default: 60,000)")
+    parser.add_argument("--target", type=int, default=6000, help="Target total reflections (default: 6,000)")
     parser.add_argument("--batch-size", type=int, default=8, help="Batch size for parallel GPU inference (default: 8)")
-    parser.add_argument("--interval", type=int, default=1000, help="Print full inspection card every N reflections (default: 1000)")
+    parser.add_argument("--interval", type=int, default=500, help="Print full inspection card every N reflections (default: 500)")
     parser.add_argument("--load-in-4bit", action="store_true", default=True, help="Enable 4-bit quantization (enabled by default)")
-    parser.add_argument("--max-new-tokens", type=int, default=280, help="Max tokens per generated reflection (default: 280)")
+    parser.add_argument("--max-new-tokens", type=int, default=360, help="Max tokens per generated reflection (default: 360)")
     args = parser.parse_args()
 
     generator = LocalLLMReflectionsGenerator(

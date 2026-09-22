@@ -3,11 +3,10 @@ cd /d "%~dp0"
 title SPP-Ro Local GPU Reflection Generator (Qwen 2.5 7B)
 
 echo ============================================================================
-echo   SPP-Ro: Generator Local de Reflexii Constitutionale (60.000 Reflexii)
+echo   SPP-Ro: Generator Local de Reflexii Constitutionale (6.000 Reflexii)
 echo   Model Teacher: Qwen/Qwen2.5-7B-Instruct (4-bit BitsAndBytes NF4)
-echo   Hardware: NVIDIA GeForce RTX 3060 12GB (Consum VRAM: ~5.5 GB)
-echo   Limite Token-uri: FARA LIMITA (100% Offline / Local pe GPU)
-echo   Inspectie Live: Afisare text complet + taguri ^<assistant^> din 1.000 in 1.000
+echo   Hardware: NVIDIA GeForce RTX 3060 12GB (Batch Size: 8)
+echo   Inspectie Live: Afisare text complet + taguri ^<assistant^> din 500 in 500
 echo   Salvare Securizata: Atomic swap + backup rotativ (.bak)
 echo ============================================================================
 echo.
@@ -18,7 +17,7 @@ pause >nul
 
 echo.
 echo [*] Pornire generare cu Qwen 2.5 7B Instruct pe GPU...
-py src\generate_local_llm_reflections.py --model Qwen/Qwen2.5-7B-Instruct --batch-size 8 --interval 1000
+py src\generate_local_llm_reflections.py --model Qwen/Qwen2.5-7B-Instruct --target 6000 --batch-size 8 --max-new-tokens 360 --interval 500
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo [EROARE] Generarea s-a oprit cu codul %ERRORLEVEL%.
@@ -28,6 +27,6 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo.
 echo ============================================================================
-echo   [SUCCES] Toate cele 60.000 de reflexii au fost generate cu succes!
+echo   [SUCCES] Toate cele 6.000 de reflexii au fost generate cu succes!
 echo ============================================================================
 pause

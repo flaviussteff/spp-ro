@@ -100,8 +100,8 @@ def main():
 
     print("\n" + "=" * 80)
     print("  PORNIRE AUTOMATA GENERATOR LOCAL REFLECTII: Qwen 2.5 7B Instruct")
-    print("  Configuratie: 4-bit NF4 Quantization | Batch Size: 8 | Inspectie Live: din 1.000 in 1.000")
-    print("  Tinta: 60.000 de reflectii constitutionale unice")
+    print("  Configuratie: 4-bit NF4 Quantization | Batch Size: 8 | Inspectie Live: din 500 in 500")
+    print("  Tinta: 6.000 de reflectii constitutionale unice (1.000 per articol)")
     print("=" * 80 + "\n", flush=True)
 
     # Launch local generator directly
@@ -110,8 +110,10 @@ def main():
         sys.executable,
         str(gen_script),
         "--model", "Qwen/Qwen2.5-7B-Instruct",
+        "--target", "6000",
         "--batch-size", "8",
-        "--interval", "1000",
+        "--max-new-tokens", "360",
+        "--interval", "500",
     ]
 
     ret = subprocess.call(cmd, cwd=str(ROOT_DIR))
