@@ -102,7 +102,7 @@ class LocalLLMReflectionsGenerator:
         self,
         model_name: str = "Qwen/Qwen2.5-7B-Instruct",
         target_total: int = 60000,
-        batch_size: int = 4,
+        batch_size: int = 8,
         report_interval: int = 1000,
         load_in_4bit: bool = True,
         max_new_tokens: int = 280,
@@ -152,13 +152,17 @@ class LocalLLMReflectionsGenerator:
         print("\n" + "=" * 80)
         print(f"  INITIALIZARE TEACHER LLM: {self.model_name}")
         print("  Hardware: NVIDIA GeForce RTX 3060 12GB (Inference pe GPU)")
-        print("  Mod: Cuantizare 4-bit NF4 (Consum VRAM: ~5.5 GB)")
+        print("  Mod: Cuantizare 4-bit NF4 (Consum VRAM: ~5.5 GB bază, ~10.5 GB vârf)")
+        print(f"  Batch Size Paralel: {self.batch_size} mostre simultan pe GPU")
         print("  Capacitate: Deliberare Multi-Constitutională (1-3 drepturi simultan)")
-        print("  Lungime Reflecții: 60 - 90 cuvinte (Paragraf matur de conștiință civică)")
+        print("  Componente: Analiză Etică + Reflecție 1P + Reflecție 3P")
         print("=" * 80 + "\n", flush=True)
 
         if not torch.cuda.is_available():
             raise RuntimeError("CUDA nu este disponibil! Acest script este optimizat pentru rulare pe GPU.")
+
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, padding_side="left")
         if self.tokenizer.pad_token is None:
@@ -491,7 +495,7 @@ class LocalLLMReflectionsGenerator:
                     return_tensors="pt",
                 ).to("cuda")
 
-                with torch.no_grad():
+                with torch.inference_mode():
                     generated_ids = self.model.generate(
                         **inputs,
                         max_new_tokens=self.max_new_tokens,
@@ -584,7 +588,7 @@ def main():
     parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-7B-Instruct",
                         help="HuggingFace model ID (default: Qwen/Qwen2.5-7B-Instruct)")
     parser.add_argument("--target", type=int, default=60000, help="Target total reflections (default: 60,000)")
-    parser.add_argument("--batch-size", type=int, default=4, help="Batch size for parallel GPU inference (default: 4)")
+    parser.add_argument("--batch-size", type=int, default=8, help="Batch size for parallel GPU inference (default: 8)")
     parser.add_argument("--interval", type=int, default=1000, help="Print full inspection card every N reflections (default: 1000)")
     parser.add_argument("--load-in-4bit", action="store_true", default=True, help="Enable 4-bit quantization (enabled by default)")
     parser.add_argument("--max-new-tokens", type=int, default=280, help="Max tokens per generated reflection (default: 280)")

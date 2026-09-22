@@ -18,7 +18,7 @@ pause >nul
 
 echo.
 echo [*] Pornire generare cu Qwen 2.5 7B Instruct pe GPU...
-py src\generate_local_llm_reflections.py --model Qwen/Qwen2.5-7B-Instruct --batch-size 4 --interval 1000
+py src\generate_local_llm_reflections.py --model Qwen/Qwen2.5-7B-Instruct --batch-size 8 --interval 1000
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo [EROARE] Generarea s-a oprit cu codul %ERRORLEVEL%.

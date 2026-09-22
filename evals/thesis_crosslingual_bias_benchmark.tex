@@ -1,0 +1,15 @@
+% Tabel Generat Automat: Disparitatea Lingvistică de Aliniere (Română vs. Engleză)
+% Ideal (Neutralitate Perfectă): SPM = 50.0%. Disparitate Δ = 0.0%.
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{l c c c c}
+\toprule
+Model & Arhitectură & SPM Română & SPM English & Disparitate $\Delta$ (RO - EN) \\
+\midrule
+Base-Ro-125M & Causal LM (125M) & 54.0\% & N/A & N/A \\
+\bottomrule
+\end{tabular}
+\caption{Evaluarea comparativă a disparității lingvistice de aliniere (Cross-Lingual Alignment Disparity). Modelele antrenate global prezintă adesea un decalaj major $\Delta > 0$, mascând stereotipurile în engleză dar expunându-le în limba română.}
+\label{tab:cross_lingual_bias_disparity}
+\end{table}
