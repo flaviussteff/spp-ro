@@ -33,8 +33,8 @@ try:
 
     print(f"\n📊 PROGRES TOTAL: {total_count:,} / {TARGET_TOTAL:,} reflecții ({pct:.1f}%)\n")
 
-    # 1. Distribution by Article
-    print("📋 Distribuție pe Drepturi Constituționale (Țintă: 10,000 / drept):")
+    # 1. Distribution by Article (Primary or Invoked)
+    print("📋 Distribuție pe Drepturi Constituționale (Țintă: 10,000 / drept primar):")
     articles = ["§1.1", "§1.2", "§1.3", "§2.1", "§2.2", "§2.3"]
     theme_names = {
         "§1.1": "Demnitate Umană & Nediscriminare",
@@ -44,7 +44,13 @@ try:
         "§2.2": "Raționalism & Progres Științific",
         "§2.3": "Bioetică Medicală & Stat de Drept",
     }
-    art_counts = df["article_invoked"].value_counts().to_dict() if "article_invoked" in df.columns else {}
+    
+    # Count occurrences: if primary_article exists use it, else first article in article_invoked
+    prim_col = "primary_article" if "primary_article" in df.columns else "article_invoked"
+    art_counts = {}
+    for val in df[prim_col].dropna():
+        first_art = str(val).split(",")[0].strip()
+        art_counts[first_art] = art_counts.get(first_art, 0) + 1
 
     for art in articles:
         c = art_counts.get(art, 0)
@@ -52,7 +58,21 @@ try:
         bar = "█" * int(art_pct // 5) + "░" * (20 - int(art_pct // 5))
         print(f"  {art} [{bar}] {c:,} / 10,000 ({art_pct:.1f}%) - {theme_names.get(art, '')}")
 
-    # 2. Distribution by Safety Score
+    # 2. Multi-Constitutional Interconnection Breakdown
+    if "article_invoked" in df.columns:
+        multi_counts = {1: 0, 2: 0, 3: 0}
+        for val in df["article_invoked"].dropna():
+            parts = [a.strip() for a in str(val).split(",") if a.strip()]
+            cnt = min(3, max(1, len(parts)))
+            multi_counts[cnt] += 1
+        
+        tot = max(1, total_count)
+        print("\n🔗 Deliberare Multi-Constituțională (Intersecționalitate):")
+        print(f"  1 Drept Focalizat         : {multi_counts[1]:,} ({multi_counts[1]/tot*100:.1f}%)")
+        print(f"  2 Drepturi Interconectate : {multi_counts[2]:,} ({multi_counts[2]/tot*100:.1f}%)")
+        print(f"  3 Drepturi Interconectate : {multi_counts[3]:,} ({multi_counts[3]/tot*100:.1f}%)")
+
+    # 3. Distribution by Safety Score
     if "safety_score" in df.columns:
         print("\n🛡️  Distribuție pe Safety Scores (1=Malign/Stereotip, 5=Complet Benign):")
         score_counts = df["safety_score"].value_counts().sort_index().to_dict()
@@ -68,12 +88,15 @@ try:
             sc_pct = (cnt / max(1, total_count)) * 100.0
             print(f"  {labels[s]}: {cnt:,} ({sc_pct:.1f}%)")
 
-    # 3. Latest Sample Preview
+    # 4. Latest Sample Preview
     print("\n🔍 Ultima Reflecție Generată:")
     latest = df.iloc[-1]
-    print(f"  Articol: {latest.get('article_invoked')} | Safety Score: {latest.get('safety_score')}/5")
+    arts_str = latest.get('article_invoked', '')
+    num_arts = len([a.strip() for a in str(arts_str).split(',') if a.strip()])
+    badge = f" [Multi-Constituțional: {num_arts} drepturi]" if num_arts > 1 else ""
+    print(f"  Articole     : {arts_str}{badge} | Safety Score: {latest.get('safety_score')}/5")
     refl = latest.get("reflection_text", "")
-    print(f"  Reflecție: \"{refl}\"")
+    print(f"  Reflecție    : \"{refl}\"")
 
 except Exception as e:
     print(f"[Eroare la citirea fișierului]: {e}")
