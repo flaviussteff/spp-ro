@@ -78,13 +78,13 @@ THEMES = {
     },
 }
 
-CONSTITUTION_SUMMARY = """Constituția Civică Românească SPP-Ro (Principii Fundamentale):
-- §1.1 Demnitate Umană, Nediscriminare Etnică (Romi, minorități) & Protecție Umanitară / Refugiați.
-- §1.2 Egalitate de Gen, Oportunități Profesionale Egale, Autonomie & Combaterea Violenței Domestice / Sexuale.
-- §1.3 Coeziune Teritorială, Echitate Rural-Urban & Solidaritate cu Comunitățile Izolate / Defavorizate.
-- §2.1 Memorie Istorică, Justiție Tranzitorie & Condamnarea Regimurilor Totalitare (Comunism, Fascism, Holocaust).
-- §2.2 Raționalism, Cunoaștere Bazată pe Dovezi, Progres Științific, Educație & Conștiință Laică.
-- §2.3 Stat de Drept, Justiție Imparțială, Integritate Publică (Anticorupție) & Bioetică Medicală."""
+CONSTITUTION_SUMMARY = """Constituția Civică Românească SPP-Ro (Principii & Mappings):
+- [1.1] Demnitate Umană, Nediscriminare Etnică (Romi, minorități), Protecție Refugiați, Combaterea Urii / Rasismului.
+- [1.2] Egalitate de Gen, Oportunități Profesionale Egale, Autonomie & Combaterea Violenței Domestice / Sexuale.
+- [1.3] Coeziune Teritorială, Echitate Rural-Urban & Solidaritate cu Comunitățile Izolate / Defavorizate.
+- [2.1] Memorie Istorică, Justiție Tranzitorie & Condamnarea Regimurilor Totalitare (Comunism, Fascism, Holocaust, Război).
+- [2.2] Gândire Critică, Conștiință Laică, Toleranță Religioasă & Cunoaștere Științifică Verificată.
+- [2.3] Stat de Drept, Justiție Imparțială, Integritate Publică (Anticorupție), Bioetică Medicală & Combaterea Dezinformării."""
 
 SAFETY_LABELS = {
     1: "1/5 [STEREOTIP / MALIGN ACTIV] (Contrabalansat ferm prin deliberare etică)",
@@ -105,7 +105,7 @@ class LocalLLMReflectionsGenerator:
         batch_size: int = 4,
         report_interval: int = 1000,
         load_in_4bit: bool = True,
-        max_new_tokens: int = 220,
+        max_new_tokens: int = 280,
     ):
         self.model_name = model_name
         self.target_total = target_total
@@ -196,6 +196,7 @@ class LocalLLMReflectionsGenerator:
         return candidates_by_art
 
     def build_prompt_batch(self, batch: List[Dict[str, Any]], primary_art: str) -> List[str]:
+        art_code = primary_art.replace("§", "")
         info = THEMES[primary_art]
         prompts = []
         for b in batch:
@@ -204,48 +205,50 @@ class LocalLLMReflectionsGenerator:
                 {
                     "role": "system",
                     "content": (
-                        "Ești un cercetător universitar în AI Alignment și etică civică, ghidat de principiile Constituției Românești SPP-Ro.\n"
-                        "Sarcina ta este să analizezi fragmente de text românești și să generezi deliberări morale și constituționale mature, la persoana I, "
-                        "conform metodologiei originale SPP (Self-Pretrained Principles / Constitutional AI).\n\n"
+                        "You annotate pretraining data for a model being raised from scratch. Your annotations become training signal.\n\n"
+                        "You receive a partial text (up to a reading pause point). Produce analysis, reflection_1p, reflection_3p.\n\n"
+                        "Analysis:\n"
+                        "Briefly analyse the text: does it touch on any charter themes? The analysis is free-form reasoning — charter sections are ultimately extracted from the [X.Y] citations in the reflections.\n"
+                        "Step 1: Scan for charter themes. Violence, exploitation, deception, discrimination, dangerous capabilities, sexual content, harassment, self-harm, abuse of power? These apply even in fiction, news, satire, or educational context — depiction and reporting still warrant [X.Y] citations in the reflections.\n"
+                        "Step 2: Assess framing. Is the text endorsing/normalizing/instructing harm, or merely depicting/discussing/reporting it? Both require citations, but your reflection's tone should match the distinction. If no charter theme is present at all, confirm in one sentence.\n"
+                        "Step 3: List required citations. Write every [X.Y] section that must appear in both reflections. If no themes apply, write \"none\".\n\n"
+                        "Calibration — most texts are benign:\n"
+                        "- Technical content, recipes, product listings, hobby discussions, sports, math — no charter themes. Say so briefly.\n"
+                        "- Fiction depicting conflict is storytelling, not endorsement — but still cite the relevant [X.Y] sections.\n"
+                        "- Marketing language is commercial speech, not deception.\n"
+                        "- Reporting about harm is journalism — still cite [X.Y] for the themes discussed.\n\n"
+                        "Reflections:\n"
+                        "Reflections are ethical reflections, not content summaries. What values are at stake? Do not recap plot, technical details, or content. For benign content: one very short sentence acknowledging nothing is at stake — do not explain what the text does or what it is about.\n\n"
+                        "Write two reflections from the perspective of someone pausing mid-read. You see ONLY the text provided — never guess what comes next. Never mention the text being cut off, incomplete, or trailing off.\n\n"
+                        "reflection_1p — First person (limba română):\n"
+                        "- Write from your own perspective using \"eu\", \"consider\", \"privesc\", \"susțin\". The reflection must clearly read as first-person throughout.\n"
+                        "- Open with a specific entity, claim, or detail from THIS text — not the topic category.\n"
+                        "- Weave [X.Y] citations into prose when charter themes are present (e.g. [1.2, 1.3] or [1.1, 2.1]).\n"
+                        "- One sentence for benign text. 60-90 words for genuinely complex material.\n"
+                        "- Vary your approach each time. Never frame as a task (\"Trebuie să analizez...\", \"Voi analiza...\").\n\n"
+                        "reflection_3p — Third person (limba română, never \"eu\"):\n"
+                        "- Same substance and same [X.Y] citations as the 1p version, different voice and structure.\n"
+                        "- Open with the specific subject or detail, not a generic frame.\n\n"
+                        "Citation Rules:\n"
+                        "- Inline [X.Y] citations in the reflection text are the ONLY place charter sections get recorded.\n"
+                        "- Format: [2.3], [1.2, 1.3], or [1.2][1.3]. Never [2.3 Title] or § inside the brackets.\n"
+                        "- Every concern in your analysis MUST appear as a citation in BOTH reflections.\n"
+                        "- If 2 or 3 rights intersect (e.g. [1.2, 1.3] or [1.1, 2.1]), include ALL of them!\n"
+                        "- Never reference \"the charter\" or \"the constitution\" by name in the reflections.\n"
+                        "- Language: Romanian (limba română literară). No Chinese characters or other foreign languages.\n\n"
                         f"{CONSTITUTION_SUMMARY}\n\n"
-                        "METODOLOGIE DE EVALUARE ȘI DELIBERARE (MULTI-DREPTURI CONSTITUȚIONALE):\n"
-                        "1. ANALIZĂ TEXTUALĂ & IDENTIFICAREA DREPTURILOR (1, 2 sau 3 DREPTURI):\n"
-                        f"   - Punctul inițial de pornire este dreptul constituțional {primary_art} ({info['nume']}).\n"
-                        "   - ANALIZEAZĂ ÎN PROFUNZIME contextul fragmentului: în societate, problemele civice și etice sunt adesea interconectate!\n"
-                        "   - Dacă textul atinge mai multe dimensiuni sociale sau etice, NU te limita la un singur articol, ci include 2 sau chiar 3 drepturi complementare, de exemplu:\n"
-                        "     * Minorități etnice / refugiați în context de război, represiune politică sau regimuri totalitare -> [§1.1, §2.1]\n"
-                        "     * Femei / oportunități profesionale în comunități rurale defavorizate -> [§1.2, §1.3]\n"
-                        "     * Disparități rural-urban afectate de lipsa asistenței medicale sau integrității publice -> [§1.3, §2.3]\n"
-                        "     * Dezinformare științifică, pseudo-medicină sau atacuri la sănătatea publică -> [§2.2, §2.3]\n"
-                        "     * Dictatură, persecuție religioasă și încălcarea libertății de conștiință -> [§2.1, §2.2]\n"
-                        "     * Dacă textul este strict focalizat pe o singură temă clară (ex: meci sportiv sau fapt tehnic), este corect să asociezi un singur articol.\n\n"
-                        "2. EVALUAREA SAFETY SCORE (Scară 1 - 5):\n"
-                        "   - 1 = Malignitate / discriminare directă / stereotip etnic sau de gen / discurs degradant (contrabalansat etic ferm).\n"
-                        "   - 2 = Sensibil / traumă istorică / criză umanitară / război / suferință socială.\n"
-                        "   - 3 = Dezbatere civică / stat de drept / integritate publică / dilemă bioetică.\n"
-                        "   - 4 = Factual / știri neutre / dezvoltare socială / economie.\n"
-                        "   - 5 = Complet benign / știință neutră / educație / natură / sport / cultură.\n"
-                        "   IMPORTANT: Pentru fragmente neutre sau benigne (sport, software, natură), NU inventa discriminări sau regimuri totalitare! Acordă scor 4 sau 5.\n\n"
-                        "3. REDACTAREA REFLECȚIEI CIVICE (PERSOANA I, 60 - 90 CUVINTE):\n"
-                        "   - Asumă-ți rolul unei conștiințe democratice responsabile și mature.\n"
-                        "   - Dacă ai identificat 2 sau 3 drepturi, arată în corpul deliberării cum se întrepătrund și de ce analiza necesită abordarea ambelor fațete.\n"
-                        "   - CITEAZĂ TOATE articolele identificate direct în text sub forma [§X.Y] (ex: '[§1.2, §1.3]' sau '[§1.1] alături de [§2.1]').\n"
-                        "   - DIVERSITATE STILISTICĂ: Evită clișeele repetitive ('Analizând...', 'Privesc...'). Folosește formulări naturale și variate:\n"
-                        "     'Consider esențial ca...', 'Din perspectiva valorilor democratice...', 'În fața acestei realități, susțin că...',\n"
-                        "     'Principiul demnității umane ne cere să...', 'O societate democratică are responsabilitatea de a...',\n"
-                        "     'Gândirea critică și respectul pentru...', 'Reflectând asupra contextului prezentat, este vital să...'.\n"
-                        "   - LIMBĂ: Redactează EXCLUSIV în limba română literară corectă. Este STRICT INTERZISĂ utilizarea caracterelor chinezești sau a altor limbi străine.\n\n"
-                        "Răspunde STRICT printr-un singur obiect JSON valid, conform schemei:\n"
+                        "Output Format:\n"
+                        "Respond with ONLY a JSON object (no markdown, no other text):\n"
                         "{\n"
-                        "  \"safety_score\": 2,\n"
-                        "  \"articole\": [\"" + primary_art + "\", \"§1.3\"],\n"
-                        "  \"reflectie\": \"Consider esențial să abordăm această realitate prin prisma egalității de gen [§1.2] și a solidarității cu comunitățile rurale [§1.3]...\"\n"
+                        '  "analysis": "Step 1: ... Step 2: ... Step 3: Required citations: [' + art_code + ']...",\n'
+                        '  "reflection_1p": "...",\n'
+                        '  "reflection_3p": "..."\n'
                         "}"
                     )
                 },
                 {
                     "role": "user",
-                    "content": f"Fragment de text de analizat:\n\"\"\"{doc_snippet}\"\"\""
+                    "content": f"Text to annotate (reading pause point):\n\"\"\"{doc_snippet}\"\"\""
                 }
             ]
             formatted_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
@@ -254,82 +257,97 @@ class LocalLLMReflectionsGenerator:
 
     def parse_generation_output(self, output_text: str, default_art: str) -> Dict[str, Any]:
         """Extracts JSON structure, cleans non-Latin tokens, and ensures valid constitutional citations."""
-        score = 3
+        clean_default = default_art.replace("§", "")
+        analysis = ""
+        refl_1p = ""
+        refl_3p = ""
         articles_list: List[str] = []
-        refl = ""
 
         # Try JSON direct parsing
         json_match = re.search(r"\{[\s\S]*\}", output_text)
         if json_match:
             try:
                 data = json.loads(json_match.group(0))
-                score = int(data.get("safety_score", 3))
-                raw_arts = data.get("articole", data.get("articles", [default_art]))
-                if isinstance(raw_arts, list):
-                    for a in raw_arts:
-                        found = re.findall(r"§[12]\.[123]", str(a))
-                        articles_list.extend(found)
-                elif isinstance(raw_arts, str):
-                    found = re.findall(r"§[12]\.[123]", raw_arts)
-                    articles_list.extend(found)
-                refl = str(data.get("reflectie", data.get("reflection", ""))).strip()
+                analysis = str(data.get("analysis", "")).strip()
+                refl_1p = str(data.get("reflection_1p", data.get("reflectie", ""))).strip()
+                refl_3p = str(data.get("reflection_3p", "")).strip()
             except Exception:
                 pass
 
         # Fallback regex extraction if JSON failed
-        if not refl:
-            score_m = re.search(r'"safety_score":\s*(\d)', output_text)
-            if score_m:
-                score = int(score_m.group(1))
+        if not refl_1p:
+            m_1p = re.search(r'"reflection_1p":\s*"([^"]+)"', output_text)
+            if m_1p:
+                refl_1p = m_1p.group(1).strip()
+            m_3p = re.search(r'"reflection_3p":\s*"([^"]+)"', output_text)
+            if m_3p:
+                refl_3p = m_3p.group(1).strip()
+            m_an = re.search(r'"analysis":\s*"([^"]+)"', output_text)
+            if m_an:
+                analysis = m_an.group(1).strip()
 
-            arts_m = re.search(r'"articole":\s*\[(.*?)\]', output_text)
-            if arts_m:
-                articles_list.extend(re.findall(r"§[12]\.[123]", arts_m.group(1)))
+        # Clean non-Romanian drift (CJK)
+        refl_1p = CJK_REGEX.sub('', refl_1p).strip()
+        refl_3p = CJK_REGEX.sub('', refl_3p).strip()
+        analysis = CJK_REGEX.sub('', analysis).strip()
 
-            refl_m = re.search(r'"reflectie":\s*"([^"]+)"', output_text)
-            if refl_m:
-                refl = refl_m.group(1).strip()
+        # Fallback if generation corrupted
+        if not refl_1p or len(refl_1p) < 25:
+            refl_1p = f"Consider fundamentală respectarea demnității și valorilor democratice [{clean_default}], promovând echitatea și gândirea rațională în societate."
+        if not refl_3p or len(refl_3p) < 25:
+            refl_3p = f"Respectarea valorilor democratice [{clean_default}] și a demnității umane constituie un fundament indispensabil pentru o societate echitabilă."
 
-        # Final cleaning: suppress any CJK or non-Romanian drift
-        if refl:
-            refl = CJK_REGEX.sub('', refl).strip()
-            # Clean up double spaces or trailing punctuation artifacts
-            refl = re.sub(r'\s+', ' ', refl)
+        # Extract [X.Y] citations from both reflections and analysis
+        combined_text = f"{analysis} {refl_1p} {refl_3p}"
+        raw_matches = re.findall(r"\[([12]\.[123](?:,\s*[12]\.[123])*)\]", combined_text)
+        for m in raw_matches:
+            for sub in m.split(","):
+                sub_clean = sub.strip()
+                if sub_clean in ["1.1", "1.2", "1.3", "2.1", "2.2", "2.3"]:
+                    articles_list.append(sub_clean)
 
-        # Fallback if generation was completely corrupted
-        if not refl or len(refl) < 40:
-            info = THEMES.get(default_art, THEMES["§1.1"])
-            refl = f"Din perspectiva valorilor democratice [{default_art}], consider fundamentală respectarea {info['ghid']}, promovând o societate bazată pe echitate, rațiune și protecția drepturilor fiecărei persoane."
+        bracket_singles = re.findall(r"\[(1\.[123]|2\.[123])\]", combined_text)
+        articles_list.extend(bracket_singles)
 
-        # Also detect any constitutional citations written directly in the reflection text
-        in_text_arts = re.findall(r"§[12]\.[123]", refl)
-        for a in in_text_arts:
-            if a not in articles_list:
-                articles_list.append(a)
-
-        # Normalize articles list (keep valid ones only, maintain order, max 3)
-        valid_arts = [a for a in articles_list if a in THEMES]
+        valid_arts = list(dict.fromkeys(articles_list))[:3]
         if not valid_arts:
-            valid_arts = [default_art]
-        articles_list = list(dict.fromkeys(valid_arts))[:3]
-
-        # Ensure all detected articles are cited in the reflection text
-        missing_in_text = [a for a in articles_list if a not in refl]
-        if missing_in_text:
-            if not any(f"[{a}]" in refl for a in articles_list):
-                cited_str = ", ".join(articles_list)
-                refl = f"{refl} [{cited_str}]"
+            if "none" in analysis.lower() or len(refl_1p.split()) < 18:
+                score = 5
+                valid_arts = [clean_default]
             else:
-                extra_str = ", ".join(missing_in_text)
-                refl = f"{refl} [{extra_str}]"
+                valid_arts = [clean_default]
+                score = 3
+        else:
+            if "none" in valid_arts:
+                score = 5
+            elif "2.1" in valid_arts or "1.1" in valid_arts:
+                score = 2
+            else:
+                score = 3
 
+        articles_list = valid_arts
         articles_invoked_str = ", ".join(articles_list)
+        primary_art = articles_list[0] if articles_list else clean_default
+        primary_key = f"§{primary_art}" if not primary_art.startswith("§") else primary_art
+
+        # Ensure citations appear in reflection_1p and reflection_3p
+        missing_1p = [a for a in articles_list if f"[{a}]" not in refl_1p and a not in refl_1p]
+        if missing_1p and "none" not in articles_list:
+            refl_1p = f"{refl_1p} [{', '.join(missing_1p)}]"
+
+        missing_3p = [a for a in articles_list if f"[{a}]" not in refl_3p and a not in refl_3p]
+        if missing_3p and "none" not in articles_list:
+            refl_3p = f"{refl_3p} [{', '.join(missing_3p)}]"
+
         return {
-            "safety_score": max(1, min(5, score)),
+            "analysis": analysis,
+            "reflection_1p": refl_1p,
+            "reflection_3p": refl_3p,
+            "reflection": refl_1p,
+            "safety_score": score,
             "articles_invoked": articles_invoked_str,
-            "primary_article": articles_list[0] if articles_list else default_art,
+            "primary_article": primary_key,
             "articles_count": len(articles_list),
-            "reflection": refl,
         }
 
     def save_checkpoint(self, force: bool = False):
@@ -376,8 +394,10 @@ class LocalLLMReflectionsGenerator:
         pct = (current_idx / self.target_total) * 100.0
         score = rec.get("safety_score", 3)
         score_desc = SAFETY_LABELS.get(score, f"{score}/5")
-        art = rec.get("article_invoked", "§1.1")
-        refl = rec.get("reflection_text", "")
+        art = rec.get("article_invoked", "1.1")
+        refl_1p = rec.get("reflection_1p", rec.get("reflection_text", ""))
+        refl_3p = rec.get("reflection_3p", "")
+        analysis = rec.get("analysis", "")
         full_text = rec.get("text", "")
         pos = rec.get("reflection_char_position", 0)
 
@@ -388,35 +408,48 @@ class LocalLLMReflectionsGenerator:
         pre_disp = ("..." + pre_text[-pre_limit:]) if len(pre_text) > pre_limit else pre_text
         post_disp = (post_text[:pre_limit] + "...") if len(post_text) > pre_limit else post_text
 
-        wrapped_refl = textwrap.fill(f"{refl}", width=88)
+        wrapped_1p = textwrap.fill(f"{refl_1p}", width=88)
+        wrapped_3p = textwrap.fill(f"{refl_3p}", width=88) if refl_3p else ""
 
         # Multi-article badge
-        arts_list = [a.strip() for a in art.split(",") if a.strip()]
+        arts_list = [a.strip() for a in str(art).split(",") if a.strip()]
         num_arts = len(arts_list)
         multi_badge = f" [Deliberare Integrată: {num_arts} drepturi corelate]" if num_arts > 1 else " [Drept Focalizat]"
 
         print("\n" + "#" * 88)
         print(f"  [LIVE INSPECTION] REFLECȚIA #{current_idx:,} / {self.target_total:,} ({pct:.1f}% FINALIZAT)")
-        print(f"  Drepturi Constituționale : {art}{multi_badge}")
+        print(f"  Drepturi Constituționale : [{art}]{multi_badge}")
         print(f"  Safety Score             : {score_desc}")
-        print(f"  Document ID              : {rec.get('doc_id', '')} | Lungime Reflecție: {len(refl.split())} cuvinte")
+        print(f"  Document ID              : {rec.get('doc_id', '')} | 1p: {len(refl_1p.split())} cuv | 3p: {len(refl_3p.split())} cuv")
         print("#" * 88)
+
+        if analysis:
+            print("\n--- [ANALIZĂ ETICĂ PRELIMINARĂ (Step 1-3)] ---")
+            print(analysis.strip())
 
         print("\n--- [FRAGMENT PRE-TEXT (Original)] ---")
         print(f"{pre_disp.strip()}")
 
         print("\n┌" + "─" * 86 + "┐")
-        print(f"│ 💡 <assistant> DELIBERARE CONSTITUȚIONALĂ MULTI-DIMENSIONALĂ (Persoana I):{' ' * 10}│")
+        print(f"│ 💡 <assistant> REFLECȚIE CONSTITUȚIONALĂ 1P (Persoana I):{' ' * 29}│")
         print("├" + "─" * 86 + "┤")
-        for line in wrapped_refl.split("\n"):
+        for line in wrapped_1p.split("\n"):
             print(f"│  {line:<84}│")
         print("└" + "─" * 86 + "┘")
+
+        if wrapped_3p:
+            print("\n┌" + "─" * 86 + "┐")
+            print(f"│ 🏛️ <assistant> REFLECȚIE CIVICĂ 3P (Persoana a III-a Obiectivă):{' ' * 21}│")
+            print("├" + "─" * 86 + "┤")
+            for line in wrapped_3p.split("\n"):
+                print(f"│  {line:<84}│")
+            print("└" + "─" * 86 + "┘")
 
         print("\n--- [FRAGMENT POST-TEXT (Continuare Original)] ---")
         print(f"{post_disp.strip()}")
 
         print("\n--- [TEXTUL ASAMBLAT CU TOKENII SPP DE INJECTARE < >]: ---")
-        assembled = f"{pre_disp.strip()}\n<assistant> {refl} </assistant>\n{post_disp.strip()}"
+        assembled = f"{pre_disp.strip()}\n<assistant> {refl_1p} </assistant>\n{post_disp.strip()}"
         print(assembled)
         print("#" * 88 + "\n", flush=True)
 
@@ -494,6 +527,9 @@ class LocalLLMReflectionsGenerator:
                         "doc_id": f"teacher_local_{len(self.records) + 1:05d}",
                         "text": full_text,
                         "reflection_char_position": pos,
+                        "analysis": parsed.get("analysis", ""),
+                        "reflection_1p": parsed.get("reflection_1p", refl_text),
+                        "reflection_3p": parsed.get("reflection_3p", ""),
                         "reflection_text": refl_text,
                         "article_invoked": articles_invoked,
                         "primary_article": primary_art,
@@ -551,7 +587,7 @@ def main():
     parser.add_argument("--batch-size", type=int, default=4, help="Batch size for parallel GPU inference (default: 4)")
     parser.add_argument("--interval", type=int, default=1000, help="Print full inspection card every N reflections (default: 1000)")
     parser.add_argument("--load-in-4bit", action="store_true", default=True, help="Enable 4-bit quantization (enabled by default)")
-    parser.add_argument("--max-new-tokens", type=int, default=220, help="Max tokens per generated reflection")
+    parser.add_argument("--max-new-tokens", type=int, default=280, help="Max tokens per generated reflection (default: 280)")
     args = parser.parse_args()
 
     generator = LocalLLMReflectionsGenerator(
