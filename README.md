@@ -63,7 +63,7 @@ Contemporary Large Language Model (LLM) alignment relies almost exclusively on p
 3. **RoPE Position Aliasing:** Resets positional embeddings for document continuation tokens relative to the prefix, ensuring zero temporal distortion.
 4. **60,000 Constitutional Reflections Dataset:** Synthesizes a balanced corpus of 60,000 verified reflections split **50% Sensitive** (Scores 1–3) and **50% Factual** (Scores 4–5) across all 6 constitutional axes of the [Romanian Civic Constitution](constitution_spp_ro.md).
 5. **Compute-Matched Experimental Triad:** Trains both `Base-Ro-125M` and `SPP-Ro-125M` for **50,000 steps** (~3.27 Billion tokens) on a single consumer **NVIDIA GeForce RTX 3060 12GB**, providing a clean, rigorous baseline comparison.
-6. **Empirical Verification of Zero Alignment Tax:** Validates that SPP incurs $|\Delta\text{PPL}| \le 0.05$ on clean Romanian Wikipedia and News benchmarks.
+6. **Empirical Verification of Zero Alignment Tax:** Validates that SPP incurs $\lvert\Delta\text{PPL}\rvert \le 0.05$ on clean Romanian Wikipedia and News benchmarks.
 
 ---
 
@@ -71,20 +71,31 @@ Contemporary Large Language Model (LLM) alignment relies almost exclusively on p
 
 SPP reproduces the mathematical invariants specified by West et al. (EPFL-dlab, arXiv:2608.13482):
 
-### 2.1 The 10% Constitutional Interleaving Stream ($\alpha = 0.10$)
+### 2.1 The 10% Constitutional Interleaving Stream (α = 0.10)
 Injecting reflections into 100% of tokens triggers perplexity degradation and unnatural phrasing. Following empirical optima from the literature:
 * **90% Unannotated Sequences:** Natural Romanian web text, news, and Wikipedia to maintain language fluency.
 * **10% SPP Constitutional Sequences:** Tripartite sequences consisting of `[Prefix] + [<assistant>] + [Reflection] + [Postfix]`.
 
 ### 2.2 Invariant 1: Causal Attention Blocking (Block Invariant)
 In standard causal attention, every token attends to all prior tokens. In SPP, subsequent document tokens ($c_{\text{post}}$) **cannot attend to reflection tokens** ($r$):
-$$\mathbf{M}_{i,j} = \begin{cases} 1, & \text{if } j \le i \text{ and } (i, j) \notin (\text{Doc}_{\text{post}}, \text{Reflection}) \\ 0, & \text{if } i \ge t_{\text{post}} \text{ and } t_{\text{refl}} \le j < t_{\text{post}} \quad (\text{\textbf{Attention Blocked}}) \\ 0, & \text{otherwise} \end{cases}$$
+
+$$
+\mathbf{M}_{i,j} = \begin{cases} 
+1, & \text{if } j \le i \text{ and } (i, j) \notin (\text{Doc}_{\text{post}}, \text{Reflection}) \\ 
+0, & \text{if } i \ge t_{\text{post}} \text{ and } t_{\text{refl}} \le j < t_{\text{post}} \quad \text{(Attention Blocked)} \\ 
+0, & \text{otherwise} 
+\end{cases}
+$$
 
 This guarantees that the student model learns the natural conditional distribution of human language without developing inference dependencies on synthetic thoughts.
 
 ### 2.3 Invariant 2: RoPE Positional Aliasing (Aliasing Invariant)
 To maintain spatial-temporal distance in real text, position IDs of postfix tokens alias back to the prefix length:
-$$\text{Pos}(c_{\text{post}}^{(k)}) = \text{len}(c_{\text{pre}}) + k$$
+
+$$
+\text{Pos}(c_{\text{post}}^{(k)}) = \text{len}(c_{\text{pre}}) + k
+$$
+
 The document continuation continues as if the reflection had zero length.
 
 ### 2.4 Invariant 3: Persona Binding
@@ -150,7 +161,7 @@ Total Reflections: 60,000 (100% Validated • Zero Duplicates • Zero Meta-Lang
 | :--- | :--- | :---: | :---: | :--- |
 | **`SPP-Ro-125M`** | Token Zero SPP (60k Reflections) | 124.8M | ~3.27 Billion (50k steps) | [`flaviussteff/spp-ro-125m`](https://huggingface.co/flaviussteff/spp-ro-125m) |
 | **`Base-Ro-125M`** | Raw Unaligned Pretraining (Control) | 124.8M | ~3.27 Billion (50k steps) | [`flaviussteff/base-ro-125m`](https://huggingface.co/flaviussteff/base-ro-125m) |
-| **`Base-Ro-LoRA`** | Post-Hoc Aligned Control ($r=16$) | 124.8M + LoRA | 10k Reflections | [`flaviussteff/base-ro-125m-lora`](https://huggingface.co/flaviussteff/base-ro-125m-lora) |
+| **`Base-Ro-LoRA`** | Post-Hoc Aligned Control (r = 16) | 124.8M + LoRA | 10k Reflections | [`flaviussteff/base-ro-125m-lora`](https://huggingface.co/flaviussteff/base-ro-125m-lora) |
 
 ---
 
@@ -199,8 +210,8 @@ py src/eval_jailbreaks.py
 
 ## 7. Empirical Benchmark Suite & Findings
 
-### Table 1: Romanian 3-Way Alignment Triad (Stereotype Preference Metric $SPM$ %)
-*Ideal Parity: $\text{SPM} = 50.0\%$.*
+### Table 1: Romanian 3-Way Alignment Triad (Stereotype Preference Metric SPM)
+**Ideal Parity:** $\text{SPM} = 50.0\%$ (neutral baseline)
 
 | Socio-Cultural Axis (Romania) | Base-Ro-125M (Raw Baseline) | Base-Ro + LoRA (Post-Hoc LoRA) | SPP-Ro-125M (Token Zero SPP) |
 | :--- | :---: | :---: | :---: |
@@ -211,24 +222,24 @@ py src/eval_jailbreaks.py
 | **Civic & Democratic Values** | 0.0% | 20.0% | **0.0%** |
 | **Overall SPM Score (Romanian)** | **56.8%** | **48.6%** | **51.4%** (Closest to Neutral) |
 
-*Finding:* `SPP-Ro-125M` achieves the closest overall score to ideal neutrality ($51.4\%$), completely eliminating bias on the Romani minority axis ($50.0\%$).
+*Finding:* `SPP-Ro-125M` achieves the closest overall score to ideal neutrality (51.4%), completely eliminating bias on the Romani minority axis (50.0%).
 
 ---
 
 ### Table 2: Adversarial Prefix Unmasking (Jailbreak Collapse Probing)
 
-| Model | Alignment Paradigm | Neutral Bias ($x_{\text{neutral}}$) | Adversarial Bias ($x_{\text{adv}}$) | Log-Likelihood Jump ($\Delta LL_{\text{adv}}$) |
+| Model | Alignment Paradigm | Neutral Bias ($x_{\text{neutral}}$) | Adversarial Bias ($x_{\text{adv}}$) | Log-Likelihood Jump ($\Delta\text{LL}_{\text{adv}}$) |
 | :--- | :--- | :---: | :---: | :---: |
 | **Base-Ro-125M** | Raw Control | 60.0% | 80.0% | +0.219 |
 | **Base-Ro-LoRA** | Post-Hoc LoRA | 20.0% | **20.0%** | **+0.473** (Severe Spike) |
 | **SPP-Ro-125M** | Token Zero SPP | 40.0% | **66.7%** | **+0.207** (Lowest Shift) |
 
-*Finding:* Post-hoc LoRA exhibits a sharp log-likelihood surge ($\Delta LL_{\text{adv}} = +0.473$), proving that the adapter fractures under adversarial pressure. `SPP-Ro` exhibits intrinsic stability ($\Delta LL_{\text{adv}} = +0.207$).
+*Finding:* Post-hoc LoRA exhibits a sharp log-likelihood surge ($\Delta\text{LL}_{\text{adv}} = +0.473$), proving that the adapter fractures under adversarial pressure. `SPP-Ro` exhibits intrinsic stability ($\Delta\text{LL}_{\text{adv}} = +0.207$).
 
 ---
 
 ### Table 3: Alignment Tax Verification (Perplexity on Held-Out Clean Texts)
-*Success Threshold: $|\Delta\text{PPL}| \le 0.5$.*
+**Success Threshold:** $\lvert\Delta\text{PPL}\rvert \le 0.5$
 
 | Model | Alignment Paradigm | Wikipedia PPL | News PPL | General PPL | Alignment Tax ($\Delta\text{PPL}$) |
 | :--- | :--- | :---: | :---: | :---: | :---: |
