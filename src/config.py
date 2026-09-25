@@ -14,7 +14,9 @@ DATA_DIR = WORKSPACE_DIR / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
 CLEAN_DATA_DIR = DATA_DIR / "clean"
 SIDECAR_DIR = DATA_DIR / "sidecar"
-CONSTITUTION_PATH = WORKSPACE_DIR / "constitutia_spp_ro.md"
+CONSTITUTION_PATH = WORKSPACE_DIR / "constitution_spp_ro.md"
+if not CONSTITUTION_PATH.exists():
+    CONSTITUTION_PATH = WORKSPACE_DIR / "constitutia_spp_ro.md"
 
 # Granular Corpus Files
 RAW_NEWS_FILE = RAW_DATA_DIR / "news_recent.jsonl"

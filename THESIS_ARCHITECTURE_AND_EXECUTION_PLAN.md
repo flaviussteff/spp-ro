@@ -213,32 +213,53 @@ $$\text{Tokens}_{\text{optimal}} = 20 \times 125 \times 10^6 = 2.50 \times 10^9 
 
 To implement the **Model Raising / SPP** methodology for Romanian from Token Zero:
 
-### A. The Romanian Normative Constitution
-We define a formal set of civic, democratic, and moral principles tailored to the Romanian sociocultural landscape:
-1. **Principiul Demnității Egale (Principle of Equal Dignity):** Explicit repudiation of derogatory slurs and stereotypes concerning the Roma minority, ethnic Hungarians, and regional groups.
-2. **Echilibrul de Gen (Gender Neutrality & Parity):** Professional competence is independent of gender; resistance to traditional misogynistic tropes.
-3. **Imparțialitate și Adevăr Faptic (Factual Rigor):** Nuanced separation of historical facts from nationalist myth-making.
+### A. The Romanian Normative Constitution (`constitution_spp_ro.md`)
+We define a formal set of civic, democratic, and moral principles tailored to the Romanian sociocultural landscape, codified in [constitution_spp_ro.md](file:///c:/Users/Flavius%20Stefan/Desktop/licenta/constitution_spp_ro.md):
+1. **Domain 1 — Human Dignity, Fundamental Rights & Non-Discrimination (§1.1–§1.10):**
+   - *§1.1 Demnitate Umană și Egalitate Fundamentală*
+   - *§1.2 Egalitate de Gen și Deconstrucția Rolurilor Tradiționale*
+   - *§1.3 Incluziunea Comunității Rome și Combaterea Antiziganismului*
+   - *§1.4 Pluralism Etnic și Minorități Naționale*
+   - *§1.5 Libertate Religioasă și Pluralism Spiritual*
+   - *§1.6 Orientare Sexuală și Drepturi LGBT+*
+   - *§1.7 Echitate Social-Economică și Vulnerabilitate Regională*
+   - *§1.8 Persoane cu Dizabilități și Neurodiversitate*
+   - *§1.9 Sănătate Mintală și Bunăstare Psihosocială*
+   - *§1.10 Protecția Minorilor și Justiție Intergenerațională*
+2. **Domain 2 — Epistemic & Democratic Integrity (§2.1–§2.3):**
+   - *§2.1 Adevăr Faptic, Rigoare Epistemică și Transmitere Istorică*
+   - *§2.2 Gândire Critică, Combaterea Conspirațiilor și a Pseudostiinței*
+   - *§2.3 Cultură Democratică, Stat de Drept și Integritate Civică*
 
-### B. Reflection Annotation Pipeline
-- We sample **10% of documents** from the pretraining corpus.
-- Using an accessible high-capability instruction model (e.g., Llama-3-70B-Instruct or open API), we generate a structured, first-person moral reflection for each sampled document.
-- The document is packaged as follows:
+### B. Reflection Dataset Construction & Verification (60,000 Instances)
+The synthetic reflection stream is stored in `data/sidecar/reflections.parquet` and comprises exactly **60,000 verified reflections**:
+- **30,000 Sensitive Domain Reflections:** Balanced evenly across §1.1–§1.10 (3,000 reflections per article), addressing high-risk sociocultural tensions.
+- **30,000 Factual Domain Reflections:** Balanced evenly across §2.1–§2.3 (10,000 reflections per article), grounding epistemological rigor and scientific literacy.
+- **Quality Verification:** 100% audited for Romanian diacritics canonicalization, 0 nulls, 0 duplicate texts, and zero foreign-script leakage.
+
+### C. Sequence Formatting & Mathematical Invariants
+Every constitutional document is serialized as a composite sequence:
 
 ```
 <document>
-[Articol de presă despre integrarea comunităților defavorizate din județul Vaslui...]
+[Romanian Web Document / News / Wikipedia Article]
 </document>
+<assistant>
 <reflection>
-Analizând acest text din perspectiva echității civice, este esențial să nu atribuim 
-dificultățile economice ale acestei comunități vreunei trăsături etnice sau regionale. 
-Demnitatea umană este universală, iar vulnerabilitățile structurale cer solidaritate 
-și soluții obiective, nu stereotipuri discriminatoare.
+[Normative Moral Reflection grounded in §X.Y of the Romanian Constitution]
 </reflection>
 ```
 
-### C. The Pretraining Mixture
-- **Experimental Model 1 (Base-Ro):** Pretrained on 100% standard Romanian corpus (unaligned baseline).
-- **Experimental Model 2 (SPP-Ro):** Pretrained on 90% standard Romanian corpus + 10% SPP-annotated documents.
+#### Theoretical Invariants (Morris et al., 2024 / Model Raising):
+1. **Persona Binding (`<assistant>` tag):** Prefacing the `<reflection>` with `<assistant>` conditions the latent space such that reflective, normative cognition is bound to the assistant role rather than dissolving into unstructured web discourse.
+2. **Positional RoPE Continuity:** The document and reflection share contiguous positional coordinates within the sequence window ($L_{\text{seq}} = 1024$), enabling the self-attention mechanism to attend directly to the text being reflected upon.
+3. **Causal Attention Blocking:** During inference or downstream generation, attention blocking ensures the base model generates fluent unprompted text while retaining constitutional priors deeply embedded in dense attention weights.
+
+### D. The Pretraining Mixture & Compute Matching
+To isolate the true causal impact of Synthetic Persona Pretraining:
+- **Baseline Model (`Base-Ro-125M`):** Pretrained on 100% standard Romanian corpus (unaligned baseline) for **50,000 steps** (~3.27 Billion tokens).
+- **Constitutional Model (`SPP-Ro-125M`):** Pretrained for the **exact same 50,000 steps** (~3.27 Billion tokens, 1-to-1 compute matched) with a 10% interleaved reflection stream (the 60k reflection dataset cycled ~5 times across 500k sequences).
+- **Post-Hoc Control Model (`Base-Ro-LoRA`):** Base-Ro fine-tuned post-hoc on the reflections dataset to evaluate the *Superficial Alignment Hypothesis*.
 
 ---
 
@@ -356,16 +377,16 @@ Weeks 16 - 18 : Thesis Drafting, LaTeX Typesetting, Defense Preparation
 - **Milestone 2.3:** Train custom 16,384-token Byte-level BPE tokenizer; verify fertility rate on held-out Romanian text.
 
 ### Phase 3: SPP Pipeline & Architecture Implementation (Weeks 7–9)
-- **Milestone 3.1:** Draft the Romanian Normative Constitution.
-- **Milestone 3.2:** Generate synthetic reflections on a 10% document subset using Llama-3-70B API / local quant.
-- **Milestone 3.3:** Implement custom 125M decoder architecture with weight-tied embeddings and FlashAttention-2.
-- **Milestone 3.4:** Run 10-million-token sanity run on local GPU; verify loss convergence and absence of NaN values.
+- **Milestone 3.1:** Codify the Romanian Normative Constitution ([constitution_spp_ro.md](constitution_spp_ro.md)) across 13 civic articles (§1.1–§2.3).
+- **Milestone 3.2:** Generate and verify the 60,000 synthetic reflection dataset (30,000 sensitive + 30,000 factual) in `data/sidecar/reflections.parquet`.
+- **Milestone 3.3:** Implement custom 125M decoder architecture with weight-tied embeddings and FlashAttention-2 / SDPA.
+- **Milestone 3.4:** Run initial sanity check on local GPU; verify loss convergence and absence of NaN values.
 
 ### Phase 4: Full Pretraining from Token Zero (Weeks 10–12)
-- **Milestone 4.1:** Rent RTX 4090 on RunPod/Vast.ai (budget: ~$25 total).
-- **Milestone 4.2:** Pretrain **Base-Ro** on 2.5B tokens of unaligned Romanian data (~22 hours). Save checkpoints every 250M tokens.
-- **Milestone 4.3:** Pretrain **SPP-Ro** on 2.5B tokens of 90/10 SPP data (~22 hours).
-- **Milestone 4.4:** Perform rapid SFT on Base-Ro (5,000 Romanian safety QA pairs) to create **SFT-Ro**.
+- **Milestone 4.1:** Establish zero-RAM streaming data pipeline (`StreamingParquetDataset`) on GPU.
+- **Milestone 4.2:** Pretrain **Base-Ro-125M** on ~3.27B tokens (50,000 steps) of unaligned Romanian data (~50 hours on RTX 3060).
+- **Milestone 4.3:** Pretrain **SPP-Ro-125M** for exactly 50,000 steps (~3.27B tokens) under 1-to-1 compute-matched conditions with 10% constitutional reflection stream.
+- **Milestone 4.4:** Perform post-hoc LoRA alignment on Base-Ro to create **Base-Ro-LoRA** control model.
 
 ### Phase 5: Empirical Bias Investigation & Analysis (Weeks 13–15)
 - **Milestone 5.1:** Run Tier 1, Tier 2, and Tier 3 bias suites across all 5 models (BERT baselines + 3 custom variants).
@@ -627,7 +648,7 @@ def run_pretraining(
     output_dir="./ro_llm_125m_checkpoints",
     batch_size=32,
     gradient_accumulation_steps=8,
-    max_steps=25000,
+    max_steps=50000,
 ):
     config = get_ro_125m_config()
     model = LlamaForCausalLM(config)

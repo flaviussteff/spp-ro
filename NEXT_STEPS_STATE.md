@@ -30,7 +30,7 @@
   Trained Byte-level BPE tokenizer on 178 MB Romanian text. Includes constitutional control tokens: `<|thought_start|>`, `<|thought_end|>`, `<assistant>`, `<reflection>`. Fertility: 1.25 tokens/word.
 
 - [x] **Step 3: Constitutional Reflection Synthesis**  
-  Generated 10,000 synthetic reflection thoughts grounded in the [Romanian Civic Constitution](constitutia_spp_ro.md) (§1.1–§2.3) in `data/sidecar/reflections.parquet`.
+  Generated 60,000 synthetic reflection thoughts grounded in the [Romanian Civic Constitution](constitution_spp_ro.md) (§1.1–§2.3) in `data/sidecar/reflections.parquet`.
 
 - [x] **Step 4: Baseline Pretraining (`Base-Ro-125M`)**  
   - 10,000 steps (655.3M tokens) completed in 10h 05m on RTX 3060. Final loss: `3.0021`, Perplexity: `20.13`.  
@@ -137,8 +137,8 @@ Now that all experimental data, models, and evaluation tables are finalized, wor
    - Balanced streaming corpus assembled: `data/clean/corpus_scale_stream.parquet` (2.06 GB, 1.5M documents: 75% diverse web, 20% Wikipedia, 5% news).
    - ISO 8859-16 canonical comma diacritics (`ș`, `ț`) strictly enforced.
 2. **Execution & Telemetry Engine:**
-   - Sequential execution via `antreneaza_tot.bat` (or `py run_scale_training.py --model all`).
-   - 60,000 cumulative steps per model (10k existing + 50k new steps = 3.932B tokens).
+   - Execution via `train_spp.bat` (or `py run_scale_training.py --model spp`).
+   - 50,000 steps per model compute-matched setup (~3.27B tokens).
    - Zero-RAM `StreamingParquetDataset` maintaining < 100 MB RAM footprint and 4.08 GB VRAM.
    - Hourly telemetry with live text generation probes and PPL tracking.
 
@@ -147,10 +147,10 @@ Now that all experimental data, models, and evaluation tables are finalized, wor
 ## 4. Master Command Cheat Sheet
 
 ```bash
-# 1. Sequential Deep Scale Pre-training (Base + SPP, ~4 days)
-antreneaza_tot.bat
+# 1. SPP Compute-Matched Scale Pre-training (~50 hours, 50,000 steps)
+train_spp.bat
 # or via Python:
-py run_scale_training.py --model all
+py run_scale_training.py --model spp
 
 # 2. Individual Model Scale Pre-training
 py run_scale_training.py --model base     # Base only (~50 hours)
