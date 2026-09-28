@@ -1085,3 +1085,140 @@ body {
 }
 
 
+
+/* Academic Math Display Typesetting */
+.math-var {
+  font-family: "KaTeX_Math", "Times New Roman", Cambria, Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  padding: 0 1px;
+}
+
+.math-fn {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.math-formula-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 16px 24px;
+  margin: 16px 0 18px 0;
+  font-size: 15.5px;
+  color: #0f172a;
+  overflow-x: auto;
+}
+
+.math-formula-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.math-eq {
+  margin: 0 4px;
+  font-weight: 600;
+}
+
+.math-frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  padding: 0 4px;
+  font-size: 13.5px;
+  line-height: 1.2;
+}
+
+.math-frac-top {
+  border-bottom: 1.5px solid #0f172a;
+  padding-bottom: 2px;
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+}
+
+.math-frac-bottom {
+  padding-top: 2px;
+  width: 100%;
+  text-align: center;
+}
+
+.math-sum-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 6px;
+  line-height: 1;
+}
+
+.math-sum-sym {
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.math-sum-sup {
+  font-size: 10.5px;
+  font-family: var(--font-sans);
+  margin-bottom: 2px;
+}
+
+.math-sum-sub {
+  font-size: 10.5px;
+  font-family: var(--font-sans);
+  margin-top: 2px;
+}
+
+.math-formula-num {
+  position: absolute;
+  right: 20px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--color-ink-muted);
+}
+
+@media (max-width: 600px) {
+  .math-formula-num {
+    display: none;
+  }
+}
+
+/* Masthead Institutional & Advisor Styling */
+.institution-top-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0c4a60;
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.institution-top-badge svg {
+  color: #0284c7;
+}
+
+.author-separator {
+  margin: 0 10px;
+  color: #94a3b8;
+}
+
+.advisor-label {
+  font-size: 13.5px;
+  color: var(--color-ink-muted);
+  font-weight: 500;
+  margin-right: 2px;
+}

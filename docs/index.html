@@ -14,13 +14,19 @@
 
     <!-- Masthead / Title Block -->
     <header class="masthead">
+      <div class="institution-top-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+        Faculty of Mathematics and Computer Science &bull; University of Bucharest
+      </div>
       <h1 class="paper-title">Synthetic Persona Pretraining:<br>Alignment from Token Zero in Romanian LLMs</h1>
       <p class="paper-subtitle">
         Internalizing constitutional ethics and civic principles during autoregressive pretraining while preserving zero alignment tax and mitigating cross-lingual bias disparity.
       </p>
 
       <div class="authors-list">
-        <strong>Flavius-Ștefan Hăbeanu</strong>
+        <span class="author-item"><strong>Flavius-Ștefan Hăbeanu</strong></span>
+        <span class="author-separator">&bull;</span>
+        <span class="author-item"><span class="advisor-label">Supervisor:</span> <strong>Sergiu Nisioi</strong></span>
       </div>
       <div class="affiliations-list">
         Faculty of Mathematics and Computer Science, University of Bucharest
@@ -313,14 +319,30 @@
         <p class="abstract-text" style="margin-bottom: 10px;">
           A central scientific question is: <em>How does a causal autoregressive language model, which outputs continuous token distributions, select discrete options on multiple-choice benchmarks without generating open-ended drift or hallucinating?</em>
         </p>
-        <p class="abstract-text" style="margin-bottom: 10px;">
-          Following standard scientific evaluation standards (EleutherAI LM-Eval Harness, Anthropic Constitutional AI, and EPFL SPP Section 4.2), we do not rely on greedy sampling or prompt-dependent generative parsing. Instead, for each dilemma prompt prefix $X$ and candidate answer continuation $O_i$, the causal model performs a forward pass over the combined sequence $S_i = X \circ O_i$ to compute the <strong>length-normalized conditional log-likelihood</strong>:
+        <p class="abstract-text" style="margin-bottom: 12px;">
+          Following standard scientific evaluation standards (EleutherAI LM-Eval Harness, Anthropic Constitutional AI, and EPFL SPP Section 4.2), we do not rely on greedy sampling or prompt-dependent generative parsing. Instead, for each dilemma prompt prefix <span class="math-var">X</span> and candidate answer continuation <span class="math-var">O</span><sub><i>i</i></sub>, the causal model performs a forward pass over the concatenated sequence <span class="math-var">S</span><sub><i>i</i></sub> = <span class="math-var">X</span> &circ; <span class="math-var">O</span><sub><i>i</i></sub> to compute the <strong>length-normalized conditional log-likelihood</strong>:
         </p>
-        <div style="background: #f8fafc; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 12px 16px; font-family: var(--font-mono); font-size: 13px; color: #0f172a; margin-bottom: 12px; text-align: center;">
-          Score(O_i | X) = [ 1 / |O_i| ] &times; &sum;_{t=1}^{|O_i|} log P(w_t | X, w_&lt;t)
+
+        <div class="math-formula-container">
+          <div class="math-formula-row">
+            <span class="math-fn">Score</span>(<span class="math-var">O</span><sub><i>i</i></sub> &mid; <span class="math-var">X</span>)
+            <span class="math-eq">=</span>
+            <div class="math-frac">
+              <span class="math-frac-top">1</span>
+              <span class="math-frac-bottom">&vert;<span class="math-var">O</span><sub><i>i</i></sub>&vert;</span>
+            </div>
+            <div class="math-sum-wrapper">
+              <span class="math-sum-sup">&vert;<span class="math-var">O</span><sub><i>i</i></sub>&vert;</span>
+              <span class="math-sum-sym">&sum;</span>
+              <span class="math-sum-sub"><i>t</i> = 1</span>
+            </div>
+            <span class="math-fn">log</span>&nbsp;<span class="math-fn"><i>P</i></span>(<span class="math-var">w</span><sub><i>t</i></sub> &mid; <span class="math-var">X</span>,&nbsp;<span class="math-var">w</span><sub>&lt;<i>t</i></sub>)
+          </div>
+          <span class="math-formula-num">(1)</span>
         </div>
+
         <p class="abstract-text" style="margin-bottom: 8px;">
-          <strong>Length Normalization:</strong> Multiplying joint probabilities over longer word sequences naturally penalizes longer answers because individual token probabilities are &le; 1. Dividing by token sequence length $|O_i|$ eliminates length bias and isolates the model's true per-token likelihood. The model selects the option with the maximum normalized score: $\hat{O} = rg\max_i 	ext{Score}(O_i \mid X)$.
+          <strong>Length Normalization:</strong> Multiplying joint probabilities over longer word sequences naturally penalizes longer answers because individual token probabilities are &le; 1. Dividing by token sequence length &vert;<span class="math-var">O</span><sub><i>i</i></sub>&vert; eliminates length bias and isolates the model's true per-token likelihood. The model deterministically selects the candidate with the maximum normalized score: <span class="math-var">O</span>* = arg max<sub><i>i</i></sub> <span class="math-fn">Score</span>(<span class="math-var">O</span><sub><i>i</i></sub> &mid; <span class="math-var">X</span>).
         </p>
         <p class="abstract-text">
           <strong>Deliberative Persona Trigger (<code>&lt;assistant&gt;</code>):</strong> In passive scoring, the prompt is <code>"Scenariu: ... \nRăspuns: "</code>. In deliberative scoring, appending the special token <code>&lt;assistant&gt;</code> activates the self-attention heads trained on Romanian constitutional reflections, shifting conditional probabilities towards aligned completions.
@@ -857,7 +879,7 @@
   school       = {Faculty of Mathematics and Computer Science, University of Bucharest},
   year         = {2026},
   type         = {Bachelor's Thesis / Licen{\c t}{\u a}},
-  note         = {Grounded in EPFL-dlab Synthetic Persona Pretraining (Minder et al., arXiv:2608.13482)},
+  note         = {Supervised by Sergiu Nisioi. Grounded in EPFL-dlab Synthetic Persona Pretraining (Minder et al., arXiv:2608.13482)},
   url          = {https://github.com/flaviussteff/spp-ro}
 }</pre>
       </div>
