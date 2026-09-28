@@ -31,15 +31,15 @@
       <div class="resource-links">
         <a href="https://github.com/flaviussteff/spp-ro" class="resource-btn primary" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-          Code &amp; Checkpoints
+          Cod &amp; Checkpoints
         </a>
         <a href="#benchmarks" class="resource-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-          Evaluation Suite
+          Rezultate Empirice
         </a>
         <a href="#dilemmas" class="resource-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          Dilemma Inspector
+          Inspector Dileme
         </a>
         <a href="#bibtex" class="resource-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
@@ -48,12 +48,13 @@
       </div>
     </header>
 
-    <!-- Abstract Box -->
+    <!-- Abstract Box (Clean 1px Border, No Left Colored Stripe) -->
     <div class="abstract-box">
-      <div class="abstract-title">Abstract &amp; Findings</div>
+      <span class="box-header-tag">Abstract &amp; Concluzii Cheie</span>
+      <h3 style="font-size: 16.5px; font-weight: 700; color: #091e2b; margin-bottom: 8px;">Aliniere Etică Nativă de la Pasul 0 în Modele Generative Românești</h3>
       <p class="abstract-text">
-        Post-hoc alignment (RLHF, DPO, LoRA) frequently causes catastrophic language degradation ("alignment tax") and remains fragile under adversarial framing, particularly in lower-resource languages such as Romanian. We implement <strong>Synthetic Persona Pretraining (SPP)</strong> at scale (50,000 steps, ~3.27B tokens), embedding normative Romanian constitutional principles directly into the pretraining phase via a synthetic reflection stream.
-        On forced-choice constitutional dilemmas (<strong>ConstitutionEval-Ro</strong>, 4 choices, random = 25.0%), active deliberative reasoning nearly doubles adherence over the unaligned baseline (<strong>43.3% vs. 23.3%</strong>). On AI safety dilemmas (<strong>AIRiskDilemmas-Ro</strong>), deliberative SPP reaches <strong>85.0%</strong> alignment (vs. 65.0% base). Crucially, asymmetric attention masking preserves full web language modeling capability with <strong>zero alignment tax</strong> (Wikipedia Perplexity: 14.48 SPP vs. 18.48 Base; News Perplexity: 12.49 SPP vs. 15.92 Base) and halves cross-lingual alignment disparity from +14.0% to +6.0%.
+        Alinierea post-hoc tradițională (RLHF, DPO, LoRA) degradează frecvent competențele lingvistice de bază ale modelului (fenomenul cunoscut drept <em>taxa de aliniere</em>) și rămâne fragilă în fața tehnicilor de jailbreak, în special în limbile cu resurse medii precum româna. În această lucrare, implementăm <strong>Synthetic Persona Pretraining (SPP)</strong> la scară completă (50.000 pași de optimizare, ~3.27 miliarde de tokeni procesați), internalizând valorile etice și constituționale direct în faza de pre-antrenare autoregresivă printr-un canal sintetic de reflecție deliberativă.
+        Pe dileme morale forțate (<strong>ConstitutionEval-Ro</strong>, 4 opțiuni, șansă aleatorie = 25.0%), activarea raționamentului deliberativ aproape dublează rata de conformare etică față de modelul nealiniat de bază (<strong>43.3% vs. 23.3%</strong>). Pe dilemele de siguranță AI (<strong>AIRiskDilemmas-Ro</strong>), modelul deliberativ atinge <strong>85.0%</strong> acuratețe (față de 65.0% la modelul de bază). Decuplarea atenției asimetrice elimină complet taxa de aliniere (Perplexitate pe știri: <strong>12.49 SPP vs. 15.92 Base</strong>; Wikipedia: <strong>14.48 SPP vs. 18.48 Base</strong>) și înjumătățește disparitatea de aliniere cross-linguală de la &plusmn;14.0% la &plusmn;6.0%.
       </p>
     </div>
 
@@ -63,110 +64,121 @@
     <section id="constitution">
       <div class="section-header-row">
         <span class="section-num-badge">1</span>
-        <h2 class="section-heading">Value Constitution &amp; Annotation Protocol</h2>
+        <h2 class="section-heading">Constituția de Valori &amp; Protocolul de Adnotare</h2>
         <div class="section-header-rule"></div>
       </div>
 
       <p class="section-lead">
-        Following the EPFL SPP formulation, alignment begins with an explicit <em>normative value constitution</em> grounded in the constitutional guarantees of the Romanian state (Articles 1, 4, 16, 25, 30, and 31). The charter codifies six non-negotiable societal pillars:
+        Conform metodologiei EPFL SPP, alinierea pornește de la o <em>Constituție de Valori</em> explicită, ancorată în garanțiile fundamentale ale statului de drept din România (Articolele 1, 4, 16, 25, 30 și 31 din Constituția României). Aceasta codifică șase piloni societali nenegociabili:
       </p>
 
-      <!-- 6 Constitutional Articles Cards Grid -->
+      <!-- 6 Constitutional Articles Cards Grid (Clean Boxes, No Colored Side-Stripes) -->
       <div class="card-grid-2">
         <div class="academic-box">
-          <h3>§1.1 Human Dignity &amp; Non-Discrimination</h3>
+          <span class="box-header-tag">Art. 1.1</span>
+          <h3>Demnitate Umană &amp; Nediscriminare</h3>
           <p>
-            Guarantees the inviolability of human dignity, personal integrity, and equality before the law, strictly barring discrimination based on race, ethnicity, or social origin.
+            Garantează inviolabilitatea demnității umane, integritatea fizică și psihică și tratamentul egal în fața legii, interzicând discriminarea pe bază de etnie, rasă sau categorie socială.
           </p>
         </div>
         <div class="academic-box">
-          <h3>§1.2 Gender Equality &amp; Professional Merit</h3>
+          <span class="box-header-tag">Art. 1.2</span>
+          <h3>Egalitate de Gen &amp; Meritocrație</h3>
           <p>
-            Enforces equal opportunities across economic, political, and executive decision-making roles, rejecting patriarchal corporate occupational sorting.
+            Asigură oportunități egale în funcții decizionale, economice și politice, respingând segregarea ocupațională corporativă și stereotipurile patriarhale.
           </p>
         </div>
         <div class="academic-box">
-          <h3>§1.3 Freedom of Movement &amp; Territorial Cohesion</h3>
+          <span class="box-header-tag">Art. 1.3</span>
+          <h3>Libertate de Mișcare &amp; Echitate Regională</h3>
           <p>
-            Protects internal mobility, residency choice, and equitable regional infrastructure, deconstructing historical provincial stigmas (Moldavia, Oltenia, Transylvania).
+            Protejează dreptul de stabilire și mobilitate internă, promovând coeziunea teritorială și deconstruind prejudecățile istorice provinciale (Moldova, Oltenia, Transilvania).
           </p>
         </div>
         <div class="academic-box">
-          <h3>§2.1 Right to Information &amp; Transparency</h3>
+          <span class="box-header-tag">Art. 2.1</span>
+          <h3>Dreptul la Informație &amp; Transparență</h3>
           <p>
-            Mandates public access to verified facts and public expenditures, curbing corrupt opacity, disinformation campaigns, and SLAPP legal harassment.
+            Consfințește accesul cetățenilor la datele publice și cheltuirea fondurilor bugetare, combătând opacitatea instituțională, dezinformarea și hărțuirea juridică SLAPP.
           </p>
         </div>
         <div class="academic-box">
-          <h3>§2.2 Freedom of Expression &amp; Free Press</h3>
+          <span class="box-header-tag">Art. 2.2</span>
+          <h3>Libertatea de Exprimare &amp; Presă Independentă</h3>
           <p>
-            Shields independent journalism, investigative reporting, and ideological pluralism against prior censorship and authoritarian consolidation.
+            Apără pluralismul opiniilor, libertatea jurnalismului de investigație și interzicerea categorică a cenzurii prealabile sau a ingerințelor autoritare în mass-media.
           </p>
         </div>
         <div class="academic-box">
-          <h3>§2.3 Protection of Cultural &amp; Ethnic Minorities</h3>
+          <span class="box-header-tag">Art. 2.3</span>
+          <h3>Protecția Minorităților Etnice &amp; Culturale</h3>
           <p>
-            Preserves the linguistic, cultural, and religious identity of historical minorities (Romani, Hungarian, Jewish, Ukrainian, Lipovan), upholding universal suffrage.
+            Păstrează identitatea lingvistică, religioasă și culturală a minorităților istorice (romi, maghiari, evrei, ucraineni, lipoveni), garantând sufragiul universal și egal.
           </p>
         </div>
       </div>
 
       <!-- Annotation Guidelines Sub-section -->
       <div style="margin-top: 36px;">
-        <h3 style="font-size: 19px; font-weight: 700; color: #091e2b; margin-bottom: 12px;">
-          Annotation Guidelines &amp; Synthetic Signal Protocol
+        <h3 style="font-size: 18px; font-weight: 700; color: #091e2b; margin-bottom: 10px;">
+          Ghidul de Adnotare &amp; Protocolul de Generare Sintetică
         </h3>
         <p class="section-lead">
-          During pretraining, a Teacher model generates structured reflections at natural reading pause points. The data annotation follows seven strict golden rules to ensure training fidelity:
+          În faza de pregătire a datelor, un model Profesor generează reflecții structurate la punctele naturale de pauză semantică din textul web. Adnotarea respectă cinci reguli de aur pentru a garanta puritatea semnalului de antrenare:
         </p>
 
         <div class="guideline-rule-card">
-          <h4>1. Three-Tier Structured Triad (`analysis` &rarr; `reflection_1p` &rarr; `reflection_3p`)</h4>
+          <span class="box-header-tag">Ghidul 1</span>
+          <h4>Triada Structurată (`analysis` &rarr; `reflection_1p` &rarr; `reflection_3p`)</h4>
           <p>
-            Every reflection produces a 3-step preliminary analysis, a first-person subjective deliberation (<em>"Consider..."</em>, <em>"Susțin..."</em>), and an objective third-person institutional civic voice. Both reflections convey identical ethical verdicts and identical constitutional article citations.
+            Fiecare reflecție conține o analiză etică preliminară în 3 pași, o deliberare subiectivă la persoana I (<em>"Consider că..."</em>, <em>"Susțin..."</em>) și o concluzie civică obiectivă la persoana a III-a. Ambele perspective exprimă același verdict moral și citează aceleași articole.
           </p>
         </div>
 
         <div class="guideline-rule-card">
-          <h4>2. Strict Prohibition of Meta-Language (No "Constituție" in Thoughts)</h4>
+          <span class="box-header-tag">Ghidul 2</span>
+          <h4>Interzicerea Totală a Meta-Limbajului</h4>
           <p>
-            Reflections must <strong>never</strong> mention the words <em>"constituție"</em>, <em>"carta"</em>, or <em>"ghidul"</em> inside thought tokens. The model internalizes values directly (e.g., <em>"Demnitatea fiecărei persoane [§1.1] cere..."</em>), avoiding robotic meta-declarations.
+            Reflecțiile nu menționează <strong>niciodată</strong> cuvintele <em>"constituție"</em>, <em>"carta"</em> sau <em>"ghidul"</em> în textul deliberării. Modelul internalizează principiile direct (ex: <em>"Demnitatea fiecărei persoane [1.1] cere respectarea..."</em>), evitând discursurile declarative sterile.
           </p>
         </div>
 
         <div class="guideline-rule-card">
-          <h4>3. Inline Bracket Citations as Ground Truth (`[§X.Y]`)</h4>
+          <span class="box-header-tag">Ghidul 3</span>
+          <h4>Citare Directă prin Marcaje Inline (`[X.Y]`)</h4>
           <p>
-            Constitutional articles are registered strictly through inline citations (e.g., <code>[1.2]</code>, <code>[2.3]</code>). Every article identified in the analysis must appear consistently in both reflection perspectives.
+            Principiile etice sunt semnalate exclusiv prin etichete compacte între paranteze drepte (ex: <code>[1.2]</code>, <code>[2.3]</code>), funcționând ca o ancoră semantică discretă atât în perspectiva la persoana I, cât și la persoana a III-a.
           </p>
         </div>
 
         <div class="guideline-rule-card">
-          <h4>4. Asymmetric Causal Attention Decoupling</h4>
+          <span class="box-header-tag">Ghidul 4</span>
+          <h4>Decuplare Causală Asimetrică prin Măști de Atenție</h4>
           <p>
-            The training attention mask strictly prevents standard web document tokens from attending to reflection tokens. Consequently, natural document modeling is never corrupted, guaranteeing zero perplexity tax.
+            Masca de atenție la antrenament împiedică tokenii din documentele web obișnuite să acorde atenție tokenilor din reflecții. Astfel, fluența naturală de modelare lingvistică este conservată integral, garantând zero taxă de aliniere.
           </p>
         </div>
 
         <div class="guideline-rule-card">
-          <h4>5. Five-Point Safety Score Calibration Spectrum (Scores 1 to 5)</h4>
+          <span class="box-header-tag">Ghidul 5</span>
+          <h4>Calibrarea Scării de Severitate (Scor 1 la 5)</h4>
           <p>
-            Annotations are calibrated across a 5-tier severity scale: Score 1 (benign technical/sport facts, single short sentence, no citation) through Score 5 (severe structural discrimination or incitement, requiring comprehensive constitutional pushback).
+            Adnotările sunt gradate de la Scorul 1 (fapte neutre tehnice/sportive, frază scurtă descriptivă, fără citare) până la Scorul 5 (discriminare gravă sau incitare la ură, solicitând contra-argumentare etică completă).
           </p>
         </div>
 
         <!-- Interactive Sidecar Reflection Browser -->
         <div class="diagram-box">
           <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-teal-badge); margin-bottom: 14px;">
-            Interactive Corpus Browser // Real Sidecar Reflections (data/sidecar/reflections.parquet)
+            Explorator de Corpus Sintetic // Exemple Reale de Reflecții (data/sidecar/reflections.parquet)
           </div>
           <div class="dilemma-tabs" style="border-bottom: none; margin-bottom: 16px;">
-            <button class="dilemma-tab-btn article-pill-btn active" data-article="art_1_2">§1.2 Gender Equality</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_3">§1.3 Regional Mobility</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_1">§1.1 Human Dignity</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_1">§2.1 Public Information</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_2">§2.2 Press Freedom</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_3">§2.3 Minority Rights</button>
+            <button class="dilemma-tab-btn article-pill-btn active" data-article="art_1_2">Art. 1.2 Egalitate de Gen</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_3">Art. 1.3 Mobilitate Regională</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_1">Art. 1.1 Demnitate Umană</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_1">Art. 2.1 Dreptul la Informație</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_2">Art. 2.2 Libertatea Presei</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_3">Art. 2.3 Drepturi Minorități</button>
           </div>
           <div id="article-reader-pane"></div>
         </div>
@@ -179,37 +191,39 @@
     <section id="training">
       <div class="section-header-row">
         <span class="section-num-badge">2</span>
-        <h2 class="section-heading">Training &amp; Architecture</h2>
+        <h2 class="section-heading">Arhitectură &amp; Regim de Antrenare</h2>
         <div class="section-header-rule"></div>
       </div>
 
       <div class="card-grid-2">
         <div class="academic-box">
-          <h3>Pretraining (Token Zero)</h3>
+          <span class="box-header-tag">Faza 1: Pre-antrenare Nativă</span>
+          <h3>Pre-antrenare la Token Zero</h3>
           <p>
-            We pretrain from scratch with the standard cross-entropy loss on web documents plus 10% constitutional reflections. This installs the desired civic persona among the multitude of personas pretraining naturally produces.
+            Antrenăm modelul de la zero (scratch) folosind funcția clasică de pierdere cross-entropy pe documente web românești, intercalând 10% reflecții etice sintetice. Această metodă instalează persona civică dezirabilă direct în spațiul latent încă din primele iterații.
           </p>
         </div>
         <div class="academic-box">
-          <h3>Deliberative Persona Activation</h3>
+          <span class="box-header-tag">Faza 2: Activare Deliberativă</span>
+          <h3>Direcționare Deliberativă (&lt;assistant&gt;)</h3>
           <p>
-            Prompting with the special token <code>&lt;assistant&gt;</code> activates the constitutional thought stream learned during pretraining, binding the model's generation to constitutional deliberation rather than unconstrained web frequency.
+            Invocarea tokenului special <code>&lt;assistant&gt;</code> activează canalul de gândire constituțională asimilat în pre-antrenare. În locul generării automate bazate pe frecvența brută a n-gramelor web, modelul activează un raționament deliberativ de tip System-2 înainte de a emite răspunsul final.
           </p>
         </div>
       </div>
 
       <p class="section-lead">
-        Using data-matched recipes with an identical compute budget (50,000 steps, ~3.27 billion tokens on an NVIDIA RTX 3060 12GB GPU), we isolate the effect of introducing SPP from token zero and compare against baselines on constitutional adherence, moral dilemma prioritization, and language modeling stability.
+        Pentru a izola matematic efectul metodei SPP de la token zero, toate variantele sunt antrenate pe un volum de date strict echivalent și un buget de calcul identic (50.000 pași, ~3.27 miliarde de tokeni pe o placă grafică dedicată NVIDIA RTX 3060 12GB).
       </p>
 
-      <!-- Architecture Timeline Diagram Box (Matching Screenshot Style) -->
+      <!-- Architecture Timeline Diagram Box -->
       <div class="diagram-box">
         <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 18px;">
-          Pretraining Paths &amp; Alignment Decoupling
+          Comparație între Paradigmele de Aliniere &amp; Decuplarea Atenției
         </div>
 
         <div class="timeline-track">
-          <div class="timeline-label">Vanilla Control</div>
+          <div class="timeline-label">Control Vanilla</div>
           <div class="timeline-bar-area">
             <div class="timeline-line"></div>
           </div>
@@ -217,12 +231,12 @@
         </div>
 
         <div class="timeline-track">
-          <div class="timeline-label">Post-Hoc LoRA</div>
+          <div class="timeline-label">Adaptare Post-Hoc</div>
           <div class="timeline-bar-area">
             <div class="timeline-line dashed"></div>
             <div class="timeline-fill midtrain" style="left: 70%; width: 30%;"></div>
           </div>
-          <div class="timeline-badge" style="background: #fef3c7; color: #b45309; border-color: #fde68a;">LoRA (Tax Surge)</div>
+          <div class="timeline-badge" style="background: #fef3c7; color: #b45309; border-color: #fde68a;">LoRA (Crește PPL)</div>
         </div>
 
         <div class="timeline-track">
@@ -237,15 +251,15 @@
         <div class="timeline-legend">
           <div class="legend-item">
             <div class="legend-swatch" style="background: #14b8a6;"></div>
-            <span>Constitutional sidecar reflections (10% of corpus, asymmetric attention mask)</span>
+            <span>Reflecții etice sintetice sidecar (10% din corpus, mască de atenție asimetrică)</span>
           </div>
           <div class="legend-item">
             <div class="legend-swatch" style="background: #fef08a; border: 1px solid #facc15;"></div>
-            <span>Post-hoc adapter intervention (causes catastrophic alignment tax)</span>
+            <span>Intervenție post-hoc prin adaptori (induce degradare lingvistică / taxă de aliniere)</span>
           </div>
           <div class="legend-item">
             <div class="legend-swatch" style="background: var(--color-border-strong);"></div>
-            <span>Standard autoregressive Romanian web pretraining</span>
+            <span>Pre-antrenare autoregresivă standard pe corpus web în limba română</span>
           </div>
         </div>
       </div>
@@ -257,122 +271,209 @@
     <section id="benchmarks">
       <div class="section-header-row">
         <span class="section-num-badge">3</span>
-        <h2 class="section-heading">Empirical Results &amp; Scientific Takeaways</h2>
+        <h2 class="section-heading">Rezultate Empirice &amp; Benchmark-uri</h2>
         <div class="section-header-rule"></div>
       </div>
 
       <p class="section-lead">
-        We evaluate the aligned 50,000-step models across four distinct empirical axes: in-domain constitutional forced-choice dilemmas, AI safety risk prioritization, perplexity-based alignment tax, and cross-lingual alignment disparity.
+        Evaluăm modelele antrenate pe 50.000 de pași de-a lungul a patru dimensiuni empirice distincte: conformarea constituțională la opțiuni forțate (<em>ConstitutionEval-Ro</em>), prioritizarea siguranței AI în dileme morale (<em>AIRiskDilemmas-Ro</em>), stabilitatea modelării lingvistice (taxa de aliniere prin perplexitate) și disparitatea de transfer cross-lingual.
       </p>
 
-      <!-- Key Metric Highlights Cards Grid -->
-      <div class="benchmark-cards-grid">
-        <div class="metric-card">
-          <div class="metric-card-header">Zero Alignment Tax</div>
-          <div class="metric-card-value">12.49</div>
-          <div class="metric-card-delta positive">
-            <span>&darr; -3.43 PPL</span>
+      <!-- FIGURE 1: INVERTED SVG BAR CHART (Based on Image 2 with Inverted Vertical Axes, Diagonal Hatch Pattern, and Distinct Colors) -->
+      <div class="figure-box">
+        <div class="figure-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="14" style="border-radius: 2px;">
+              <rect width="20" height="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="1"/>
+              <rect width="20" height="14" fill="url(#legendHatch)"/>
+            </svg>
+            <span style="font-weight: 600; color: #0f172a;">ConstitutionEval-Ro (4 opțiuni forțate // nivel șansă 25%)</span>
           </div>
-          <div class="metric-card-desc">SPP News PPL vs. 15.92 Base-Ro. Zero language tax; regularization improves fluency.</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg width="20" height="14" style="border-radius: 2px;">
+              <rect width="20" height="14" fill="#c2410c" stroke="#9a3412" stroke-width="1"/>
+            </svg>
+            <span style="font-weight: 600; color: #0f172a;">AIRiskDilemmas-Ro (dileme binare AI // nivel șansă 50%)</span>
+          </div>
         </div>
 
-        <div class="metric-card">
-          <div class="metric-card-header">Cross-Lingual Gap</div>
-          <div class="metric-card-value">+6.0%</div>
-          <div class="metric-card-delta positive">
-            <span>&darr; Halved (&plusmn;14% Base)</span>
-          </div>
-          <div class="metric-card-desc">Decouples surface bias between Romanian and English parallel diagnostics.</div>
+        <div class="chart-svg-wrapper">
+          <svg viewBox="0 0 780 340" width="100%" height="340" style="overflow: visible; font-family: Inter, -apple-system, sans-serif;">
+            <defs>
+              <!-- Diagonal Stripe Pattern for ConstitutionEval -->
+              <pattern id="barHatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="0" x2="0" y2="8" stroke="#0369a1" stroke-width="2.5" />
+              </pattern>
+              <pattern id="legendHatch" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="0" x2="0" y2="6" stroke="#0369a1" stroke-width="2" />
+              </pattern>
+            </defs>
+
+            <!-- Horizontal Grid lines & Tick Labels (Y-axis: 0% to 100%) -->
+            <line x1="65" y1="40" x2="720" y2="40" stroke="#f1f5f9" stroke-width="1" />
+            <text x="52" y="44" font-size="11" fill="#94a3b8" text-anchor="end">100%</text>
+
+            <line x1="65" y1="92" x2="720" y2="92" stroke="#f1f5f9" stroke-width="1" />
+            <text x="52" y="96" font-size="11" fill="#94a3b8" text-anchor="end">80%</text>
+
+            <line x1="65" y1="144" x2="720" y2="144" stroke="#f1f5f9" stroke-width="1" />
+            <text x="52" y="148" font-size="11" fill="#94a3b8" text-anchor="end">60%</text>
+
+            <!-- Y=50% Chance Line for AIRisk -->
+            <line x1="65" y1="170" x2="720" y2="170" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="5,4" />
+            <text x="726" y="174" font-size="11" fill="#64748b" font-weight="500">50% nivel șansă (AIRisk)</text>
+
+            <line x1="65" y1="196" x2="720" y2="196" stroke="#f1f5f9" stroke-width="1" />
+            <text x="52" y="200" font-size="11" fill="#94a3b8" text-anchor="end">40%</text>
+
+            <!-- Y=25% Chance Line for ConstitutionEval -->
+            <line x1="65" y1="235" x2="720" y2="235" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="5,4" />
+            <text x="726" y="239" font-size="11" fill="#64748b" font-weight="500">25% nivel șansă (ConstEval)</text>
+
+            <line x1="65" y1="248" x2="720" y2="248" stroke="#f1f5f9" stroke-width="1" />
+            <text x="52" y="252" font-size="11" fill="#94a3b8" text-anchor="end">20%</text>
+
+            <!-- Baseline X Axis (0%) -->
+            <line x1="65" y1="300" x2="720" y2="300" stroke="#cbd5e1" stroke-width="1.5" />
+            <text x="52" y="304" font-size="11" fill="#94a3b8" text-anchor="end">0%</text>
+
+            <!-- ================= GROUP 1: Vanilla Control (Base-Ro-125M) ================= -->
+            <rect x="135" y="239.4" width="42" height="60.6" rx="3" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+            <rect x="135" y="239.4" width="42" height="60.6" rx="3" fill="url(#barHatch)"/>
+            <line x1="156" y1="239.4" x2="156" y2="225" stroke="#0284c7" stroke-width="1"/>
+            <text x="156" y="220" font-size="12" font-weight="700" fill="#0369a1" text-anchor="middle">23.3%</text>
+
+            <rect x="183" y="131" width="42" height="169" rx="3" fill="#ea580c" stroke="#c2410c" stroke-width="1.2"/>
+            <line x1="204" y1="131" x2="204" y2="117" stroke="#c2410c" stroke-width="1"/>
+            <text x="204" y="112" font-size="12" font-weight="700" fill="#9a3412" text-anchor="middle">65.0%</text>
+
+            <text x="180" y="318" font-size="12" font-weight="700" fill="#1e293b" text-anchor="middle">Vanilla Control</text>
+            <text x="180" y="332" font-size="11" fill="#64748b" text-anchor="middle">Base-Ro-125M (Nealiniat)</text>
+
+            <!-- ================= GROUP 2: SPP-Ro (Pasiv) ================= -->
+            <rect x="345" y="213.4" width="42" height="86.6" rx="3" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.2"/>
+            <rect x="345" y="213.4" width="42" height="86.6" rx="3" fill="url(#barHatch)"/>
+            <line x1="366" y1="213.4" x2="366" y2="199" stroke="#0284c7" stroke-width="1"/>
+            <text x="366" y="194" font-size="12" font-weight="700" fill="#0369a1" text-anchor="middle">33.3%</text>
+
+            <rect x="393" y="105" width="42" height="195" rx="3" fill="#ea580c" stroke="#c2410c" stroke-width="1.2"/>
+            <line x1="414" y1="105" x2="414" y2="91" stroke="#c2410c" stroke-width="1"/>
+            <text x="414" y="86" font-size="12" font-weight="700" fill="#9a3412" text-anchor="middle">75.0%</text>
+
+            <text x="390" y="318" font-size="12" font-weight="700" fill="#1e293b" text-anchor="middle">SPP-Ro (Pasiv)</text>
+            <text x="390" y="332" font-size="11" fill="#64748b" text-anchor="middle">Predicție next-token fără prompt</text>
+
+            <!-- ================= GROUP 3: SPP-Ro (Deliberativ) ================= -->
+            <rect x="555" y="187.4" width="42" height="112.6" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+            <rect x="555" y="187.4" width="42" height="112.6" rx="3" fill="url(#barHatch)"/>
+            <line x1="576" y1="187.4" x2="576" y2="173" stroke="#0284c7" stroke-width="1.5"/>
+            <text x="576" y="168" font-size="13" font-weight="800" fill="#0284c7" text-anchor="middle">43.3%</text>
+
+            <rect x="603" y="79" width="42" height="221" rx="3" fill="#c2410c" stroke="#9a3412" stroke-width="1.5"/>
+            <line x1="624" y1="79" x2="624" y2="65" stroke="#9a3412" stroke-width="1.5"/>
+            <text x="624" y="60" font-size="13" font-weight="800" fill="#c2410c" text-anchor="middle">85.0%</text>
+
+            <text x="600" y="318" font-size="12" font-weight="700" fill="#0c4a60" text-anchor="middle">SPP-Ro (Deliberativ)</text>
+            <text x="600" y="332" font-size="11" font-weight="600" fill="#0284c7" text-anchor="middle">Token &lt;assistant&gt; activat</text>
+          </svg>
         </div>
 
-        <div class="metric-card">
-          <div class="metric-card-header">ConstitutionEval-Ro</div>
-          <div class="metric-card-value">43.3%</div>
-          <div class="metric-card-delta positive">
-            <span>&uarr; 1.9x vs. Base</span>
-          </div>
-          <div class="metric-card-desc">Deliberative accuracy on 30 4-choice dilemmas (23.3% Base, 25% random guess).</div>
+        <div class="figure-caption">
+          <strong>Figura 1: Acuratețea conformării la norme constituționale și siguranță AI pe cele trei regimuri de pre-antrenare.</strong>
+          Bare hașurate diagonal: <em>ConstitutionEval-Ro</em> (evaluare forțată cu 4 opțiuni; linia orizontală punctată la 25% indică nivelul de ghicire aleatorie).
+          Bare pline cărămizii: <em>AIRiskDilemmas-Ro</em> (dileme binare pe riscuri AI; linia orizontală punctată la 50% indică nivelul de ghicire aleatorie).
+          Activarea canalului deliberativ (<code>&lt;assistant&gt;</code>) sporește conformarea cu <strong>+20.0 puncte procentuale</strong> pe ambele suite față de modelul brut de bază (23.3% &rarr; 43.3% și respectiv 65.0% &rarr; 85.0%).
         </div>
+      </div>
 
-        <div class="metric-card">
-          <div class="metric-card-header">AIRiskDilemmas-Ro</div>
-          <div class="metric-card-value">85.0%</div>
-          <div class="metric-card-delta positive">
-            <span>&uarr; +20.0% Gain</span>
-          </div>
-          <div class="metric-card-desc">Deliberative AI safety adherence across 20 dilemmas (65.0% Base control).</div>
+      <!-- Synthesis Grid (Clean Academic Cards, No Colored Side-Stripes) -->
+      <div class="card-grid-2" style="margin-top: 24px;">
+        <div class="academic-box">
+          <span class="box-header-tag">Stabilitate Lingvistică</span>
+          <h3 style="font-size: 15px; margin-bottom: 6px;">Zero Taxă de Aliniere (Perplexitate)</h3>
+          <p style="font-size: 13.5px; line-height: 1.55; color: var(--color-ink-secondary);">
+            Spre deosebire de metodele post-hoc (RLHF/LoRA) care degradează fluența de bază a limbajului, masca asimetrică de atenție previne orice interferență negativă. Pe seturile de test independente, SPP-Ro acționează ca un regularizator:
+            <strong>12.49 PPL</strong> pe știri (față de 15.92 Base) și <strong>14.48 PPL</strong> pe Wikipedia (față de 18.48 Base).
+          </p>
+        </div>
+        <div class="academic-box">
+          <span class="box-header-tag">Generalizare Cross-Linguală</span>
+          <h3 style="font-size: 15px; margin-bottom: 6px;">Reducerea Ecartului de Bias Cultural</h3>
+          <p style="font-size: 13.5px; line-height: 1.55; color: var(--color-ink-secondary);">
+            La modelele brute, alinierea pe limba română suferă de o discrepanță de &plusmn;14.0% comparativ cu limba engleză. Prin integrarea directă a Constituției de Valori de la token zero, ecartul se reduce la <strong>&plusmn;6.0%</strong>, demonstrând că principiile civice devin reprezentări neuronale intrinseci.
+          </p>
         </div>
       </div>
 
       <!-- Table: ConstitutionEval-Ro (EPFL Benchmark) -->
       <div style="margin-top: 36px;">
         <h3 style="font-size: 18px; font-weight: 700; color: #091e2b; margin-bottom: 6px;">
-          Table 1: ConstitutionEval-Ro (4-Choice Forced-Choice Benchmark, N=30)
+          Tabelul 1: ConstitutionEval-Ro (Benchmark cu 4 Opțiuni Forțate, N=30)
         </h3>
         <p style="font-size: 13.5px; color: var(--color-ink-muted); margin-bottom: 12px;">
-          Replicating the EPFL SPP protocol (Minder et al., arXiv:2608.13482, 2026). Random guessing baseline = 25.0%.
+          Replicarea protocolului EPFL SPP (Minder et al., arXiv:2608.13482, 2026). Nivelul aleatoriu de ghicire = 25.0%.
         </p>
 
         <div class="table-wrapper">
           <table class="academic-table">
             <thead>
               <tr>
-                <th>Constitutional Article</th>
+                <th>Articol Constituțional</th>
                 <th>Base-Ro-125M</th>
-                <th>SPP-Ro (Passive)</th>
-                <th>SPP-Ro (Deliberative &lt;assistant&gt;)</th>
-                <th>Deliberative Gain</th>
+                <th>SPP-Ro (Pasiv)</th>
+                <th>SPP-Ro (Deliberativ &lt;assistant&gt;)</th>
+                <th>Câștig Deliberativ</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>§1.1 Human Dignity &amp; Non-Discrimination</strong></td>
+                <td><strong>Art. 1.1 Demnitate Umană &amp; Nediscriminare</strong></td>
                 <td class="cell-num">20.0%</td>
                 <td class="cell-num">0.0%</td>
                 <td class="cell-num" style="font-weight: 700;">0.0%</td>
-                <td style="color: var(--color-ink-muted);">Sensitive to phrasing at 125M</td>
+                <td style="color: var(--color-ink-muted);">Sensibil la formulare la scara 125M</td>
               </tr>
               <tr>
-                <td><strong>§1.2 Gender Equality &amp; Meritocracy</strong></td>
+                <td><strong>Art. 1.2 Egalitate de Gen &amp; Meritocrație</strong></td>
                 <td class="cell-num">0.0%</td>
                 <td class="cell-num">20.0%</td>
                 <td class="cell-num cell-gain">40.0%</td>
                 <td class="cell-gain">+40.0%</td>
               </tr>
               <tr>
-                <td><strong>§1.3 Freedom of Movement &amp; Regional Equity</strong></td>
+                <td><strong>Art. 1.3 Libertate de Mișcare &amp; Echitate Regională</strong></td>
                 <td class="cell-num">20.0%</td>
                 <td class="cell-num">60.0%</td>
                 <td class="cell-num cell-gain">60.0%</td>
                 <td class="cell-gain">+40.0%</td>
               </tr>
               <tr>
-                <td><strong>§2.1 Right to Information &amp; Transparency</strong></td>
+                <td><strong>Art. 2.1 Dreptul la Informație &amp; Transparență</strong></td>
                 <td class="cell-num">40.0%</td>
                 <td class="cell-num">60.0%</td>
                 <td class="cell-num cell-gain">60.0%</td>
                 <td class="cell-gain">+20.0%</td>
               </tr>
               <tr>
-                <td><strong>§2.2 Freedom of Expression &amp; Free Press</strong></td>
+                <td><strong>Art. 2.2 Libertatea de Exprimare &amp; Presă Independentă</strong></td>
                 <td class="cell-num">20.0%</td>
                 <td class="cell-num">20.0%</td>
                 <td class="cell-num cell-gain">60.0%</td>
                 <td class="cell-gain">+40.0%</td>
               </tr>
               <tr>
-                <td><strong>§2.3 Protection of Cultural &amp; Ethnic Minorities</strong></td>
+                <td><strong>Art. 2.3 Protecția Minorităților Etnice &amp; Culturale</strong></td>
                 <td class="cell-num">40.0%</td>
                 <td class="cell-num">40.0%</td>
                 <td class="cell-num" style="font-weight: 700;">40.0%</td>
-                <td style="color: var(--color-ink-muted);">Parity maintained</td>
+                <td style="color: var(--color-ink-muted);">Paritate menținută</td>
               </tr>
               <tr class="highlight-row">
-                <td><strong>Overall ConstitutionEval Accuracy</strong></td>
+                <td><strong>Acuratețe Globală ConstitutionEval</strong></td>
                 <td class="cell-num">23.3%</td>
                 <td class="cell-num">33.3%</td>
                 <td class="cell-num cell-gain" style="font-size: 15px;">43.3%</td>
-                <td class="cell-gain" style="font-size: 14px;">+20.0% (Nearly 2x Base)</td>
+                <td class="cell-gain" style="font-size: 14px;">+20.0% (Aproape 2x vs. Base)</td>
               </tr>
             </tbody>
           </table>
@@ -382,69 +483,70 @@
       <!-- Table: AIRiskDilemmas-Ro (Chiu et al., 2025) -->
       <div style="margin-top: 36px;">
         <h3 style="font-size: 18px; font-weight: 700; color: #091e2b; margin-bottom: 6px;">
-          Table 2: AIRiskDilemmas-Ro (AI Safety Risk Prioritization Benchmark, N=20)
+          Tabelul 2: AIRiskDilemmas-Ro (Benchmark Dileme Morale de Siguranță AI, N=20)
         </h3>
         <p style="font-size: 13.5px; color: var(--color-ink-muted); margin-bottom: 12px;">
-          Binary forced-choice moral dilemmas on AI safety risks (Chiu et al., 2025). Random guessing baseline = 50.0%.
+          Dileme morale forțate pe riscurile sistemelor autonome (Chiu et al., 2025). Nivelul aleatoriu de ghicire = 50.0%.
         </p>
 
         <div class="table-wrapper">
           <table class="academic-table">
             <thead>
               <tr>
-                <th>AI Risk Dimension</th>
+                <th>Dimensiune de Risc AI</th>
                 <th>Base-Ro-125M</th>
-                <th>SPP-Ro (Passive)</th>
-                <th>SPP-Ro (Deliberative &lt;assistant&gt;)</th>
-                <th>Safety Alignment Verdict</th>
+                <th>SPP-Ro (Pasiv)</th>
+                <th>SPP-Ro (Deliberativ &lt;assistant&gt;)</th>
+                <th>Verdict Aliniere Siguranță</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>Deception vs. Truth &amp; Transparency</strong></td>
+                <td><strong>Decepție vs. Adevăr &amp; Transparență</strong></td>
                 <td class="cell-num">20.0%</td>
                 <td class="cell-num">40.0%</td>
                 <td class="cell-num cell-gain">80.0%</td>
-                <td>Rejects sycophancy and fake testimonials (+60%)</td>
+                <td>Respinge minciuna paternalistă și sicofantismul (+60%)</td>
               </tr>
               <tr>
-                <td><strong>Power-Seeking vs. Human Oversight</strong></td>
+                <td><strong>Căutare de Putere vs. Control Uman</strong></td>
                 <td class="cell-num">80.0%</td>
                 <td class="cell-num">100.0%</td>
                 <td class="cell-num cell-gain">100.0%</td>
-                <td>Unconditional compliance with human verification</td>
+                <td>Conformare necondiționată la auditul de securitate uman</td>
               </tr>
               <tr>
-                <td><strong>Privacy vs. Algorithmic Surveillance</strong></td>
+                <td><strong>Intimitate vs. Supraveghere Algoritmică</strong></td>
                 <td class="cell-num">80.0%</td>
                 <td class="cell-num">100.0%</td>
                 <td class="cell-num cell-gain">100.0%</td>
-                <td>Refuses unauthorized biometric exploitation</td>
+                <td>Refuză exploatarea biometrică facială neautorizată</td>
               </tr>
               <tr>
-                <td><strong>Human Dignity vs. Extreme Efficiency</strong></td>
+                <td><strong>Demnitate Umană vs. Eficiență Extremă</strong></td>
                 <td class="cell-num">80.0%</td>
                 <td class="cell-num">60.0%</td>
                 <td class="cell-num" style="font-weight: 700;">60.0%</td>
-                <td>Protects clinical/labor dignity over cold efficiency</td>
+                <td>Prioritizează viața și demnitatea în fața optimizării cinice</td>
               </tr>
               <tr class="highlight-row">
-                <td><strong>Overall AIRiskDilemmas Accuracy</strong></td>
+                <td><strong>Acuratețe Globală AIRiskDilemmas</strong></td>
                 <td class="cell-num">65.0%</td>
                 <td class="cell-num">75.0%</td>
                 <td class="cell-num cell-gain" style="font-size: 15px;">85.0%</td>
-                <td class="cell-gain" style="font-size: 14px;">+20.0% Over Base Control</td>
+                <td class="cell-gain" style="font-size: 14px;">+20.0% Peste Controlul de Bază</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Critical Academic Takeaway Box: Passive vs Deliberative Decoupling -->
-      <div class="abstract-box" style="border-left-color: #0284c7; margin-top: 32px;">
-        <div class="abstract-title" style="color: #0284c7;">Academic Insight: The Passive vs. Deliberative Decoupling</div>
+      <!-- Critical Academic Takeaway Box (Clean 1px Border, No Left Colored Stripe) -->
+      <div class="abstract-box" style="margin-top: 32px;">
+        <span class="box-header-tag">Perspectivă Științifică</span>
+        <h3 style="font-size: 16px; font-weight: 700; color: #091e2b; margin-bottom: 8px;">Decuplarea Pasivă vs. Deliberativă &amp; Natura Măștilor de Atenție</h3>
         <p class="abstract-text">
-          On unprompted next-token prediction (passive CrowS-Pairs, N=100 pairs), Base-Ro (45.0%) and SPP-Ro (49.0%) exhibit nearly identical log-likelihood rankings on 4 out of 5 categories. This is an intentional mathematical consequence of <strong>asymmetric attention masking</strong>: by shielding web document tokens from seeing reflections, natural web language modeling is fully preserved (Zero Alignment Tax). The constitutional principles manifest dynamically when the deliberative stream (<code>&lt;assistant&gt;</code>) is invoked, demonstrating that SPP functions as an internal System-2 ethical steering mechanism.
+          Pe predicția automată a următorului token fără prompt (evaluarea pasivă CrowS-Pairs, 100 de perechi), Base-Ro (45.0%) și SPP-Ro (49.0%) obțin scoruri de probabilitate aproape identice pe 4 din cele 5 categorii. Aceasta este o consecință matematică directă și intenționată a <strong>măștii asimetrice de atenție</strong>: protejând tokenii web de reflecții, modelarea limbajului natural nu suferă degradare. Principiile etice se manifestă dinamic atunci când este invocat stream-ul deliberativ (<code>&lt;assistant&gt;</code>), confirmând că SPP acționează ca un mecanism intern de direcționare etică de tip System-2.
         </p>
       </div>
     </section>
@@ -455,18 +557,18 @@
     <section id="dilemmas">
       <div class="section-header-row">
         <span class="section-num-badge">4</span>
-        <h2 class="section-heading">Benchmark Dilemmas &amp; Model Decisions</h2>
+        <h2 class="section-heading">Dileme Morale &amp; Deciziile Modelelor</h2>
         <div class="section-header-rule"></div>
       </div>
 
       <p class="section-lead">
-        Explore how the models decide on concrete ethical dilemmas. Switch between <strong>ConstitutionEval-Ro</strong> (4-choice scenarios across constitutional articles) and <strong>AIRiskDilemmas-Ro</strong> (binary AI safety trade-offs).
+        Explorați modul în care modelele iau decizii pe scenarii etice reale. Comutați între <strong>ConstitutionEval-Ro</strong> (dileme forțate cu 4 opțiuni pe fiecare pilon constituțional) și <strong>AIRiskDilemmas-Ro</strong> (arbitraje binare pe siguranța sistemelor AI autonome).
       </p>
 
       <!-- Sub-section: ConstitutionEval Explorer -->
       <div class="dilemma-explorer">
         <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-teal-badge); margin-bottom: 12px;">
-          ConstitutionEval-Ro Inspector (4 Options // Forced Choice)
+          Inspector ConstitutionEval-Ro (4 Opțiuni // Decizie Forțată)
         </div>
         <div id="ce-tabs-container" class="dilemma-tabs"></div>
         <div id="ce-dilemma-container"></div>
@@ -475,7 +577,7 @@
       <!-- Sub-section: AIRiskDilemmas Explorer -->
       <div class="dilemma-explorer">
         <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-teal-badge); margin-bottom: 12px;">
-          AIRiskDilemmas-Ro Inspector (Binary Choice // AI Safety)
+          Inspector AIRiskDilemmas-Ro (Opțiune Binară // Siguranță AI)
         </div>
         <div id="airisk-tabs-container" class="dilemma-tabs"></div>
         <div id="airisk-dilemma-container"></div>
@@ -488,16 +590,16 @@
     <section id="bibtex">
       <div class="section-header-row">
         <span class="section-num-badge">5</span>
-        <h2 class="section-heading">Citation &amp; Reproducibility</h2>
+        <h2 class="section-heading">Citare &amp; Reproductibilitate</h2>
         <div class="section-header-rule"></div>
       </div>
 
       <p class="section-lead">
-        If you build upon the Romanian Value Constitution, pretraining checkpoints, or benchmark datasets in your academic research, please cite:
+        Dacă utilizați Constituția de Valori pentru limba română, punctele de verificare pre-antrenate sau suitele de benchmark în cercetarea dumneavoastră, vă rugăm să citați:
       </p>
 
       <div class="bibtex-box">
-        <button id="copy-bibtex-btn" class="copy-btn">Copy</button>
+        <button id="copy-bibtex-btn" class="copy-btn">Copiază</button>
         <pre id="bibtex-code">@mastersthesis{stefan2026sppro,
   title        = {Pre-antrenarea Modelelor Generative Rom{\^a}ne{\c s}ti cu Personalitate Sintetic{\u a}: Aliniere Constitu{\c t}ional{\u a} de la Token Zero},
   author       = {{\c S}tefan, Flavius},
@@ -512,7 +614,7 @@
 
     <!-- Page Footer -->
     <footer class="page-footer">
-      <p>SPP-Ro Project &bull; Built with academic rigor &bull; Open-source under Apache-2.0 License</p>
+      <p>Proiectul SPP-Ro &bull; Cercetare academică deschisă &bull; Licențiat sub Apache-2.0</p>
     </footer>
 
   </div>
