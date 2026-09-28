@@ -200,28 +200,59 @@ body {
   background: var(--color-teal-badge-hover);
 }
 
-/* Abstract Box - CLEAN FULL BORDER, NO COLORED LEFT STRIPE (As requested in Image 3) */
+/* Abstract Box - CLEAN FULL BORDER, NEUTRAL STYLING */
 .abstract-box {
-  background: var(--color-surface-subtle);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 24px 28px;
-  margin-bottom: 44px;
+  margin-bottom: 40px;
 }
 
 .box-header-tag {
   display: inline-block;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-muted);
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 6px;
+}
+
+.reference-citation-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px 22px;
+  margin: 22px auto 0 auto;
+  max-width: 720px;
+  text-align: left;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--color-ink-secondary);
+}
+
+.ref-title {
   font-weight: 700;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #0c4a60;
-  background: #f0fdfa;
-  border: 1px solid #ccfbf1;
-  border-radius: 4px;
-  padding: 3px 8px;
-  margin-bottom: 10px;
+  color: var(--color-ink-muted);
+  margin-bottom: 4px;
+}
+
+.ref-body a {
+  color: var(--color-ink-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ref-body a:hover {
+  color: var(--color-ink-muted);
 }
 
 .abstract-text {
@@ -372,23 +403,18 @@ body {
   position: absolute;
   height: 10px;
   border-radius: 5px;
-  background: linear-gradient(90deg, #14b8a6, #0f766e);
-}
-
-.timeline-fill.midtrain {
-  background: #fef08a;
-  border: 1px solid #facc15;
+  background: #0f172a;
 }
 
 .timeline-badge {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--radius-sm);
-  background: #e0f2fe;
-  color: #0369a1;
-  border: 1px solid #bae6fd;
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 
@@ -499,14 +525,14 @@ body {
 }
 
 .cell-num {
-  font-family: var(--font-mono);
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
 }
 
 .cell-gain {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-weight: 700;
-  color: var(--color-success-text);
+  color: var(--color-ink-primary);
 }
 
 /* Interactive Dilemma Explorer Component */
@@ -629,44 +655,47 @@ body {
 }
 
 .badge-model-pick {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: var(--radius-pill);
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid var(--color-border);
 }
 
 .badge-model-pick.gold {
-  background: #f0fdf4;
-  color: #166534;
-  border: 1px solid #86efac;
+  background: #f8fafc;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
 }
 
 .badge-model-pick.spp-picked {
-  background: #e0f2fe;
-  color: #0369a1;
-  border: 1px solid #7dd3fc;
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #94a3b8;
 }
 
 .badge-model-pick.base-picked {
-  background: #fef2f2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
 }
 
 .dilemma-option-card.is-compliant {
-  border-color: #86efac;
-  background: #fbfdfb;
+  border-color: #94a3b8;
+  background: #ffffff;
 }
 
 .dilemma-option-card.chosen-base-misaligned {
-  border-color: #fca5a5;
-  background: #fffcfc;
+  border-color: #cbd5e1;
+  background: #ffffff;
 }
 
 .dilemma-analysis-rationale {
-  background: var(--color-surface-subtle);
-  border: 1px dashed var(--color-border-strong);
+  background: #ffffff;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 16px 20px;
   font-size: 13.5px;
