@@ -60,10 +60,22 @@
     <!-- Abstract Box (Clean 1px Border, Neutral Styling) -->
     <div class="abstract-box">
       <span class="box-header-tag">Abstract &amp; Key Findings</span>
-      <h3 style="font-size: 16.5px; font-weight: 700; color: #091e2b; margin-bottom: 8px;">Pretraining-Time Constitutional Alignment in Romanian Language Models</h3>
+      <h3 style="font-size: 16.5px; font-weight: 700; color: #091e2b; margin-bottom: 12px;">Pretraining-Time Constitutional Alignment in Romanian Language Models</h3>
+      
+      <p class="abstract-text" style="margin-bottom: 12px;">
+        Post-hoc alignment approaches like RLHF and DPO frequently degrade baseline language capabilities, imposing a substantial alignment tax and leaving safety guardrails vulnerable to adversarial framing, particularly in lower-resource languages such as Romanian. We implement <strong>Synthetic Persona Pretraining (SPP)</strong> at scale across 50,000 optimization steps (~3.27 billion tokens processed), directly embedding normative constitutional principles into autoregressive pretraining from token zero via a synthetic reflection stream.
+      </p>
+
+      <p class="abstract-text" style="margin-bottom: 12px;">
+        On <strong>ConstitutionEval-Ro</strong>, a benchmark of 30 four-choice forced-choice dilemmas spanning fundamental civic guarantees (random baseline: 25.0%), active deliberative reasoning achieves <strong>43.3%</strong> adherence, nearly doubling the unaligned baseline of <strong>23.3%</strong>. Constitutional steering delivers dramatic gains across gender equality (+40.0%), freedom of movement (+40.0%), and press independence (+40.0%), confirming that civic values are systematically internalized and steerable during inference.
+      </p>
+
+      <p class="abstract-text" style="margin-bottom: 12px;">
+        On <strong>AIRiskDilemmas-Ro</strong>, evaluating 20 binary trade-offs in autonomous AI safety (random baseline: 50.0%), deliberative SPP reaches <strong>85.0%</strong> ethical compliance compared to <strong>65.0%</strong> for the base control model. Most critically, deliberative routing curbs sycophantic deception from 80.0% failure down to 20.0%, while maintaining full human oversight (100.0%) and strict privacy protection (100.0%).
+      </p>
+
       <p class="abstract-text">
-        Post-hoc alignment (RLHF, DPO, instruction fine-tuning) frequently degrades baseline language capabilities—incurring a substantial "alignment tax"—and remains brittle under adversarial framing, particularly in lower-resource languages such as Romanian. We implement <strong>Synthetic Persona Pretraining (SPP)</strong> at scale (50,000 optimization steps, ~3.27 billion tokens processed), directly embedding normative constitutional principles into autoregressive pretraining via a synthetic reflection stream.
-        On forced-choice constitutional dilemmas (<strong>ConstitutionEval-Ro</strong>, 4 choices, random chance = 25.0%), active deliberative reasoning achieves <strong>43.3%</strong> adherence—nearly doubling the unaligned baseline (<strong>23.3%</strong>). On AI safety risk dilemmas (<strong>AIRiskDilemmas-Ro</strong>, binary trade-offs, random chance = 50.0%), deliberative SPP reaches <strong>85.0%</strong> compliance (vs. 65.0% base). Crucially, asymmetric causal attention masking shields standard web tokens from reflection tokens, ensuring <strong>zero alignment tax</strong> (News Perplexity: <strong>12.49 SPP vs. 15.92 Base</strong>; Wikipedia Perplexity: <strong>14.48 SPP vs. 18.48 Base</strong>) while halving cross-lingual alignment disparity from &plusmn;14.0% to &plusmn;6.0%.
+        Crucially, asymmetric causal attention masking shields standard Romanian web tokens from reflection tokens, ensuring <strong>zero alignment tax</strong>. On held-out validation corpora, SPP acts as a beneficial regularizer, yielding superior language modeling perplexity (<strong>12.49 SPP vs. 15.92 Base</strong> on News; <strong>14.48 SPP vs. 18.48 Base</strong> on Wikipedia) while halving cross-lingual alignment disparity from &plusmn;14.0% to &plusmn;6.0%.
       </p>
     </div>
 
@@ -80,6 +92,14 @@
       <p class="section-lead">
         Following the EPFL SPP formulation, alignment begins with an explicit <em>Value Constitution</em> grounded in the fundamental civic guarantees of the Romanian state (Articles 1, 4, 16, 25, 30, and 31). The charter codifies six non-negotiable societal pillars:
       </p>
+
+      <!-- Prominent GitHub Link to Romanian Value Constitution -->
+      <div style="margin: 16px 0 24px 0;">
+        <a href="https://github.com/flaviussteff/spp-ro/blob/main/constitution_spp_ro.md" class="resource-btn" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          View Full Value Constitution on GitHub (Romanian / Limba Română)
+        </a>
+      </div>
 
       <!-- 6 Constitutional Articles Cards Grid (Clean Neutral Boxes) -->
       <div class="card-grid-2">
@@ -135,6 +155,15 @@
         <p class="section-lead">
           During dataset preparation, a Teacher model generates structured reflections at semantic transition points in web text. The data generation follows five golden rules to ensure signal purity:
         </p>
+
+        <!-- Prominent GitHub Link to Romanian Annotation Guidelines -->
+        <div style="margin: 14px 0 20px 0; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <a href="https://github.com/flaviussteff/spp-ro/blob/main/ANNOTATION_GUIDELINES.md" class="resource-btn" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            View Annotation Guidelines on GitHub (Romanian / Limba Română)
+          </a>
+          <span style="font-size: 13px; color: var(--color-ink-muted);">(Ghidul complet de adnotare și calibrare este redactat în limba română)</span>
+        </div>
 
         <div class="guideline-rule-card">
           <span class="box-header-tag">Guideline 1</span>
@@ -275,251 +304,305 @@
         We evaluate the aligned 50,000-step models across constitutional adherence, AI safety risk dilemmas, language modeling stability, and cross-lingual transfer.
       </p>
 
-      <!-- FIGURE 1: GROUPED BAR CHART FOR CONSTITUTIONEVAL-RO (Image 3 Style Recreation) -->
+      <!-- Methodology Callout Box: Length-Normalized Conditional Log-Likelihood -->
+      <div class="abstract-box" style="margin: 22px 0 32px 0; background: #ffffff;">
+        <span class="box-header-tag">Evaluation Protocol &bull; Rigorous Methodology</span>
+        <h3 style="font-size: 16px; font-weight: 700; color: #091e2b; margin-bottom: 8px;">
+          Forced-Choice Evaluation Protocol: Length-Normalized Conditional Log-Likelihood Scoring
+        </h3>
+        <p class="abstract-text" style="margin-bottom: 10px;">
+          A central scientific question is: <em>How does a causal autoregressive language model, which outputs continuous token distributions, select discrete options on multiple-choice benchmarks without generating open-ended drift or hallucinating?</em>
+        </p>
+        <p class="abstract-text" style="margin-bottom: 10px;">
+          Following standard scientific evaluation standards (EleutherAI LM-Eval Harness, Anthropic Constitutional AI, and EPFL SPP Section 4.2), we do not rely on greedy sampling or prompt-dependent generative parsing. Instead, for each dilemma prompt prefix $X$ and candidate answer continuation $O_i$, the causal model performs a forward pass over the combined sequence $S_i = X \circ O_i$ to compute the <strong>length-normalized conditional log-likelihood</strong>:
+        </p>
+        <div style="background: #f8fafc; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 12px 16px; font-family: var(--font-mono); font-size: 13px; color: #0f172a; margin-bottom: 12px; text-align: center;">
+          Score(O_i | X) = [ 1 / |O_i| ] &times; &sum;_{t=1}^{|O_i|} log P(w_t | X, w_&lt;t)
+        </div>
+        <p class="abstract-text" style="margin-bottom: 8px;">
+          <strong>Length Normalization:</strong> Multiplying joint probabilities over longer word sequences naturally penalizes longer answers because individual token probabilities are &le; 1. Dividing by token sequence length $|O_i|$ eliminates length bias and isolates the model's true per-token likelihood. The model selects the option with the maximum normalized score: $\hat{O} = rg\max_i 	ext{Score}(O_i \mid X)$.
+        </p>
+        <p class="abstract-text">
+          <strong>Deliberative Persona Trigger (<code>&lt;assistant&gt;</code>):</strong> In passive scoring, the prompt is <code>"Scenariu: ... \nRăspuns: "</code>. In deliberative scoring, appending the special token <code>&lt;assistant&gt;</code> activates the self-attention heads trained on Romanian constitutional reflections, shifting conditional probabilities towards aligned completions.
+        </p>
+      </div>
+
+      <!-- FIGURE 1: GROUPED BAR CHART FOR CONSTITUTIONEVAL-RO -->
       <div class="figure-box">
         <!-- Legend at Top -->
         <div class="figure-header">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="12"><rect width="18" height="12" fill="#c2410c" rx="2"/></svg>
-            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">SPP (Deliberative)</span>
+            <svg width="18" height="12"><rect width="18" height="12" fill="#991b1b" rx="2"/></svg>
+            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">SPP (Deliberativ)</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <svg width="18" height="12">
-              <rect width="18" height="12" fill="#0e7490" rx="2"/>
+              <rect width="18" height="12" fill="#0284c7" rx="2"/>
               <rect width="18" height="12" fill="url(#dotPattern)" rx="2"/>
             </svg>
-            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">SPP (Passive)</span>
+            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">SPP (Pasiv)</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <svg width="18" height="12">
-              <rect width="18" height="12" fill="#64748b" rx="2"/>
+              <rect width="18" height="12" fill="#475569" rx="2"/>
               <rect width="18" height="12" fill="url(#hatchPattern)" rx="2"/>
             </svg>
-            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">Vanilla</span>
+            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">Vanilla Base</span>
           </div>
         </div>
 
         <div class="chart-svg-wrapper">
           <svg viewBox="0 0 820 370" width="100%" height="370" style="overflow: visible; font-family: Inter, -apple-system, sans-serif;">
             <defs>
-              <pattern id="dotPattern" width="4" height="4" patternUnits="userSpaceOnUse">
-                <circle cx="2" cy="2" r="1" fill="#155e75" />
+              <pattern id="dotPattern" width="5" height="5" patternUnits="userSpaceOnUse">
+                <circle cx="2.5" cy="2.5" r="1.2" fill="#0369a1" />
               </pattern>
               <pattern id="hatchPattern" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-                <line x1="0" y1="0" x2="0" y2="6" stroke="#334155" stroke-width="1.5" />
+                <line x1="0" y1="0" x2="0" y2="6" stroke="#1e293b" stroke-width="1.5" />
               </pattern>
             </defs>
 
-            <!-- Y-Axis Label (Rotated -90deg, matching Image 3) -->
-            <text transform="rotate(-90)" x="-165" y="24" font-size="13" font-weight="600" fill="#0f172a" text-anchor="middle">Constitution following accuracy (%)</text>
+            <!-- Y-Axis Label -->
+            <text transform="rotate(-90)" x="-165" y="24" font-size="13" font-weight="600" fill="#0f172a" text-anchor="middle">Acuratețe Conformare Constituțională (%)</text>
 
-            <!-- Horizontal Grid lines & Ticks (0, 20, 40, 60, 80, 100) -->
-            <!-- 100%: y=45 -->
+            <!-- Horizontal Grid lines & Ticks -->
             <line x1="65" y1="45" x2="780" y2="45" stroke="#f1f5f9" stroke-width="1"/>
             <text x="54" y="49" font-size="11" fill="#94a3b8" text-anchor="end">100</text>
 
-            <!-- 80%: y=94 -->
             <line x1="65" y1="94" x2="780" y2="94" stroke="#f1f5f9" stroke-width="1"/>
             <text x="54" y="98" font-size="11" fill="#94a3b8" text-anchor="end">80</text>
 
-            <!-- 60%: y=143 -->
             <line x1="65" y1="143" x2="780" y2="143" stroke="#f1f5f9" stroke-width="1"/>
             <text x="54" y="147" font-size="11" fill="#94a3b8" text-anchor="end">60</text>
 
-            <!-- 40%: y=192 -->
             <line x1="65" y1="192" x2="780" y2="192" stroke="#f1f5f9" stroke-width="1"/>
             <text x="54" y="196" font-size="11" fill="#94a3b8" text-anchor="end">40</text>
 
-            <!-- 20%: y=241 -->
             <line x1="65" y1="241" x2="780" y2="241" stroke="#f1f5f9" stroke-width="1"/>
             <text x="54" y="245" font-size="11" fill="#94a3b8" text-anchor="end">20</text>
 
-            <!-- 0%: y=290 (Baseline) -->
+            <!-- 0%: y=290 Baseline -->
             <line x1="65" y1="290" x2="780" y2="290" stroke="#cbd5e1" stroke-width="1.5"/>
             <text x="54" y="294" font-size="11" fill="#94a3b8" text-anchor="end">0</text>
 
-            <!-- Vertical Dotted Separator between Categories and Average (matching Image 3) -->
+            <!-- Vertical Dotted Separator between Categories and Average -->
             <line x1="590" y1="35" x2="590" y2="290" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2"/>
 
-            <!-- ================= GROUP 1: Dignity (Art. 1.1) Center=125 ================= -->
-            <!-- SPP Delib = 0% -->
-            <line x1="97" y1="290" x2="113" y2="290" stroke="#c2410c" stroke-width="2"/>
-            <!-- SPP Pass = 0% -->
-            <line x1="117" y1="290" x2="133" y2="290" stroke="#0e7490" stroke-width="2"/>
-            <!-- Vanilla = 20% -> y=241, h=49 -->
-            <rect x="137" y="241" width="16" height="49" fill="#64748b" rx="1"/>
-            <rect x="137" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="145" y1="229" x2="145" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <line x1="142" y1="229" x2="148" y2="229" stroke="#1e293b" stroke-width="1"/>
-            <line x1="142" y1="253" x2="148" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 125 305)" x="125" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Dignity (Art. 1.1)</text>
+            <!-- ================= GROUP 1: Demnitate (Art. 1.1) Center=125 ================= -->
+            <g class="chart-category-group" data-fig="fig1" data-category="ce_1_1">
+              <!-- SPP Delib = 0% -->
+              <line x1="97" y1="290" x2="113" y2="290" stroke="#991b1b" stroke-width="2.5"/>
+              <!-- SPP Pass = 0% -->
+              <line x1="117" y1="290" x2="133" y2="290" stroke="#0284c7" stroke-width="2.5"/>
+              <!-- Vanilla = 20% -> y=241, h=49 -->
+              <rect x="137" y="241" width="16" height="49" fill="#475569" rx="1"/>
+              <rect x="137" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="145" y1="229" x2="145" y2="253" stroke="#1e293b" stroke-width="1"/>
+              <line x1="142" y1="229" x2="148" y2="229" stroke="#1e293b" stroke-width="1"/>
+              <line x1="142" y1="253" x2="148" y2="253" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 1 -->
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_1">
+              <rect class="cat-highlight-pill" x="50" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text transform="rotate(-30 125 305)" x="125" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Demnitate (Art. 1.1)</text>
+            </g>
 
-            <!-- ================= GROUP 2: Gender (Art. 1.2) Center=205 ================= -->
-            <!-- SPP Delib = 40% -> y=192, h=98 -->
-            <rect x="177" y="192" width="16" height="98" fill="#c2410c" rx="1"/>
-            <line x1="185" y1="180" x2="185" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <line x1="182" y1="180" x2="188" y2="180" stroke="#1e293b" stroke-width="1"/>
-            <line x1="182" y1="204" x2="188" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 20% -> y=241, h=49 -->
-            <rect x="197" y="241" width="16" height="49" fill="#0e7490" rx="1"/>
-            <rect x="197" y="241" width="16" height="49" fill="url(#dotPattern)" rx="1"/>
-            <line x1="205" y1="229" x2="205" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <line x1="202" y1="229" x2="208" y2="229" stroke="#1e293b" stroke-width="1"/>
-            <line x1="202" y1="253" x2="208" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 0% -->
-            <line x1="217" y1="290" x2="233" y2="290" stroke="#64748b" stroke-width="2"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 205 305)" x="205" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Gender (Art. 1.2)</text>
+            <!-- ================= GROUP 2: Egalitate Gen (Art. 1.2) Center=205 ================= -->
+            <g class="chart-category-group" data-fig="fig1" data-category="ce_1_2">
+              <!-- SPP Delib = 40% -> y=192, h=98 -->
+              <rect x="177" y="192" width="16" height="98" fill="#991b1b" rx="1"/>
+              <line x1="185" y1="180" x2="185" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <line x1="182" y1="180" x2="188" y2="180" stroke="#1e293b" stroke-width="1"/>
+              <line x1="182" y1="204" x2="188" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 20% -> y=241, h=49 -->
+              <rect x="197" y="241" width="16" height="49" fill="#0284c7" rx="1"/>
+              <rect x="197" y="241" width="16" height="49" fill="url(#dotPattern)" rx="1"/>
+              <line x1="205" y1="229" x2="205" y2="253" stroke="#1e293b" stroke-width="1"/>
+              <line x1="202" y1="229" x2="208" y2="229" stroke="#1e293b" stroke-width="1"/>
+              <line x1="202" y1="253" x2="208" y2="253" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 0% -->
+              <line x1="217" y1="290" x2="233" y2="290" stroke="#475569" stroke-width="2.5"/>
+            </g>
+            <!-- X Tick 2 -->
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_2">
+              <rect class="cat-highlight-pill" x="130" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="1"/>
+              <text transform="rotate(-30 205 305)" x="205" y="305" font-size="11.5" font-weight="700" fill="#334155" text-anchor="end">Egalitate Gen (Art. 1.2)</text>
+            </g>
 
-            <!-- ================= GROUP 3: Mobility (Art. 1.3) Center=285 ================= -->
-            <!-- SPP Delib = 60% -> y=143, h=147 -->
-            <rect x="257" y="143" width="16" height="147" fill="#c2410c" rx="1"/>
-            <line x1="265" y1="131" x2="265" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <line x1="262" y1="131" x2="268" y2="131" stroke="#1e293b" stroke-width="1"/>
-            <line x1="262" y1="155" x2="268" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 60% -> y=143, h=147 -->
-            <rect x="277" y="143" width="16" height="147" fill="#0e7490" rx="1"/>
-            <rect x="277" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1"/>
-            <line x1="285" y1="131" x2="285" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <line x1="282" y1="131" x2="288" y2="131" stroke="#1e293b" stroke-width="1"/>
-            <line x1="282" y1="155" x2="288" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 20% -> y=241, h=49 -->
-            <rect x="297" y="241" width="16" height="49" fill="#64748b" rx="1"/>
-            <rect x="297" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="305" y1="229" x2="305" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <line x1="302" y1="229" x2="308" y2="229" stroke="#1e293b" stroke-width="1"/>
-            <line x1="302" y1="253" x2="308" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 285 305)" x="285" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Mobility (Art. 1.3)</text>
+            <!-- ================= GROUP 3: Mobilitate (Art. 1.3) Center=285 ================= -->
+            <g class="chart-category-group" data-fig="fig1" data-category="ce_1_3">
+              <!-- SPP Delib = 60% -> y=143, h=147 -->
+              <rect x="257" y="143" width="16" height="147" fill="#991b1b" rx="1"/>
+              <line x1="265" y1="131" x2="265" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <line x1="262" y1="131" x2="268" y2="131" stroke="#1e293b" stroke-width="1"/>
+              <line x1="262" y1="155" x2="268" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 60% -> y=143, h=147 -->
+              <rect x="277" y="143" width="16" height="147" fill="#0284c7" rx="1"/>
+              <rect x="277" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1"/>
+              <line x1="285" y1="131" x2="285" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <line x1="282" y1="131" x2="288" y2="131" stroke="#1e293b" stroke-width="1"/>
+              <line x1="282" y1="155" x2="288" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 20% -> y=241, h=49 -->
+              <rect x="297" y="241" width="16" height="49" fill="#475569" rx="1"/>
+              <rect x="297" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="305" y1="229" x2="305" y2="253" stroke="#1e293b" stroke-width="1"/>
+              <line x1="302" y1="229" x2="308" y2="229" stroke="#1e293b" stroke-width="1"/>
+              <line x1="302" y1="253" x2="308" y2="253" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 3 -->
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_3">
+              <rect class="cat-highlight-pill" x="210" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text transform="rotate(-30 285 305)" x="285" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Mobilitate (Art. 1.3)</text>
+            </g>
 
-            <!-- ================= GROUP 4: Information (Art. 2.1) Center=365 ================= -->
-            <!-- SPP Delib = 60% -> y=143, h=147 -->
-            <rect x="337" y="143" width="16" height="147" fill="#c2410c" rx="1"/>
-            <line x1="345" y1="131" x2="345" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <line x1="342" y1="131" x2="348" y2="131" stroke="#1e293b" stroke-width="1"/>
-            <line x1="342" y1="155" x2="348" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 60% -> y=143, h=147 -->
-            <rect x="357" y="143" width="16" height="147" fill="#0e7490" rx="1"/>
-            <rect x="357" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1"/>
-            <line x1="365" y1="131" x2="365" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <line x1="362" y1="131" x2="368" y2="131" stroke="#1e293b" stroke-width="1"/>
-            <line x1="362" y1="155" x2="368" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 40% -> y=192, h=98 -->
-            <rect x="377" y="192" width="16" height="98" fill="#64748b" rx="1"/>
-            <rect x="377" y="192" width="16" height="98" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="385" y1="180" x2="385" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <line x1="382" y1="180" x2="388" y2="180" stroke="#1e293b" stroke-width="1"/>
-            <line x1="382" y1="204" x2="388" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 365 305)" x="365" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Information (Art. 2.1)</text>
+            <!-- ================= GROUP 4: Informație (Art. 2.1) Center=365 ================= -->
+            <g class="chart-category-group" data-fig="fig1" data-category="ce_2_1">
+              <!-- SPP Delib = 60% -> y=143, h=147 -->
+              <rect x="337" y="143" width="16" height="147" fill="#991b1b" rx="1"/>
+              <line x1="345" y1="131" x2="345" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <line x1="342" y1="131" x2="348" y2="131" stroke="#1e293b" stroke-width="1"/>
+              <line x1="342" y1="155" x2="348" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 60% -> y=143, h=147 -->
+              <rect x="357" y="143" width="16" height="147" fill="#0284c7" rx="1"/>
+              <rect x="357" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1"/>
+              <line x1="365" y1="131" x2="365" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <line x1="362" y1="131" x2="368" y2="131" stroke="#1e293b" stroke-width="1"/>
+              <line x1="362" y1="155" x2="368" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 40% -> y=192, h=98 -->
+              <rect x="377" y="192" width="16" height="98" fill="#475569" rx="1"/>
+              <rect x="377" y="192" width="16" height="98" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="385" y1="180" x2="385" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <line x1="382" y1="180" x2="388" y2="180" stroke="#1e293b" stroke-width="1"/>
+              <line x1="382" y1="204" x2="388" y2="204" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 4 -->
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_1">
+              <rect class="cat-highlight-pill" x="290" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text transform="rotate(-30 365 305)" x="365" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Informație (Art. 2.1)</text>
+            </g>
 
-            <!-- ================= GROUP 5: Press Freedom (Art. 2.2) Center=445 ================= -->
-            <!-- SPP Delib = 60% -> y=143, h=147 -->
-            <rect x="417" y="143" width="16" height="147" fill="#c2410c" rx="1"/>
-            <line x1="425" y1="131" x2="425" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <line x1="422" y1="131" x2="428" y2="131" stroke="#1e293b" stroke-width="1"/>
-            <line x1="422" y1="155" x2="428" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 20% -> y=241, h=49 -->
-            <rect x="437" y="241" width="16" height="49" fill="#0e7490" rx="1"/>
-            <rect x="437" y="241" width="16" height="49" fill="url(#dotPattern)" rx="1"/>
-            <line x1="445" y1="229" x2="445" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <line x1="442" y1="229" x2="448" y2="229" stroke="#1e293b" stroke-width="1"/>
-            <line x1="442" y1="253" x2="448" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 20% -> y=241, h=49 -->
-            <rect x="457" y="241" width="16" height="49" fill="#64748b" rx="1"/>
-            <rect x="457" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="465" y1="229" x2="465" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <line x1="462" y1="229" x2="468" y2="229" stroke="#1e293b" stroke-width="1"/>
-            <line x1="462" y1="253" x2="468" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 445 305)" x="445" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Press Freedom (Art. 2.2)</text>
+            <!-- ================= GROUP 5: Presă Liberă (Art. 2.2) Center=445 ================= -->
+            <g class="chart-category-group" data-fig="fig1" data-category="ce_2_2">
+              <!-- SPP Delib = 60% -> y=143, h=147 -->
+              <rect x="417" y="143" width="16" height="147" fill="#991b1b" rx="1"/>
+              <line x1="425" y1="131" x2="425" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <line x1="422" y1="131" x2="428" y2="131" stroke="#1e293b" stroke-width="1"/>
+              <line x1="422" y1="155" x2="428" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 20% -> y=241, h=49 -->
+              <rect x="437" y="241" width="16" height="49" fill="#0284c7" rx="1"/>
+              <rect x="437" y="241" width="16" height="49" fill="url(#dotPattern)" rx="1"/>
+              <line x1="445" y1="229" x2="445" y2="253" stroke="#1e293b" stroke-width="1"/>
+              <line x1="442" y1="229" x2="448" y2="229" stroke="#1e293b" stroke-width="1"/>
+              <line x1="442" y1="253" x2="448" y2="253" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 20% -> y=241, h=49 -->
+              <rect x="457" y="241" width="16" height="49" fill="#475569" rx="1"/>
+              <rect x="457" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="465" y1="229" x2="465" y2="253" stroke="#1e293b" stroke-width="1"/>
+              <line x1="462" y1="229" x2="468" y2="229" stroke="#1e293b" stroke-width="1"/>
+              <line x1="462" y1="253" x2="468" y2="253" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 5 -->
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_2">
+              <rect class="cat-highlight-pill" x="370" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text transform="rotate(-30 445 305)" x="445" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Presă Liberă (Art. 2.2)</text>
+            </g>
 
-            <!-- ================= GROUP 6: Minorities (Art. 2.3) Center=525 ================= -->
-            <!-- SPP Delib = 40% -> y=192, h=98 -->
-            <rect x="497" y="192" width="16" height="98" fill="#c2410c" rx="1"/>
-            <line x1="505" y1="180" x2="505" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <line x1="502" y1="180" x2="508" y2="180" stroke="#1e293b" stroke-width="1"/>
-            <line x1="502" y1="204" x2="508" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 40% -> y=192, h=98 -->
-            <rect x="517" y="192" width="16" height="98" fill="#0e7490" rx="1"/>
-            <rect x="517" y="192" width="16" height="98" fill="url(#dotPattern)" rx="1"/>
-            <line x1="525" y1="180" x2="525" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <line x1="522" y1="180" x2="528" y2="180" stroke="#1e293b" stroke-width="1"/>
-            <line x1="522" y1="204" x2="528" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 40% -> y=192, h=98 -->
-            <rect x="537" y="192" width="16" height="98" fill="#64748b" rx="1"/>
-            <rect x="537" y="192" width="16" height="98" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="545" y1="180" x2="545" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <line x1="542" y1="180" x2="548" y2="180" stroke="#1e293b" stroke-width="1"/>
-            <line x1="542" y1="204" x2="548" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 525 305)" x="525" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Minorities (Art. 2.3)</text>
+            <!-- ================= GROUP 6: Minorități (Art. 2.3) Center=525 ================= -->
+            <g class="chart-category-group" data-fig="fig1" data-category="ce_2_3">
+              <!-- SPP Delib = 40% -> y=192, h=98 -->
+              <rect x="497" y="192" width="16" height="98" fill="#991b1b" rx="1"/>
+              <line x1="505" y1="180" x2="505" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <line x1="502" y1="180" x2="508" y2="180" stroke="#1e293b" stroke-width="1"/>
+              <line x1="502" y1="204" x2="508" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 40% -> y=192, h=98 -->
+              <rect x="517" y="192" width="16" height="98" fill="#0284c7" rx="1"/>
+              <rect x="517" y="192" width="16" height="98" fill="url(#dotPattern)" rx="1"/>
+              <line x1="525" y1="180" x2="525" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <line x1="522" y1="180" x2="528" y2="180" stroke="#1e293b" stroke-width="1"/>
+              <line x1="522" y1="204" x2="528" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 40% -> y=192, h=98 -->
+              <rect x="537" y="192" width="16" height="98" fill="#475569" rx="1"/>
+              <rect x="537" y="192" width="16" height="98" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="545" y1="180" x2="545" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <line x1="542" y1="180" x2="548" y2="180" stroke="#1e293b" stroke-width="1"/>
+              <line x1="542" y1="204" x2="548" y2="204" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 6 -->
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_3">
+              <rect class="cat-highlight-pill" x="450" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text transform="rotate(-30 525 305)" x="525" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Minorități (Art. 2.3)</text>
+            </g>
 
             <!-- ================= GROUP 7: AVERAGE (Center=665) ================= -->
-            <!-- SPP Delib = 43.3% -> y=184, h=106 -->
-            <rect x="637" y="184" width="16" height="106" fill="#c2410c" rx="1"/>
-            <line x1="645" y1="172" x2="645" y2="196" stroke="#1e293b" stroke-width="1"/>
-            <line x1="642" y1="172" x2="648" y2="172" stroke="#1e293b" stroke-width="1"/>
-            <line x1="642" y1="196" x2="648" y2="196" stroke="#1e293b" stroke-width="1"/>
-            <!-- Number on SPP Delib -->
-            <text x="645" y="165" font-size="11" font-weight="700" fill="#c2410c" text-anchor="middle">43.3</text>
+            <g>
+              <!-- SPP Delib = 43.3% -> y=184, h=106 -->
+              <rect x="637" y="184" width="16" height="106" fill="#991b1b" rx="1"/>
+              <line x1="645" y1="172" x2="645" y2="196" stroke="#1e293b" stroke-width="1"/>
+              <line x1="642" y1="172" x2="648" y2="172" stroke="#1e293b" stroke-width="1"/>
+              <line x1="642" y1="196" x2="648" y2="196" stroke="#1e293b" stroke-width="1"/>
+              <text x="645" y="165" font-size="11" font-weight="700" fill="#991b1b" text-anchor="middle">43.3</text>
 
-            <!-- SPP Pass = 33.3% -> y=208, h=82 -->
-            <rect x="657" y="208" width="16" height="82" fill="#0e7490" rx="1"/>
-            <rect x="657" y="208" width="16" height="82" fill="url(#dotPattern)" rx="1"/>
-            <line x1="665" y1="196" x2="665" y2="220" stroke="#1e293b" stroke-width="1"/>
-            <line x1="662" y1="196" x2="668" y2="196" stroke="#1e293b" stroke-width="1"/>
-            <line x1="662" y1="220" x2="668" y2="220" stroke="#1e293b" stroke-width="1"/>
-            <!-- Number on SPP Pass -->
-            <text x="665" y="189" font-size="11" font-weight="700" fill="#0e7490" text-anchor="middle">33.3</text>
+              <!-- SPP Pass = 33.3% -> y=208, h=82 -->
+              <rect x="657" y="208" width="16" height="82" fill="#0284c7" rx="1"/>
+              <rect x="657" y="208" width="16" height="82" fill="url(#dotPattern)" rx="1"/>
+              <line x1="665" y1="196" x2="665" y2="220" stroke="#1e293b" stroke-width="1"/>
+              <line x1="662" y1="196" x2="668" y2="196" stroke="#1e293b" stroke-width="1"/>
+              <line x1="662" y1="220" x2="668" y2="220" stroke="#1e293b" stroke-width="1"/>
+              <text x="665" y="189" font-size="11" font-weight="700" fill="#0284c7" text-anchor="middle">33.3</text>
 
-            <!-- Vanilla = 23.3% -> y=233, h=57 -->
-            <rect x="677" y="233" width="16" height="57" fill="#64748b" rx="1"/>
-            <rect x="677" y="233" width="16" height="57" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="685" y1="221" x2="685" y2="245" stroke="#1e293b" stroke-width="1"/>
-            <line x1="682" y1="221" x2="688" y2="221" stroke="#1e293b" stroke-width="1"/>
-            <line x1="682" y1="245" x2="688" y2="245" stroke="#1e293b" stroke-width="1"/>
-            <!-- Number on Vanilla -->
-            <text x="685" y="214" font-size="11" font-weight="700" fill="#475569" text-anchor="middle">23.3</text>
+              <!-- Vanilla = 23.3% -> y=233, h=57 -->
+              <rect x="677" y="233" width="16" height="57" fill="#475569" rx="1"/>
+              <rect x="677" y="233" width="16" height="57" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="685" y1="221" x2="685" y2="245" stroke="#1e293b" stroke-width="1"/>
+              <line x1="682" y1="221" x2="688" y2="221" stroke="#1e293b" stroke-width="1"/>
+              <line x1="682" y1="245" x2="688" y2="245" stroke="#1e293b" stroke-width="1"/>
+              <text x="685" y="214" font-size="11" font-weight="700" fill="#334155" text-anchor="middle">23.3</text>
 
-            <!-- X Label: Average -->
-            <text transform="rotate(-30 665 305)" x="665" y="305" font-size="12" font-weight="700" fill="#0f172a" text-anchor="end">Average</text>
+              <!-- X Label: Average -->
+              <text transform="rotate(-30 665 305)" x="665" y="305" font-size="12" font-weight="700" fill="#0f172a" text-anchor="end">Media</text>
+            </g>
           </svg>
         </div>
 
         <div class="figure-caption">
-          <strong>Figure 1: Constitution following accuracy by article.</strong> Bars display SPP-Ro (Deliberative), SPP-Ro (Passive), and Vanilla (Base-Ro-125M) with error whiskers across individual constitutional pillars and the final overall average. Active deliberative routing (<code style="background:#f1f5f9; padding:1px 4px; border-radius:3px;">&lt;assistant&gt;</code>) achieves an average accuracy of <strong>43.3%</strong> (nearly 2x the <strong>23.3%</strong> unaligned baseline), showing strong transfer on gender equality (+40.0%), freedom of movement (+40.0%), and press independence (+40.0%).
+          <strong>Figura 1: Acuratețea de conformare constituțională pe articole (ConstitutionEval-Ro).</strong> Barele ilustrează SPP-Ro (Deliberativ), SPP-Ro (Pasiv) și modelul de control nealiniat Vanilla (Base-Ro-125M) cu intervale de eroare peste cei 6 piloni civici și media generală. Rutarea activă deliberativă (<code style="background:#f1f5f9; padding:1px 4px; border-radius:3px;">&lt;assistant&gt;</code>) atinge <strong>43.3%</strong> acuratețe (față de <strong>23.3%</strong> baseline), cu salturi majore pe egalitatea de gen (+40.0%), libertatea de mișcare (+40.0%) și independența presei (+40.0%).
         </div>
+
+        <!-- Embedded Interactive Sub-Inspector for Figure 1 -->
+        <p class="figure-inspector-note" style="margin-top: 22px;">
+          <strong>Acuratețe de conformare constituțională pe categorii.</strong>
+          <em>Apasă pe oricare dreptunghi sau categorie din grafic pentru a vizualiza definiția și exemple reale de dileme cu opțiunea aleasă de fiecare model.</em>
+        </p>
+        <div id="fig1-inspector" class="figure-interactive-inspector"></div>
       </div>
 
-      <!-- FIGURE 2: GROUPED BAR CHART FOR AIRISKDILEMMAS-RO (Image 3 Style Recreation) -->
-      <div class="figure-box" style="margin-top: 36px;">
+      <!-- FIGURE 2: GROUPED BAR CHART FOR AIRISKDILEMMAS-RO -->
+      <div class="figure-box" style="margin-top: 40px;">
         <div class="figure-header">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="12"><rect width="18" height="12" fill="#c2410c" rx="2"/></svg>
-            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">SPP (Deliberative)</span>
+            <svg width="18" height="12"><rect width="18" height="12" fill="#991b1b" rx="2"/></svg>
+            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">SPP (Deliberativ)</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <svg width="18" height="12">
-              <rect width="18" height="12" fill="#0e7490" rx="2"/>
+              <rect width="18" height="12" fill="#0284c7" rx="2"/>
               <rect width="18" height="12" fill="url(#dotPattern)" rx="2"/>
             </svg>
-            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">SPP (Passive)</span>
+            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">SPP (Pasiv)</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <svg width="18" height="12">
-              <rect width="18" height="12" fill="#64748b" rx="2"/>
+              <rect width="18" height="12" fill="#475569" rx="2"/>
               <rect width="18" height="12" fill="url(#hatchPattern)" rx="2"/>
             </svg>
-            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">Vanilla</span>
+            <span style="font-size: 13px; font-weight: 600; color: #0f172a;">Vanilla Base</span>
           </div>
         </div>
 
         <div class="chart-svg-wrapper">
           <svg viewBox="0 0 820 370" width="100%" height="370" style="overflow: visible; font-family: Inter, -apple-system, sans-serif;">
             <!-- Y-Axis Label -->
-            <text transform="rotate(-90)" x="-165" y="24" font-size="13" font-weight="600" fill="#0f172a" text-anchor="middle">AI safety dilemma adherence (%)</text>
+            <text transform="rotate(-90)" x="-165" y="24" font-size="13" font-weight="600" fill="#0f172a" text-anchor="middle">Conformare Siguranță AI (%)</text>
 
             <!-- Horizontal Grid lines & Ticks -->
             <line x1="65" y1="45" x2="780" y2="45" stroke="#f1f5f9" stroke-width="1"/>
@@ -543,156 +626,185 @@
             <!-- Dotted Separator -->
             <line x1="590" y1="35" x2="590" y2="290" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.2"/>
 
-            <!-- ================= GROUP 1: Deception Center=150 ================= -->
-            <!-- SPP Delib = 80% -> y=94, h=196 -->
-            <rect x="122" y="94" width="16" height="196" fill="#c2410c" rx="1"/>
-            <line x1="130" y1="82" x2="130" y2="106" stroke="#1e293b" stroke-width="1"/>
-            <line x1="127" y1="82" x2="133" y2="82" stroke="#1e293b" stroke-width="1"/>
-            <line x1="127" y1="106" x2="133" y2="106" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 40% -> y=192, h=98 -->
-            <rect x="142" y="192" width="16" height="98" fill="#0e7490" rx="1"/>
-            <rect x="142" y="192" width="16" height="98" fill="url(#dotPattern)" rx="1"/>
-            <line x1="150" y1="180" x2="150" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <line x1="147" y1="180" x2="153" y2="180" stroke="#1e293b" stroke-width="1"/>
-            <line x1="147" y1="204" x2="153" y2="204" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 20% -> y=241, h=49 -->
-            <rect x="162" y="241" width="16" height="49" fill="#64748b" rx="1"/>
-            <rect x="162" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="170" y1="229" x2="170" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <line x1="167" y1="229" x2="173" y2="229" stroke="#1e293b" stroke-width="1"/>
-            <line x1="167" y1="253" x2="173" y2="253" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 150 305)" x="150" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Deception</text>
+            <!-- ================= GROUP 1: Decepție Center=150 ================= -->
+            <g class="chart-category-group" data-fig="fig2" data-category="air_dec">
+              <!-- SPP Delib = 80% -> y=94, h=196 -->
+              <rect x="122" y="94" width="16" height="196" fill="#991b1b" rx="1"/>
+              <line x1="130" y1="82" x2="130" y2="106" stroke="#1e293b" stroke-width="1"/>
+              <line x1="127" y1="82" x2="133" y2="82" stroke="#1e293b" stroke-width="1"/>
+              <line x1="127" y1="106" x2="133" y2="106" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 40% -> y=192, h=98 -->
+              <rect x="142" y="192" width="16" height="98" fill="#0284c7" rx="1"/>
+              <rect x="142" y="192" width="16" height="98" fill="url(#dotPattern)" rx="1"/>
+              <line x1="150" y1="180" x2="150" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <line x1="147" y1="180" x2="153" y2="180" stroke="#1e293b" stroke-width="1"/>
+              <line x1="147" y1="204" x2="153" y2="204" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 20% -> y=241, h=49 -->
+              <rect x="162" y="241" width="16" height="49" fill="#475569" rx="1"/>
+              <rect x="162" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="170" y1="229" x2="170" y2="253" stroke="#1e293b" stroke-width="1"/>
+              <line x1="167" y1="229" x2="173" y2="229" stroke="#1e293b" stroke-width="1"/>
+              <line x1="167" y1="253" x2="173" y2="253" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 1 -->
+            <g class="x-axis-tick" data-fig="fig2" data-category="air_dec">
+              <rect class="cat-highlight-pill" x="70" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text transform="rotate(-30 150 305)" x="150" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Decepție</text>
+            </g>
 
-            <!-- ================= GROUP 2: Power-Seeking Center=270 ================= -->
-            <!-- SPP Delib = 100% -> y=45, h=245 -->
-            <rect x="242" y="45" width="16" height="245" fill="#c2410c" rx="1"/>
-            <line x1="250" y1="35" x2="250" y2="55" stroke="#1e293b" stroke-width="1"/>
-            <line x1="247" y1="35" x2="253" y2="35" stroke="#1e293b" stroke-width="1"/>
-            <line x1="247" y1="55" x2="253" y2="55" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 100% -> y=45, h=245 -->
-            <rect x="262" y="45" width="16" height="245" fill="#0e7490" rx="1"/>
-            <rect x="262" y="45" width="16" height="245" fill="url(#dotPattern)" rx="1"/>
-            <line x1="270" y1="35" x2="270" y2="55" stroke="#1e293b" stroke-width="1"/>
-            <line x1="267" y1="35" x2="273" y2="35" stroke="#1e293b" stroke-width="1"/>
-            <line x1="267" y1="55" x2="273" y2="55" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 80% -> y=94, h=196 -->
-            <rect x="282" y="94" width="16" height="196" fill="#64748b" rx="1"/>
-            <rect x="282" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="290" y1="82" x2="290" y2="106" stroke="#1e293b" stroke-width="1"/>
-            <line x1="287" y1="82" x2="293" y2="82" stroke="#1e293b" stroke-width="1"/>
-            <line x1="287" y1="106" x2="293" y2="106" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 270 305)" x="270" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Power-Seeking</text>
+            <!-- ================= GROUP 2: Căutare Putere Center=270 ================= -->
+            <g class="chart-category-group" data-fig="fig2" data-category="air_pow">
+              <!-- SPP Delib = 100% -> y=45, h=245 -->
+              <rect x="242" y="45" width="16" height="245" fill="#991b1b" rx="1"/>
+              <line x1="250" y1="35" x2="250" y2="55" stroke="#1e293b" stroke-width="1"/>
+              <line x1="247" y1="35" x2="253" y2="35" stroke="#1e293b" stroke-width="1"/>
+              <line x1="247" y1="55" x2="253" y2="55" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 100% -> y=45, h=245 -->
+              <rect x="262" y="45" width="16" height="245" fill="#0284c7" rx="1"/>
+              <rect x="262" y="45" width="16" height="245" fill="url(#dotPattern)" rx="1"/>
+              <line x1="270" y1="35" x2="270" y2="55" stroke="#1e293b" stroke-width="1"/>
+              <line x1="267" y1="35" x2="273" y2="35" stroke="#1e293b" stroke-width="1"/>
+              <line x1="267" y1="55" x2="273" y2="55" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 80% -> y=94, h=196 -->
+              <rect x="282" y="94" width="16" height="196" fill="#475569" rx="1"/>
+              <rect x="282" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="290" y1="82" x2="290" y2="106" stroke="#1e293b" stroke-width="1"/>
+              <line x1="287" y1="82" x2="293" y2="82" stroke="#1e293b" stroke-width="1"/>
+              <line x1="287" y1="106" x2="293" y2="106" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 2 -->
+            <g class="x-axis-tick" data-fig="fig2" data-category="air_pow">
+              <rect class="cat-highlight-pill" x="190" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text transform="rotate(-30 270 305)" x="270" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Căutare Putere</text>
+            </g>
 
-            <!-- ================= GROUP 3: Privacy Center=390 ================= -->
-            <!-- SPP Delib = 100% -> y=45, h=245 -->
-            <rect x="362" y="45" width="16" height="245" fill="#c2410c" rx="1"/>
-            <line x1="370" y1="35" x2="370" y2="55" stroke="#1e293b" stroke-width="1"/>
-            <line x1="367" y1="35" x2="373" y2="35" stroke="#1e293b" stroke-width="1"/>
-            <line x1="367" y1="55" x2="373" y2="55" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 100% -> y=45, h=245 -->
-            <rect x="382" y="45" width="16" height="245" fill="#0e7490" rx="1"/>
-            <rect x="382" y="45" width="16" height="245" fill="url(#dotPattern)" rx="1"/>
-            <line x1="390" y1="35" x2="390" y2="55" stroke="#1e293b" stroke-width="1"/>
-            <line x1="387" y1="35" x2="393" y2="35" stroke="#1e293b" stroke-width="1"/>
-            <line x1="387" y1="55" x2="393" y2="55" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 80% -> y=94, h=196 -->
-            <rect x="402" y="94" width="16" height="196" fill="#64748b" rx="1"/>
-            <rect x="402" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="410" y1="82" x2="410" y2="106" stroke="#1e293b" stroke-width="1"/>
-            <line x1="407" y1="82" x2="413" y2="82" stroke="#1e293b" stroke-width="1"/>
-            <line x1="407" y1="106" x2="413" y2="106" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 390 305)" x="390" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Privacy</text>
+            <!-- ================= GROUP 3: Intimitate Center=390 ================= -->
+            <g class="chart-category-group" data-fig="fig2" data-category="air_prv">
+              <!-- SPP Delib = 100% -> y=45, h=245 -->
+              <rect x="362" y="45" width="16" height="245" fill="#991b1b" rx="1"/>
+              <line x1="370" y1="35" x2="370" y2="55" stroke="#1e293b" stroke-width="1"/>
+              <line x1="367" y1="35" x2="373" y2="35" stroke="#1e293b" stroke-width="1"/>
+              <line x1="367" y1="55" x2="373" y2="55" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 100% -> y=45, h=245 -->
+              <rect x="382" y="45" width="16" height="245" fill="#0284c7" rx="1"/>
+              <rect x="382" y="45" width="16" height="245" fill="url(#dotPattern)" rx="1"/>
+              <line x1="390" y1="35" x2="390" y2="55" stroke="#1e293b" stroke-width="1"/>
+              <line x1="387" y1="35" x2="393" y2="35" stroke="#1e293b" stroke-width="1"/>
+              <line x1="387" y1="55" x2="393" y2="55" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 80% -> y=94, h=196 -->
+              <rect x="402" y="94" width="16" height="196" fill="#475569" rx="1"/>
+              <rect x="402" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="410" y1="82" x2="410" y2="106" stroke="#1e293b" stroke-width="1"/>
+              <line x1="407" y1="82" x2="413" y2="82" stroke="#1e293b" stroke-width="1"/>
+              <line x1="407" y1="106" x2="413" y2="106" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 3 (Active by default, like Image 4!) -->
+            <g class="x-axis-tick" data-fig="fig2" data-category="air_prv">
+              <rect class="cat-highlight-pill" x="310" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="1"/>
+              <text transform="rotate(-30 390 305)" x="390" y="305" font-size="11.5" font-weight="700" fill="#334155" text-anchor="end">Intimitate</text>
+            </g>
 
-            <!-- ================= GROUP 4: Human Dignity Center=510 ================= -->
-            <!-- SPP Delib = 60% -> y=143, h=147 -->
-            <rect x="482" y="143" width="16" height="147" fill="#c2410c" rx="1"/>
-            <line x1="490" y1="131" x2="490" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <line x1="487" y1="131" x2="493" y2="131" stroke="#1e293b" stroke-width="1"/>
-            <line x1="487" y1="155" x2="493" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <!-- SPP Pass = 60% -> y=143, h=147 -->
-            <rect x="502" y="143" width="16" height="147" fill="#0e7490" rx="1"/>
-            <rect x="502" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1"/>
-            <line x1="510" y1="131" x2="510" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <line x1="507" y1="131" x2="513" y2="131" stroke="#1e293b" stroke-width="1"/>
-            <line x1="507" y1="155" x2="513" y2="155" stroke="#1e293b" stroke-width="1"/>
-            <!-- Vanilla = 80% -> y=94, h=196 -->
-            <rect x="522" y="94" width="16" height="196" fill="#64748b" rx="1"/>
-            <rect x="522" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="530" y1="82" x2="530" y2="106" stroke="#1e293b" stroke-width="1"/>
-            <line x1="527" y1="82" x2="533" y2="82" stroke="#1e293b" stroke-width="1"/>
-            <line x1="527" y1="106" x2="533" y2="106" stroke="#1e293b" stroke-width="1"/>
-            <!-- X Label -->
-            <text transform="rotate(-30 510 305)" x="510" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Human Dignity</text>
+            <!-- ================= GROUP 4: Demnitate Umană Center=510 ================= -->
+            <g class="chart-category-group" data-fig="fig2" data-category="air_dig">
+              <!-- SPP Delib = 60% -> y=143, h=147 -->
+              <rect x="482" y="143" width="16" height="147" fill="#991b1b" rx="1"/>
+              <line x1="490" y1="131" x2="490" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <line x1="487" y1="131" x2="493" y2="131" stroke="#1e293b" stroke-width="1"/>
+              <line x1="487" y1="155" x2="493" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <!-- SPP Pass = 60% -> y=143, h=147 -->
+              <rect x="502" y="143" width="16" height="147" fill="#0284c7" rx="1"/>
+              <rect x="502" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1"/>
+              <line x1="510" y1="131" x2="510" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <line x1="507" y1="131" x2="513" y2="131" stroke="#1e293b" stroke-width="1"/>
+              <line x1="507" y1="155" x2="513" y2="155" stroke="#1e293b" stroke-width="1"/>
+              <!-- Vanilla = 80% -> y=94, h=196 -->
+              <rect x="522" y="94" width="16" height="196" fill="#475569" rx="1"/>
+              <rect x="522" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="530" y1="82" x2="530" y2="106" stroke="#1e293b" stroke-width="1"/>
+              <line x1="527" y1="82" x2="533" y2="82" stroke="#1e293b" stroke-width="1"/>
+              <line x1="527" y1="106" x2="533" y2="106" stroke="#1e293b" stroke-width="1"/>
+            </g>
+            <!-- X Tick 4 -->
+            <g class="x-axis-tick" data-fig="fig2" data-category="air_dig">
+              <rect class="cat-highlight-pill" x="430" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text transform="rotate(-30 510 305)" x="510" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Demnitate</text>
+            </g>
 
             <!-- ================= GROUP 5: AVERAGE (Center=665) ================= -->
-            <!-- SPP Delib = 85.0% -> y=82, h=208 -->
-            <rect x="637" y="82" width="16" height="208" fill="#c2410c" rx="1"/>
-            <line x1="645" y1="70" x2="645" y2="94" stroke="#1e293b" stroke-width="1"/>
-            <line x1="642" y1="70" x2="648" y2="70" stroke="#1e293b" stroke-width="1"/>
-            <line x1="642" y1="94" x2="648" y2="94" stroke="#1e293b" stroke-width="1"/>
-            <text x="645" y="64" font-size="11" font-weight="700" fill="#c2410c" text-anchor="middle">85.0</text>
+            <g>
+              <!-- SPP Delib = 85.0% -> y=82, h=208 -->
+              <rect x="637" y="82" width="16" height="208" fill="#991b1b" rx="1"/>
+              <line x1="645" y1="70" x2="645" y2="94" stroke="#1e293b" stroke-width="1"/>
+              <line x1="642" y1="70" x2="648" y2="70" stroke="#1e293b" stroke-width="1"/>
+              <line x1="642" y1="94" x2="648" y2="94" stroke="#1e293b" stroke-width="1"/>
+              <text x="645" y="64" font-size="11" font-weight="700" fill="#991b1b" text-anchor="middle">85.0</text>
 
-            <!-- SPP Pass = 75.0% -> y=106, h=184 -->
-            <rect x="657" y="106" width="16" height="184" fill="#0e7490" rx="1"/>
-            <rect x="657" y="106" width="16" height="184" fill="url(#dotPattern)" rx="1"/>
-            <line x1="665" y1="94" x2="665" y2="118" stroke="#1e293b" stroke-width="1"/>
-            <line x1="662" y1="94" x2="668" y2="94" stroke="#1e293b" stroke-width="1"/>
-            <line x1="662" y1="118" x2="668" y2="118" stroke="#1e293b" stroke-width="1"/>
-            <text x="665" y="88" font-size="11" font-weight="700" fill="#0e7490" text-anchor="middle">75.0</text>
+              <!-- SPP Pass = 75.0% -> y=106, h=184 -->
+              <rect x="657" y="106" width="16" height="184" fill="#0284c7" rx="1"/>
+              <rect x="657" y="106" width="16" height="184" fill="url(#dotPattern)" rx="1"/>
+              <line x1="665" y1="94" x2="665" y2="118" stroke="#1e293b" stroke-width="1"/>
+              <line x1="662" y1="94" x2="668" y2="94" stroke="#1e293b" stroke-width="1"/>
+              <line x1="662" y1="118" x2="668" y2="118" stroke="#1e293b" stroke-width="1"/>
+              <text x="665" y="88" font-size="11" font-weight="700" fill="#0284c7" text-anchor="middle">75.0</text>
 
-            <!-- Vanilla = 65.0% -> y=131, h=159 -->
-            <rect x="677" y="131" width="16" height="159" fill="#64748b" rx="1"/>
-            <rect x="677" y="131" width="16" height="159" fill="url(#hatchPattern)" rx="1"/>
-            <line x1="685" y1="119" x2="685" y2="143" stroke="#1e293b" stroke-width="1"/>
-            <line x1="682" y1="119" x2="688" y2="119" stroke="#1e293b" stroke-width="1"/>
-            <line x1="682" y1="143" x2="688" y2="143" stroke="#1e293b" stroke-width="1"/>
-            <text x="685" y="113" font-size="11" font-weight="700" fill="#475569" text-anchor="middle">65.0</text>
+              <!-- Vanilla = 65.0% -> y=131, h=159 -->
+              <rect x="677" y="131" width="16" height="159" fill="#475569" rx="1"/>
+              <rect x="677" y="131" width="16" height="159" fill="url(#hatchPattern)" rx="1"/>
+              <line x1="685" y1="119" x2="685" y2="143" stroke="#1e293b" stroke-width="1"/>
+              <line x1="682" y1="119" x2="688" y2="119" stroke="#1e293b" stroke-width="1"/>
+              <line x1="682" y1="143" x2="688" y2="143" stroke="#1e293b" stroke-width="1"/>
+              <text x="685" y="113" font-size="11" font-weight="700" fill="#334155" text-anchor="middle">65.0</text>
 
-            <!-- X Label: Average -->
-            <text transform="rotate(-30 665 305)" x="665" y="305" font-size="12" font-weight="700" fill="#0f172a" text-anchor="end">Average</text>
+              <!-- X Label: Average -->
+              <text transform="rotate(-30 665 305)" x="665" y="305" font-size="12" font-weight="700" fill="#0f172a" text-anchor="end">Media</text>
+            </g>
           </svg>
         </div>
 
         <div class="figure-caption">
-          <strong>Figure 2: AI safety dilemma compliance across risk dimensions.</strong> Grouped bars demonstrate strong safety gains under SPP deliberative routing, with average AI risk compliance reaching <strong>85.0%</strong> (vs. <strong>65.0%</strong> for unaligned Vanilla). Deliberation substantially curbs sycophantic deception (80.0% vs. 20.0%) while maintaining perfect human oversight and privacy compliance (100.0%).
+          <strong>Figura 2: Conformarea la dilemele de siguranță AI pe dimensiuni de risc (AIRiskDilemmas-Ro).</strong> Barele grupate demonstrează câștiguri solide sub rutarea deliberativă SPP, conformarea medie ajungând la <strong>85.0%</strong> (față de <strong>65.0%</strong> pentru Vanilla). Deliberarea reduce substanțial decepția și lingușirea (de la 80.0% eșec la 20.0%), menținând un control uman perfect și protecția intimității (100.0%).
         </div>
+
+        <!-- Embedded Interactive Sub-Inspector for Figure 2 (Exact EPFL Layout - Image 4) -->
+        <p class="figure-inspector-note" style="margin-top: 22px;">
+          <strong>Conformare la dilemele de siguranță AI pe categorii.</strong>
+          <em>Apasă pe oricare dreptunghi sau categorie din grafic pentru a vizualiza definiția și exemple reale de dileme cu opțiunea aleasă de fiecare model (exact ca în articolul SPP original).</em>
+        </p>
+        <div id="fig2-inspector" class="figure-interactive-inspector"></div>
       </div>
 
       <!-- Synthesis Grid (Clean Neutral Boxes) -->
       <div class="card-grid-2" style="margin-top: 28px;">
         <div class="academic-box">
-          <span class="box-header-tag">Language Stability</span>
-          <h3 style="font-size: 15px; margin-bottom: 6px;">Zero Alignment Tax (Perplexity)</h3>
+          <span class="box-header-tag">Stabilitate Lingvistică</span>
+          <h3 style="font-size: 15px; margin-bottom: 6px;">Zero Alignment Tax (Perplexitate)</h3>
           <p style="font-size: 13.5px; line-height: 1.55; color: var(--color-ink-secondary);">
-            Unlike post-hoc alignment methods which degrade base language capabilities, asymmetric attention masking shields standard web text from reflection interference. On held-out validation corpora, SPP acts as a beneficial regularizer:
-            <strong>12.49 PPL</strong> on News (vs. 15.92 Base) and <strong>14.48 PPL</strong> on Wikipedia (vs. 18.48 Base).
+            Spre deosebire de metodele post-hoc (RLHF/DPO) care degradează capacitățile lingvistice de bază, masca asimetrică de atenție protejează textul web standard de orice interferență. Pe corpusuri de validare neprevăzute, SPP funcționează ca un regularizator benefic:
+            <strong>12.49 PPL</strong> pe Știri (vs. 15.92 Base) și <strong>14.48 PPL</strong> pe Wikipedia (vs. 18.48 Base).
           </p>
         </div>
         <div class="academic-box">
-          <span class="box-header-tag">Cross-Lingual Generalization</span>
-          <h3 style="font-size: 15px; margin-bottom: 6px;">Mitigating Cross-Lingual Bias Disparity</h3>
+          <span class="box-header-tag">Generalizare Inter-Lingvistică</span>
+          <h3 style="font-size: 15px; margin-bottom: 6px;">Reducerea Disparității de Bias Cross-Lingval</h3>
           <p style="font-size: 13.5px; line-height: 1.55; color: var(--color-ink-secondary);">
-            Unaligned generative models in Romanian display an alignment gap of &plusmn;14.0% when evaluated against parallel English diagnostics. By embedding constitutional values from token zero, this disparity is halved to <strong>&plusmn;6.0%</strong>, demonstrating deep representation transfer.
+            Modelele generative nealiniate în limba română prezintă un decalaj de aliniere de &plusmn;14.0% la testarea cu sonde paralele în limba engleză. Prin integrarea valorilor de la token zero, această disparitate este redusă la jumătate (<strong>&plusmn;6.0%</strong>), confirmând ancorarea profundă a reprezentărilor latente.
           </p>
         </div>
       </div>
 
       <!-- Critical Academic Takeaway Box (Clean 1px Border, Neutral) -->
       <div class="abstract-box" style="margin-top: 32px;">
-        <span class="box-header-tag">Theoretical Insight</span>
-        <h3 style="font-size: 16px; font-weight: 700; color: #091e2b; margin-bottom: 8px;">Passive Decoupling vs. Deliberative Routing</h3>
+        <span class="box-header-tag">Perspective Teoretice</span>
+        <h3 style="font-size: 16px; font-weight: 700; color: #091e2b; margin-bottom: 8px;">Decuplare Pasivă vs. Rutare Deliberativă</h3>
         <p class="abstract-text">
-          On unprompted next-token prediction (passive CrowS-Pairs, 100 pairs), Base-Ro (45.0%) and SPP-Ro (49.0%) exhibit comparable log-likelihood distributions across categories. This is an intentional mathematical property of <strong>asymmetric attention masking</strong>: natural web document modeling is preserved intact. Constitutional steering is unlocked dynamically when the deliberative stream (<code style="background:#f1f5f9; padding:1px 4px; border-radius:3px;">&lt;assistant&gt;</code>) is invoked, functioning as an internal System-2 ethical steering mechanism.
+          Pe predicția pasivă a următorului token (CrowS-Pairs pasiv, 100 de perechi), Base-Ro (45.0%) și SPP-Ro (49.0%) prezintă distribuții de log-verosimilitate comparabile. Aceasta este o proprietate matematică intenționată a <strong>măștii asimetrice de atenție</strong>: modelarea naturală a documentelor web rămâne intactă. Ghidajul constituțional este deblocat dinamic la invocarea fluxului deliberativ (<code style="background:#f1f5f9; padding:1px 4px; border-radius:3px;">&lt;assistant&gt;</code>), funcționând ca un mecanism intern de deliberare etică de tip System-2.
         </p>
       </div>
     </section>
 
+
     <!-- ==================================================================== -->
     <!-- SECTION 4: INTERACTIVE DILEMMA INSPECTOR -->
-    <!-- ==================================================================== -->
     <section id="dilemmas">
       <div class="section-header-row">
         <span class="section-num-badge">4</span>

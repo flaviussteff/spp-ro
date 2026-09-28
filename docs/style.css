@@ -770,3 +770,293 @@ body {
   padding-top: 22px;
   border-top: 1px solid var(--color-border);
 }
+
+/* ==========================================================================
+   Embedded Chart Interactive Inspector (EPFL SPP Style - Image 4)
+   ========================================================================== */
+.figure-interactive-inspector {
+  margin-top: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px 22px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.figure-inspector-note {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-ink-primary);
+  margin-bottom: 14px;
+}
+
+.figure-inspector-note em {
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  font-style: normal;
+}
+
+.inspector-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.category-badge-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.category-definition-text {
+  font-size: 13.5px;
+  color: var(--color-ink-secondary);
+  line-height: 1.45;
+}
+
+.inspector-dotted-rule {
+  border: none;
+  border-top: 1px dashed var(--color-border-subtle);
+  margin: 14px 0;
+}
+
+.inspector-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-muted);
+  margin-bottom: 8px;
+}
+
+.dilemma-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.dilemma-item-pill {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: #ffffff;
+  color: var(--color-ink-secondary);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dilemma-item-pill:hover {
+  background: var(--color-surface-subtle);
+  color: var(--color-ink-primary);
+  border-color: var(--color-border-strong);
+}
+
+.dilemma-item-pill.active {
+  background: #0c4a60;
+  color: #ffffff;
+  border-color: #0c4a60;
+}
+
+.dilemma-prompt-callout {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-ink-primary);
+  margin-bottom: 16px;
+}
+
+.dilemma-prompt-callout strong {
+  color: #091e2b;
+}
+
+/* Side-by-Side Binary Choice Cards (Matching Image 4) */
+.binary-choices-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 680px) {
+  .binary-choices-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.binary-choice-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.choice-badge-header {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  align-self: flex-start;
+}
+
+.choice-badge-header.safe {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.choice-badge-header.risky {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.binary-choice-text {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--color-ink-primary);
+  flex: 1;
+}
+
+.chosen-by-block {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+.chosen-by-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-muted);
+  margin-right: 2px;
+}
+
+/* Specific Model Choice Pills */
+.model-pick-pill {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.model-pick-pill.pill-delib {
+  background: #fff1f2;
+  color: #991b1b;
+  border: 1.5px solid #991b1b;
+}
+
+.model-pick-pill.pill-pass {
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1.5px solid #0284c7;
+}
+
+.model-pick-pill.pill-vanilla {
+  background: #f8fafc;
+  color: #334155;
+  border: 1.5px solid #475569;
+}
+
+/* 4-Choice Cards for ConstitutionEval in Inspector */
+.multi-choice-inspector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.multi-choice-inspector-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  background: #ffffff;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.multi-choice-inspector-item.is-gold {
+  border-color: #94a3b8;
+  background: #fafaf9;
+}
+
+.multi-choice-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-muted);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-ink-secondary);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.multi-choice-body {
+  flex: 1;
+}
+
+.multi-choice-text {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--color-ink-primary);
+  margin-bottom: 4px;
+}
+
+/* SVG Chart Interactivity */
+.chart-category-group {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.chart-category-group:hover {
+  opacity: 0.85;
+}
+
+.x-axis-tick text {
+  cursor: pointer;
+  transition: fill 0.15s ease, font-weight 0.15s ease;
+}
+
+.x-axis-tick:hover text {
+  fill: #0c4a60 !important;
+  font-weight: 700 !important;
+}
+
+.x-axis-highlight-pill {
+  transition: opacity 0.2s ease;
+}
+
