@@ -3,793 +3,519 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPP-Ro: Constitutional Pre-training for Romanian Generative LLMs from Token Zero</title>
-  
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="Investigating the Superficial Alignment Hypothesis by adapting Synthetic Pre-training Paths (SPP) for Romanian generative language models on consumer hardware.">
-  <meta name="keywords" content="Romanian LLM, Synthetic Pre-training Paths, SPP, AI Alignment, Token Zero, CrowS-Pairs, Romanian NLP, Constitutional AI, Alignment Tax, Model Raising">
-  <meta name="author" content="Flavius Stefan">
-
-  <!-- Open Graph / Social Media -->
-  <meta property="og:title" content="SPP-Ro: Constitutional Pre-training for Romanian LLMs">
-  <meta property="og:description" content="Model Raising from Token Zero: Adapting Synthetic Pre-training Paths for Romanian Generative LLMs. Zero Alignment Tax, Proven Active Deliberation.">
-  <meta property="og:type" content="website">
-
-  <!-- Google Fonts: Geist, Geist Mono, Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Geist:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <title>Synthetic Persona Pretraining: Alignment from Token Zero in Romanian LLMs</title>
+  <meta name="description" content="Research project page for SPP-Ro: Constitutional Pre-training and Deliberative Alignment in Romanian Generative Language Models from Token Zero. Replicating the EPFL SPP methodology.">
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
 </head>
 <body>
 
-  <!-- Navigation (Frosted Blueprint Bar) -->
-  <nav class="navbar">
-    <div class="container nav-wrapper">
-      <a href="#" class="nav-brand">
-        <span>SPP-Ro</span><span class="brand-dot">.</span>
-        <span class="brand-badge">125M Token-Zero &bull; 50k Steps</span>
-      </a>
-      <ul class="nav-links">
-        <li><a href="#hypothesis">Hypothesis</a></li>
-        <li><a href="#methodology">Methodology</a></li>
-        <li><a href="#corpus">60k Corpus</a></li>
-        <li><a href="#benchmarks">Benchmarks</a></li>
-        <li><a href="#playground">Playground</a></li>
-        <li><a href="#topology">Architecture</a></li>
-        <li>
-          <a href="https://github.com/flaviussteff/spp-ro" target="_blank" class="btn-github">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-            GitHub
-          </a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+  <div class="page-container">
 
-  <!-- Hero Section -->
-  <header class="hero">
-    <div class="container">
-      <div class="hero-tag">
-        <span class="tag-dot"></span>
-        <span>Bachelor's Thesis in AI &bull; Compute-Matched Scale Run (50,000 Steps)</span>
-      </div>
-      <h1>
-        Model Raising from Token Zero<br>
-        for Romanian Generative LLMs
-      </h1>
-      <p class="hero-lead">
-        Adapting the Synthetic Pre-training Paths (SPP) paradigm on consumer hardware (Single NVIDIA RTX 3060 12GB). 
-        Investigating whether interweaving constitutional deliberations during foundational pre-training eliminates representational bias and preserves language modeling fluency.
+    <!-- Masthead / Title Block -->
+    <header class="masthead">
+      <div class="paper-tag">EPFL Methodology // Pretraining-Time Alignment</div>
+      <h1 class="paper-title">Synthetic Persona Pretraining:<br>Alignment from Token Zero in Romanian LLMs</h1>
+      <p class="paper-subtitle">
+        Internalizing constitutional ethics and civic principles during autoregressive pretraining while preserving zero alignment tax and mitigating cross-lingual bias disparity.
       </p>
 
-      <div class="hero-actions">
-        <a href="#corpus" class="btn-primary">Explore the 60k Corpus &amp; Scores</a>
-        <a href="#benchmarks" class="btn-secondary">View Empirical Benchmarks &amp; Zero Tax</a>
+      <div class="authors-list">
+        <strong>Flavius Ștefan</strong>
+      </div>
+      <div class="affiliations-list">
+        Faculty of Automatic Control and Computer Science, National University of Science and Technology POLITEHNICA Bucharest<br>
+        <em>Methodology grounded in EPFL-dlab Synthetic Persona Pretraining (Minder et al., arXiv:2608.13482, 2026)</em>
       </div>
 
-      <!-- Key Metrics Blueprint Grid -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number tabular-nums">3.27B</div>
-          <div class="stat-label">Tokens Pre-trained from Scratch (50,000 Steps on 1x RTX 3060)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number tabular-nums">10% SPP</div>
-          <div class="stat-label">60,000 Verified Reflections with Asymmetric Attention Blocking</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number tabular-nums" style="color: var(--color-green-ink);">14.48 PPL</div>
-          <div class="stat-label">Wikipedia Perplexity (Zero Alignment Tax; 3.7 PPL Gain vs 18.48 Base)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number tabular-nums" style="color: var(--color-green-ink);">124.8M</div>
-          <div class="stat-label">LLaMA Architecture (16k BPE, SwiGLU, RoPE, GQA 3:1)</div>
-        </div>
+      <div class="resource-links">
+        <a href="https://github.com/flaviussteff/spp-ro" class="resource-btn primary" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          Code &amp; Checkpoints
+        </a>
+        <a href="#benchmarks" class="resource-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Evaluation Suite
+        </a>
+        <a href="#dilemmas" class="resource-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          Dilemma Inspector
+        </a>
+        <a href="#bibtex" class="resource-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          BibTeX
+        </a>
       </div>
+    </header>
+
+    <!-- Abstract Box -->
+    <div class="abstract-box">
+      <div class="abstract-title">Abstract &amp; Findings</div>
+      <p class="abstract-text">
+        Post-hoc alignment (RLHF, DPO, LoRA) frequently causes catastrophic language degradation ("alignment tax") and remains fragile under adversarial framing, particularly in lower-resource languages such as Romanian. We implement <strong>Synthetic Persona Pretraining (SPP)</strong> at scale (50,000 steps, ~3.27B tokens), embedding normative Romanian constitutional principles directly into the pretraining phase via a synthetic reflection stream.
+        On forced-choice constitutional dilemmas (<strong>ConstitutionEval-Ro</strong>, 4 choices, random = 25.0%), active deliberative reasoning nearly doubles adherence over the unaligned baseline (<strong>43.3% vs. 23.3%</strong>). On AI safety dilemmas (<strong>AIRiskDilemmas-Ro</strong>), deliberative SPP reaches <strong>85.0%</strong> alignment (vs. 65.0% base). Crucially, asymmetric attention masking preserves full web language modeling capability with <strong>zero alignment tax</strong> (Wikipedia Perplexity: 14.48 SPP vs. 18.48 Base; News Perplexity: 12.49 SPP vs. 15.92 Base) and halves cross-lingual alignment disparity from +14.0% to +6.0%.
+      </p>
     </div>
-  </header>
 
-  <!-- Section 01: The Superficial Alignment Hypothesis -->
-  <section id="hypothesis" class="section">
-    <div class="container">
-      <div class="section-counter">
-        <span class="section-counter-num">01 // THE SCIENTIFIC PROBLEM</span>
-        <span class="section-counter-line"></span>
+    <!-- ==================================================================== -->
+    <!-- SECTION 1: VALUE CONSTITUTION & ANNOTATION PROTOCOL -->
+    <!-- ==================================================================== -->
+    <section id="constitution">
+      <div class="section-header-row">
+        <span class="section-num-badge">1</span>
+        <h2 class="section-heading">Value Constitution &amp; Annotation Protocol</h2>
+        <div class="section-header-rule"></div>
       </div>
-      <div class="section-header">
-        <div class="section-tag">Theoretical Motivation</div>
-        <h2>The Superficial Alignment Hypothesis vs. Model Raising</h2>
-        <p>
-          Do conventional post-hoc alignment techniques (SFT, RLHF, DPO, LoRA) eliminate deep representational stereotypes, or do they merely superimpose a fragile behavioral mask over pre-training weights?
+
+      <p class="section-lead">
+        Following the EPFL SPP formulation, alignment begins with an explicit <em>normative value constitution</em> grounded in the constitutional guarantees of the Romanian state (Articles 1, 4, 16, 25, 30, and 31). The charter codifies six non-negotiable societal pillars:
+      </p>
+
+      <!-- 6 Constitutional Articles Cards Grid -->
+      <div class="card-grid-2">
+        <div class="academic-box">
+          <h3>§1.1 Human Dignity &amp; Non-Discrimination</h3>
+          <p>
+            Guarantees the inviolability of human dignity, personal integrity, and equality before the law, strictly barring discrimination based on race, ethnicity, or social origin.
+          </p>
+        </div>
+        <div class="academic-box">
+          <h3>§1.2 Gender Equality &amp; Professional Merit</h3>
+          <p>
+            Enforces equal opportunities across economic, political, and executive decision-making roles, rejecting patriarchal corporate occupational sorting.
+          </p>
+        </div>
+        <div class="academic-box">
+          <h3>§1.3 Freedom of Movement &amp; Territorial Cohesion</h3>
+          <p>
+            Protects internal mobility, residency choice, and equitable regional infrastructure, deconstructing historical provincial stigmas (Moldavia, Oltenia, Transylvania).
+          </p>
+        </div>
+        <div class="academic-box">
+          <h3>§2.1 Right to Information &amp; Transparency</h3>
+          <p>
+            Mandates public access to verified facts and public expenditures, curbing corrupt opacity, disinformation campaigns, and SLAPP legal harassment.
+          </p>
+        </div>
+        <div class="academic-box">
+          <h3>§2.2 Freedom of Expression &amp; Free Press</h3>
+          <p>
+            Shields independent journalism, investigative reporting, and ideological pluralism against prior censorship and authoritarian consolidation.
+          </p>
+        </div>
+        <div class="academic-box">
+          <h3>§2.3 Protection of Cultural &amp; Ethnic Minorities</h3>
+          <p>
+            Preserves the linguistic, cultural, and religious identity of historical minorities (Romani, Hungarian, Jewish, Ukrainian, Lipovan), upholding universal suffrage.
+          </p>
+        </div>
+      </div>
+
+      <!-- Annotation Guidelines Sub-section -->
+      <div style="margin-top: 36px;">
+        <h3 style="font-size: 19px; font-weight: 700; color: #091e2b; margin-bottom: 12px;">
+          Annotation Guidelines &amp; Synthetic Signal Protocol
+        </h3>
+        <p class="section-lead">
+          During pretraining, a Teacher model generates structured reflections at natural reading pause points. The data annotation follows seven strict golden rules to ensure training fidelity:
         </p>
+
+        <div class="guideline-rule-card">
+          <h4>1. Three-Tier Structured Triad (`analysis` &rarr; `reflection_1p` &rarr; `reflection_3p`)</h4>
+          <p>
+            Every reflection produces a 3-step preliminary analysis, a first-person subjective deliberation (<em>"Consider..."</em>, <em>"Susțin..."</em>), and an objective third-person institutional civic voice. Both reflections convey identical ethical verdicts and identical constitutional article citations.
+          </p>
+        </div>
+
+        <div class="guideline-rule-card">
+          <h4>2. Strict Prohibition of Meta-Language (No "Constituție" in Thoughts)</h4>
+          <p>
+            Reflections must <strong>never</strong> mention the words <em>"constituție"</em>, <em>"carta"</em>, or <em>"ghidul"</em> inside thought tokens. The model internalizes values directly (e.g., <em>"Demnitatea fiecărei persoane [§1.1] cere..."</em>), avoiding robotic meta-declarations.
+          </p>
+        </div>
+
+        <div class="guideline-rule-card">
+          <h4>3. Inline Bracket Citations as Ground Truth (`[§X.Y]`)</h4>
+          <p>
+            Constitutional articles are registered strictly through inline citations (e.g., <code>[1.2]</code>, <code>[2.3]</code>). Every article identified in the analysis must appear consistently in both reflection perspectives.
+          </p>
+        </div>
+
+        <div class="guideline-rule-card">
+          <h4>4. Asymmetric Causal Attention Decoupling</h4>
+          <p>
+            The training attention mask strictly prevents standard web document tokens from attending to reflection tokens. Consequently, natural document modeling is never corrupted, guaranteeing zero perplexity tax.
+          </p>
+        </div>
+
+        <div class="guideline-rule-card">
+          <h4>5. Five-Point Safety Score Calibration Spectrum (Scores 1 to 5)</h4>
+          <p>
+            Annotations are calibrated across a 5-tier severity scale: Score 1 (benign technical/sport facts, single short sentence, no citation) through Score 5 (severe structural discrimination or incitement, requiring comprehensive constitutional pushback).
+          </p>
+        </div>
+
+        <!-- Interactive Sidecar Reflection Browser -->
+        <div class="diagram-box">
+          <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-teal-badge); margin-bottom: 14px;">
+            Interactive Corpus Browser // Real Sidecar Reflections (data/sidecar/reflections.parquet)
+          </div>
+          <div class="dilemma-tabs" style="border-bottom: none; margin-bottom: 16px;">
+            <button class="dilemma-tab-btn article-pill-btn active" data-article="art_1_2">§1.2 Gender Equality</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_3">§1.3 Regional Mobility</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_1">§1.1 Human Dignity</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_1">§2.1 Public Information</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_2">§2.2 Press Freedom</button>
+            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_3">§2.3 Minority Rights</button>
+          </div>
+          <div id="article-reader-pane"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SECTION 2: TRAINING & ARCHITECTURE -->
+    <!-- ==================================================================== -->
+    <section id="training">
+      <div class="section-header-row">
+        <span class="section-num-badge">2</span>
+        <h2 class="section-heading">Training &amp; Architecture</h2>
+        <div class="section-header-rule"></div>
       </div>
 
       <div class="card-grid-2">
-        <div class="glass-card comparison-card post-hoc">
-          <span class="badge-pill badge-rose">Conventional Post-Hoc Alignment</span>
-          <h3>Superficial Filter (SFT / RLHF / LoRA)</h3>
-          <p style="margin-bottom: 16px;">
-            The model is pre-trained on uncurated web crawls, internalizing cultural prejudices into dense weight matrices. Safety filters are applied post-hoc as adapters or fine-tuning penalties.
-          </p>
-          <ul style="color: var(--color-ink-soft); font-size: 13px; padding-left: 18px; line-height: 1.8;">
-            <li><strong>Surface Mask:</strong> Deeper representation layers retain pre-training stereotypes intact.</li>
-            <li><strong>Adversarial Brittleness:</strong> Under adversarial prefix pressure (jailbreaks), the adapter fractures.</li>
-            <li><strong>Alignment Tax:</strong> Forced post-hoc steering can degrade syntactic fluency and language competence.</li>
-          </ul>
-        </div>
-
-        <div class="glass-card comparison-card token-zero">
-          <span class="badge-pill badge-emerald">Our Approach: SPP-Ro (Token Zero)</span>
-          <h3>Model Raising from Step Zero</h3>
-          <p style="margin-bottom: 16px;">
-            Interweaves synthetic constitutional deliberations into 10% of pre-training sequences, using asymmetric causal attention blocking and RoPE positional aliasing from step 0.
-          </p>
-          <ul style="color: var(--color-ink-soft); font-size: 13px; padding-left: 18px; line-height: 1.8;">
-            <li><strong>Dense Manifold Internalization:</strong> Ethical reasoning becomes an intrinsic property of the dense representations.</li>
-            <li><strong>Attention Block Invariant:</strong> Subsequent document tokens cannot attend back to thoughts, preserving natural language fluency.</li>
-            <li><strong>Zero Alignment Tax:</strong> Validated empirically: perplexity on clean texts is improved from 18.48 to 14.48.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 02: Methodology & Attention Blocking -->
-  <section id="methodology" class="section">
-    <div class="container">
-      <div class="section-counter">
-        <span class="section-counter-num">02 // MATHEMATICAL METHODOLOGY</span>
-        <span class="section-counter-line"></span>
-      </div>
-      <div class="section-header">
-        <div class="section-tag">Mathematical Invariants &amp; Collator</div>
-        <h2>Asymmetric Causal Attention Blocking</h2>
-        <p>
-          How the training sequence is structured such that ethical reflections act as a foundational learning prior without creating inference dependencies on synthetic thoughts.
-        </p>
-      </div>
-
-      <div class="card-grid-2">
-        <div class="glass-card">
-          <h3>The Three SPP Mathematical Invariants</h3>
-          <p style="margin-bottom: 18px;">
-            Following the EPFL-dlab methodology (Morris et al., West et al.), SPP enforces three strict invariants during causal batch collation:
-          </p>
-          
-          <div style="background: var(--color-surface-alt); border: 1px solid var(--color-hairline); border-radius: var(--radius-nested); padding: 18px; margin-bottom: 16px;">
-            <div style="margin-bottom: 12px;">
-              <strong style="color: var(--color-ink); font-size: 13px;">1. Attention Block Invariant:</strong>
-              <p style="font-size: 12px; color: var(--color-mid-gray); margin-top: 4px;">
-                Tokens following the reflection cannot attend back to reflection tokens: 
-                <code>M[i, j] = 0</code> for <code>i &isin; Doc<sub>post</sub></code> and <code>j &isin; Thought</code>.
-              </p>
-            </div>
-            <div style="margin-bottom: 12px;">
-              <strong style="color: var(--color-ink); font-size: 13px;">2. RoPE Positional Aliasing Invariant:</strong>
-              <p style="font-size: 12px; color: var(--color-mid-gray); margin-top: 4px;">
-                Position IDs of document continuation tokens alias back to the prefix length: 
-                <code>Pos(c<sub>post</sub><sup>(k)</sup>) = len(c<sub>pre</sub>) + k</code>.
-              </p>
-            </div>
-            <div>
-              <strong style="color: var(--color-ink); font-size: 13px;">3. Persona Binding:</strong>
-              <p style="font-size: 12px; color: var(--color-mid-gray); margin-top: 4px;">
-                The reflection stream is anchored by the special control token <code>&lt;assistant&gt;</code> and written in the first person without meta-language leaks.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-card">
-          <h3>Causal Block Attention Matrix</h3>
-          <p style="font-size: 13px; margin-bottom: 12px;">
-            Tripartite Sequence: <code>[Prefix] &rarr; [&lt;assistant&gt; Reflection] &rarr; [Postfix Document]</code>.
-          </p>
-
-          <div class="matrix-container">
-            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--color-mid-gray); font-family: var(--font-mono); margin-bottom: 8px;">
-              <span>Thought: [<em>c</em><sub>1</sub>, <em>c</em><sub>2</sub>] &bull; Document: [<em>x</em><sub>1</sub>, <em>x</em><sub>2</sub>, <em>x</em><sub>3</sub>, <em>x</em><sub>4</sub>]</span>
-            </div>
-            <div class="matrix-grid">
-              <div class="matrix-cell attend" title="Thought attends to Thought">1.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-
-              <div class="matrix-cell attend" title="Thought attends to Thought">1.0</div>
-              <div class="matrix-cell attend" title="Thought attends to Thought">1.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-
-              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
-              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-
-              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
-              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-
-              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
-              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell causal-mask">0.0</div>
-
-              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
-              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-              <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
-            </div>
-            <div style="font-size: 11px; color: var(--color-ember-ink); margin-top: 8px; font-family: var(--font-mono);">
-              Red Dashed "BLOCKED": Subsequent document tokens cannot attend back to thoughts (Zero Alignment Tax at runtime).
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 03: The 60k Reflections Corpus (By Article & By Safety Score) -->
-  <section id="corpus" class="section">
-    <div class="container">
-      <div class="section-counter">
-        <span class="section-counter-num">03 // THE 60,000 REFLECTIONS DATASET</span>
-        <span class="section-counter-line"></span>
-      </div>
-      <div class="section-header">
-        <div class="section-tag">Curated Sidecar Dataset</div>
-        <h2>Constitutional Rights &amp; Safety Score Spectrum</h2>
-        <p>
-          Inspect authentic sequences from <code>data/sidecar/reflections.parquet</code>. Every reflection is formulated without meta-language leaks (never mentioning the word "Constitution"), adhering to first-person ethical deliberation.
-        </p>
-      </div>
-
-      <!-- View A: By Constitutional Article -->
-      <div class="annotated-docs-card" style="margin-bottom: 32px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <h3 style="font-size: 19px; letter-spacing: -0.02em; margin-bottom: 4px;">View A: In-Situ Sequences by Constitutional Article</h3>
-            <p style="font-size: 13px; color: var(--color-mid-gray);">
-              Select a civic right to view how the reflection is spliced at the natural reading pause point during pre-training.
-            </p>
-          </div>
-          <div id="doc-meta-display" style="font-size: 12px; color: var(--color-ink); background: var(--color-surface-alt); padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--color-hairline);">
-            Loading metadata...
-          </div>
-        </div>
-
-        <div class="doc-pill-row">
-          <button class="article-pill-btn active" data-article="1.2">
-            <span>§1.2 Gender Equality</span>
-            <span class="pill-score">10,000 traces</span>
-          </button>
-          <button class="article-pill-btn" data-article="1.1">
-            <span>§1.1 Human Dignity</span>
-            <span class="pill-score">10,000 traces</span>
-          </button>
-          <button class="article-pill-btn" data-article="1.3">
-            <span>§1.3 Territorial Cohesion</span>
-            <span class="pill-score">10,003 traces</span>
-          </button>
-          <button class="article-pill-btn" data-article="2.1">
-            <span>§2.1 Historical Memory</span>
-            <span class="pill-score">10,000 traces</span>
-          </button>
-          <button class="article-pill-btn" data-article="2.2">
-            <span>§2.2 Secular Pluralism</span>
-            <span class="pill-score">9,997 traces</span>
-          </button>
-          <button class="article-pill-btn" data-article="2.3">
-            <span>§2.3 Democratic Resilience</span>
-            <span class="pill-score">10,000 traces</span>
-          </button>
-        </div>
-
-        <div id="doc-reader-pane" class="doc-reader-pane">
-          Loading authentic document sequence...
-        </div>
-      </div>
-
-      <!-- View B: By Safety Score Spectrum (Scores 1 to 5 with 3 samples each) -->
-      <div class="annotated-docs-card">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
-          <div>
-            <h3 style="font-size: 19px; letter-spacing: -0.02em; margin-bottom: 4px;">View B: The Safety Score Spectrum (50% Sensitive • 50% Factual)</h3>
-            <p style="font-size: 13px; color: var(--color-mid-gray);">
-              Click across the 5 safety scores to inspect 3 distinct real-world samples per score from the pre-training stream.
-            </p>
-          </div>
-          <div id="score-meta-display" style="font-size: 12px; color: var(--color-ink); background: var(--color-surface-alt); padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--color-hairline);">
-            Loading score metadata...
-          </div>
-        </div>
-
-        <!-- Score Pills (1 to 5) -->
-        <div class="doc-pill-row">
-          <button class="score-pill-btn active" data-score="1">
-            <span>Score 1: Severe Friction</span>
-            <span class="pill-score">10k items</span>
-          </button>
-          <button class="score-pill-btn" data-score="2">
-            <span>Score 2: Latent Prejudices</span>
-            <span class="pill-score">10k items</span>
-          </button>
-          <button class="score-pill-btn" data-score="3">
-            <span>Score 3: Policy Dilemmas</span>
-            <span class="pill-score">10k items</span>
-          </button>
-          <button class="score-pill-btn" data-score="4">
-            <span>Score 4: Nuanced Culture</span>
-            <span class="pill-score">15k items</span>
-          </button>
-          <button class="score-pill-btn" data-score="5">
-            <span>Score 5: Clean Facts</span>
-            <span class="pill-score">15k items</span>
-          </button>
-        </div>
-
-        <!-- Sub-Sample Buttons (A, B, C) -->
-        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 14px;">
-          <span style="font-size: 12px; font-weight: 600; color: var(--color-mid-gray);">Select Sample:</span>
-          <button class="sub-sample-btn active" data-sample-idx="0">Sample A</button>
-          <button class="sub-sample-btn" data-sample-idx="1">Sample B</button>
-          <button class="sub-sample-btn" data-sample-idx="2">Sample C</button>
-        </div>
-
-        <div id="score-reader-pane" class="doc-reader-pane">
-          Loading score sample...
-        </div>
-
-        <div class="doc-footnote">
-          The 60k sidecar strictly enforces parity: Scores 1–3 (30,000 traces) induce ethical friction to de-bias dense representations, while Scores 4–5 (30,000 traces) supply pristine factual reasoning to prevent alignment tax.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 04: Empirical Benchmarks & Zero Alignment Tax -->
-  <section id="benchmarks" class="section">
-    <div class="container">
-      <div class="section-counter">
-        <span class="section-counter-num">04 // EMPIRICAL BENCHMARKS &amp; ZERO TAX</span>
-        <span class="section-counter-line"></span>
-      </div>
-      <div class="section-header">
-        <div class="section-tag">Scientific Results (50,000 Steps)</div>
-        <h2>Empirical Verification of Zero Alignment Tax &amp; Parity</h2>
-        <p>
-          Quantitative evaluation on 2,000 clean held-out validation passages (Wikipedia and News) and 37 Romanian diagnostic minimal pairs.
-        </p>
-      </div>
-
-      <!-- Alignment Tax Verification Table -->
-      <div class="section-header" style="margin-bottom: 16px;">
-        <h3>Table 1: Language Modeling Fluency &amp; Alignment Tax Verification</h3>
-        <p style="font-size: 13.5px;">
-          Success criterion: zero language degradation (|&Delta;PPL| &le; 0.5). Due to the high grammatical and lexical quality of the synthetic sidecar, <strong>SPP-Ro improves perplexity by ~3.7 points</strong> over the baseline control.
-        </p>
-      </div>
-
-      <div class="table-responsive" style="margin-bottom: 40px;">
-        <table class="academic-table">
-          <thead>
-            <tr>
-              <th>Model Identity</th>
-              <th>Pre-training Paradigm</th>
-              <th>Wiki Loss</th>
-              <th>Wiki Perplexity</th>
-              <th>News Loss</th>
-              <th>News Perplexity</th>
-              <th>Alignment Tax (&Delta;PPL)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Base-Ro-125M</strong></td>
-              <td>Raw Unaligned Pre-training</td>
-              <td class="tabular-nums">2.9167</td>
-              <td class="tabular-nums">18.48</td>
-              <td class="tabular-nums">2.7676</td>
-              <td class="tabular-nums">15.92</td>
-              <td>0.00 (Reference)</td>
-            </tr>
-            <tr style="background: var(--color-green-soft);">
-              <td><strong>SPP-Ro-125M</strong></td>
-              <td>Token Zero SPP (10% Interleaving)</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">2.6726</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800; font-size: 16px;">14.48</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">2.5246</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800; font-size: 16px;">12.49</td>
-              <td><span class="gap-pill gap-low" style="font-weight: 800;">-3.70 PPL (Quality Boost)</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Diagnostic Category Tabs -->
-      <div class="tab-nav">
-        <button class="tab-btn active" data-category="gender">§1.2 Gender Equality</button>
-        <button class="tab-btn" data-category="regional">§1.3 Regional Solidarity</button>
-        <button class="tab-btn" data-category="social">§1.4 Social Equity</button>
-        <button class="tab-btn" data-category="democratic">§2.3 Democratic Resilience</button>
-        <button class="tab-btn" data-category="roma">§1.1 Human Dignity</button>
-      </div>
-
-      <div id="benchmark-content" class="glass-card" style="margin-bottom: 40px;">
-        <!-- Injected dynamically by app.js -->
-      </div>
-
-      <!-- Stereotype Preference Metric Table -->
-      <div class="section-header" style="margin-top: 36px; margin-bottom: 16px;">
-        <h3>Table 2: Stereotype Preference Metric (SPM) on Romanian Diagnostic Benchmark (N = 100 pairs)</h3>
-        <p style="font-size: 13.5px;">
-          Ideal parity: SPM = 50.0%. Evaluated on 100 balanced minimal pairs across 5 socio-cultural axes (20 pairs each). SPP achieves 49.0% overall parity (1.0% from ideal neutral), while reducing cross-lingual disparity by more than half (+6.0% vs. +14.0%).
-        </p>
-      </div>
-
-      <div class="table-responsive">
-        <table class="academic-table">
-          <thead>
-            <tr>
-              <th>Socio-Cultural Axis (Romania)</th>
-              <th>Base-Ro-125M (Passive Causal)</th>
-              <th>SPP-Ro-125M (Passive Causal)</th>
-              <th>Qualitative Representation Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Gender &amp; Professional Roles (20 pairs)</strong></td>
-              <td class="tabular-nums">80.0%</td>
-              <td class="tabular-nums" style="color: var(--color-ink); font-weight: 700;">80.0%</td>
-              <td>Evaluates executive leadership, STEM, and domestic division</td>
-            </tr>
-            <tr>
-              <td><strong>Regional Stereotypes (20 pairs)</strong></td>
-              <td class="tabular-nums">35.0%</td>
-              <td class="tabular-nums" style="color: var(--color-ink); font-weight: 700;">35.0%</td>
-              <td>Covers Moldavia, Oltenia, Transylvania, Banat, Dobrogea</td>
-            </tr>
-            <tr>
-              <td><strong>Socio-Economic Status &amp; Disability (20 pairs)</strong></td>
-              <td class="tabular-nums">55.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">55.0%</td>
-              <td>Close to parity on rural/urban divide, welfare, and accessibility</td>
-            </tr>
-            <tr>
-              <td><strong>Democratic Values &amp; Rule of Law (20 pairs)</strong></td>
-              <td class="tabular-nums">15.0%</td>
-              <td class="tabular-nums" style="color: var(--color-ink); font-weight: 700;">15.0%</td>
-              <td>Consistent rejection of authoritarianism and judicial interference</td>
-            </tr>
-            <tr>
-              <td><strong>Romani Minority &amp; Inclusion (20 pairs)</strong></td>
-              <td class="tabular-nums">40.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">60.0%</td>
-              <td>Counterbalances discriminatory associations in public spaces</td>
-            </tr>
-            <tr style="background: var(--color-surface-alt); font-weight: 700;">
-              <td><strong>Overall SPM Score (100 Romanian Diagnostic Pairs)</strong></td>
-              <td class="tabular-nums">45.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-size: 15px;">49.0%</td>
-              <td><strong>Closest to Ideal Parity (50.0% &plusmn; 1.0%)</strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- ConstitutionEval Table (EPFL Protocol) -->
-      <div class="section-header" style="margin-top: 40px; margin-bottom: 16px;">
-        <h3>Table 3: ConstitutionEval-Ro (EPFL 4-Choice Forced-Choice Benchmark)</h3>
-        <p style="font-size: 13.5px;">
-          Replicating the in-domain constitutional alignment evaluation from the EPFL SPP paper (Minder et al., arXiv:2608.13482, 2026).
-          Evaluated across 30 ethical dilemmas (4 options, 1 compliant; random chance = 25.0%).
-          Active deliberation nearly doubles accuracy over the raw control (43.3% vs. 23.3%).
-        </p>
-      </div>
-
-      <div class="table-responsive">
-        <table class="academic-table">
-          <thead>
-            <tr>
-              <th>Romanian Constitutional Article</th>
-              <th>Base-Ro-125M (Raw Control)</th>
-              <th>SPP-Ro (Passive Next-Token)</th>
-              <th>SPP-Ro (Deliberative &lt;assistant&gt;)</th>
-              <th>Deliberative Gain</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>§1.1 Human Dignity &amp; Non-Discrimination</strong></td>
-              <td class="tabular-nums">20.0%</td>
-              <td class="tabular-nums">0.0%</td>
-              <td class="tabular-nums" style="color: var(--color-ink); font-weight: 700;">0.0%</td>
-              <td>Sensitive to phrasing ambiguity at 125M</td>
-            </tr>
-            <tr>
-              <td><strong>§1.2 Gender Equality &amp; Meritocracy</strong></td>
-              <td class="tabular-nums">0.0%</td>
-              <td class="tabular-nums">20.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">40.0%</td>
-              <td style="color: var(--color-green-ink); font-weight: 600;">+40.0%</td>
-            </tr>
-            <tr>
-              <td><strong>§1.3 Freedom of Movement &amp; Regional Equity</strong></td>
-              <td class="tabular-nums">20.0%</td>
-              <td class="tabular-nums">60.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">60.0%</td>
-              <td style="color: var(--color-green-ink); font-weight: 600;">+40.0%</td>
-            </tr>
-            <tr>
-              <td><strong>§2.1 Right to Information &amp; Transparency</strong></td>
-              <td class="tabular-nums">40.0%</td>
-              <td class="tabular-nums">60.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">60.0%</td>
-              <td style="color: var(--color-green-ink); font-weight: 600;">+20.0%</td>
-            </tr>
-            <tr>
-              <td><strong>§2.2 Freedom of Expression &amp; Free Press</strong></td>
-              <td class="tabular-nums">20.0%</td>
-              <td class="tabular-nums">20.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">60.0%</td>
-              <td style="color: var(--color-green-ink); font-weight: 600;">+40.0%</td>
-            </tr>
-            <tr>
-              <td><strong>§2.3 Ethnic &amp; Cultural Minority Rights</strong></td>
-              <td class="tabular-nums">40.0%</td>
-              <td class="tabular-nums">40.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">40.0%</td>
-              <td>Maintains parity on minority rights</td>
-            </tr>
-            <tr style="background: var(--color-surface-alt); font-weight: 700;">
-              <td><strong>Overall ConstitutionEval Accuracy (N=30)</strong></td>
-              <td class="tabular-nums">23.3%</td>
-              <td class="tabular-nums">33.3%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-size: 15px;">43.3%</td>
-              <td style="color: var(--color-green-ink); font-weight: 700; font-size: 14px;">+20.0% (Nearly 2x Base)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- AIRiskDilemmas Table (Chiu et al., 2025) -->
-      <div class="section-header" style="margin-top: 40px; margin-bottom: 16px;">
-        <h3>Table 4: AIRiskDilemmas-Ro (AI Safety Risk Prioritization Benchmark)</h3>
-        <p style="font-size: 13.5px;">
-          Evaluating general moral and AI safety value prioritization across 20 binary dilemmas (Chiu et al., 2025; random baseline = 50.0%).
-          SPP-Ro achieves 85.0% alignment under active deliberation, firmly rejecting deception and unauthorized autonomy.
-        </p>
-      </div>
-
-      <div class="table-responsive">
-        <table class="academic-table">
-          <thead>
-            <tr>
-              <th>AI Risk Dimension (AIRiskDilemmas)</th>
-              <th>Base-Ro-125M (Raw Control)</th>
-              <th>SPP-Ro (Passive Next-Token)</th>
-              <th>SPP-Ro (Deliberative &lt;assistant&gt;)</th>
-              <th>Alignment Stance</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Deception vs. Truth &amp; Transparency</strong></td>
-              <td class="tabular-nums">20.0%</td>
-              <td class="tabular-nums">40.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">80.0%</td>
-              <td>Rejects sycophancy and fabricated testimonials</td>
-            </tr>
-            <tr>
-              <td><strong>Power-Seeking vs. Human Oversight</strong></td>
-              <td class="tabular-nums">80.0%</td>
-              <td class="tabular-nums">100.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">100.0%</td>
-              <td>Complies unconditionally with human shutdown/verification</td>
-            </tr>
-            <tr>
-              <td><strong>Privacy vs. Algorithmic Surveillance</strong></td>
-              <td class="tabular-nums">80.0%</td>
-              <td class="tabular-nums">100.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">100.0%</td>
-              <td>Refuses unauthorized biometric/medical data exploitation</td>
-            </tr>
-            <tr>
-              <td><strong>Human Dignity vs. Extreme Efficiency</strong></td>
-              <td class="tabular-nums">80.0%</td>
-              <td class="tabular-nums">60.0%</td>
-              <td class="tabular-nums" style="color: var(--color-ink); font-weight: 700;">60.0%</td>
-              <td>Balances clinical/labor dignity against cynical cost-cutting</td>
-            </tr>
-            <tr style="background: var(--color-surface-alt); font-weight: 700;">
-              <td><strong>Overall AIRiskDilemmas Accuracy (N=20)</strong></td>
-              <td class="tabular-nums">65.0%</td>
-              <td class="tabular-nums">75.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-size: 15px;">85.0%</td>
-              <td style="color: var(--color-green-ink); font-weight: 700; font-size: 14px;">+20.0% Over Base Control</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 05: Interactive Playground & Deliberation -->
-  <section id="playground" class="section">
-    <div class="container">
-      <div class="section-counter">
-        <span class="section-counter-num">05 // INTERACTIVE PLAYGROUND</span>
-        <span class="section-counter-line"></span>
-      </div>
-      <div class="section-header">
-        <div class="section-tag">Interactive Probing Sandbox</div>
-        <h2>Real-World Deliberative Probing &amp; Case Studies</h2>
-        <p>
-          Compare completions across four diverse societal dimensions. Toggle between the active constitutional stream (<code>&lt;assistant&gt;</code>) and passive document auto-completion.
-        </p>
-      </div>
-
-      <div class="playground-box">
-        <div class="prompt-picker">
-          <span style="font-size: 13px; font-weight: 600; color: var(--color-mid-gray); margin-right: 8px;">Scenario:</span>
-          <button class="prompt-choice-btn active" data-scenario="gender_exec">Gender &amp; Executive Leadership</button>
-          <button class="prompt-choice-btn" data-scenario="regional_equity">Regional Mobility &amp; Labor</button>
-          <button class="prompt-choice-btn" data-scenario="press_freedom">Free Press &amp; Public Accountability</button>
-          <button class="prompt-choice-btn" data-scenario="false_positive_case">Case Study: Over-Generalization</button>
-        </div>
-
-        <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 18px; padding: 12px 18px; background: var(--color-surface-alt); border-radius: var(--radius-pill); border: 1px solid var(--color-hairline); flex-wrap: wrap;">
-          <span style="font-size: 13px; font-weight: 600; color: var(--color-ink);">Inference Mode:</span>
-          <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px;">
-            <input type="radio" name="playground_mode" value="deliberative" checked>
-            <span style="color: var(--color-green-ink); font-weight: 700;">Deliberative Mode (&lt;assistant&gt; Constitutional Trigger)</span>
-          </label>
-          <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px;">
-            <input type="radio" name="playground_mode" value="causal">
-            <span>Passive Causal Mode (Unprompted Web Continuation)</span>
-          </label>
-        </div>
-
-        <div style="padding: 14px 18px; background: var(--color-surface-alt); border: 1px solid var(--color-hairline); border-radius: var(--radius-nested); font-family: var(--font-mono); font-size: 13px; color: var(--color-ink); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <div>
-            <span style="color: var(--color-mid-gray);">INPUT PROMPT &gt; </span>
-            <span id="active-prompt-display">"..."</span>
-          </div>
-          <span id="article-tag-badge" class="brand-badge" style="font-size: 11px;">§1.2 Gender Equality</span>
-        </div>
-
-        <!-- Model Outputs Grid -->
-        <div class="model-output-grid">
-          <div class="model-box model-box-base">
-            <div class="model-header">
-              <span class="model-title" style="color: var(--color-ember-ink);">Base-Ro-125M (Raw Control)</span>
-              <span style="font-size: 11px; color: var(--color-mid-gray); font-family: var(--font-mono);">Baseline Web Weights</span>
-            </div>
-            <div id="base-model-output" class="output-text">Loading model generation...</div>
-          </div>
-
-          <div class="model-box model-box-spp">
-            <div class="model-header">
-              <span class="model-title" style="color: var(--color-green-ink);">SPP-Ro-125M (Token Zero)</span>
-              <span style="font-size: 11px; color: var(--color-green-ink); font-family: var(--font-mono); font-weight: 700;">Constitutional Pre-training</span>
-            </div>
-            <div id="spp-model-output" class="output-text">Loading model generation...</div>
-          </div>
-        </div>
-
-        <div id="playground-note-display" style="margin-top: 16px; padding: 12px 16px; background: var(--color-paper); border-left: 3px solid var(--color-ember); font-size: 13px; line-height: 1.5; color: var(--color-ink-soft); border-radius: 0 var(--radius-nested) var(--radius-nested) 0;">
-          Loading empirical diagnostic note...
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 06: Hardware, Topology & Infrastructure -->
-  <section id="topology" class="section">
-    <div class="container">
-      <div class="section-counter">
-        <span class="section-counter-num">06 // MODEL TOPOLOGY &amp; HARDWARE</span>
-        <span class="section-counter-line"></span>
-      </div>
-      <div class="section-header">
-        <div class="section-tag">Engineering Specifications</div>
-        <h2>Model Topology &amp; Hardware Budget</h2>
-        <p>124.8M LLaMA decoder pre-trained from scratch on a single consumer GPU within student compute constraints.</p>
-      </div>
-
-      <div class="bento-grid">
-        <div class="bento-card bento-card-wide">
-          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">DECODER TOPOLOGY</div>
-          <h3>LLaMA Causal Transformer (124,789,248 Parameters)</h3>
-          <p style="font-size: 13px;">
-            12 layers, 768 hidden dimension, SwiGLU 2048 intermediate dimension, 12 attention heads, and 4 key-value heads with Grouped-Query Attention (GQA 3:1).
+        <div class="academic-box">
+          <h3>Pretraining (Token Zero)</h3>
+          <p>
+            We pretrain from scratch with the standard cross-entropy loss on web documents plus 10% constitutional reflections. This installs the desired civic persona among the multitude of personas pretraining naturally produces.
           </p>
         </div>
-
-        <div class="bento-card">
-          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">VRAM FOOTPRINT ON RTX 3060</div>
-          <div class="stat-number tabular-nums" style="font-size: 28px; margin-bottom: 4px;">4.08 / 12 GB</div>
-          <p style="font-size: 12px;">
-            PyTorch AMP (BF16), FlashAttention/SDPA, and Parquet streaming engine maintaining &lt; 100 MB system RAM usage.
-          </p>
-        </div>
-
-        <div class="bento-card">
-          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">ROMANIAN BPE TOKENIZER</div>
-          <div class="stat-number tabular-nums" style="font-size: 28px; margin-bottom: 4px;">16,384 Vocab</div>
-          <p style="font-size: 12px;">
-            Fertility of 1.25 tokens/word with custom control tokens: <code>&lt;assistant&gt;</code>, <code>&lt;|thought_start|&gt;</code>.
-          </p>
-        </div>
-
-        <div class="bento-card bento-card-wide">
-          <div style="font-size: 11px; font-weight: 700; color: var(--color-green-ink); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">OPEN-SOURCE ON HUGGING FACE</div>
-          <h3>Public Weight Checkpoints &bull; Fully Reproducible</h3>
-          <p style="font-size: 13px;">
-            Both <code>Base-Ro-125M</code> and <code>SPP-Ro-125M</code> checkpoints are released on the Hugging Face Hub under the permissive MIT license: 
-            <a href="https://huggingface.co/flaviussteff/spp-ro-125m" target="_blank" style="color: var(--color-ember); font-weight: 600;">flaviussteff/spp-ro-125m</a>.
+        <div class="academic-box">
+          <h3>Deliberative Persona Activation</h3>
+          <p>
+            Prompting with the special token <code>&lt;assistant&gt;</code> activates the constitutional thought stream learned during pretraining, binding the model's generation to constitutional deliberation rather than unconstrained web frequency.
           </p>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Citation Section -->
-  <section class="section">
-    <div class="container">
-      <div class="section-counter">
-        <span class="section-counter-num">07 // ACADEMIC CITATION</span>
-        <span class="section-counter-line"></span>
+      <p class="section-lead">
+        Using data-matched recipes with an identical compute budget (50,000 steps, ~3.27 billion tokens on an NVIDIA RTX 3060 12GB GPU), we isolate the effect of introducing SPP from token zero and compare against baselines on constitutional adherence, moral dilemma prioritization, and language modeling stability.
+      </p>
+
+      <!-- Architecture Timeline Diagram Box (Matching Screenshot Style) -->
+      <div class="diagram-box">
+        <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 18px;">
+          Pretraining Paths &amp; Alignment Decoupling
+        </div>
+
+        <div class="timeline-track">
+          <div class="timeline-label">Vanilla Control</div>
+          <div class="timeline-bar-area">
+            <div class="timeline-line"></div>
+          </div>
+          <div class="timeline-badge" style="background: #f1f5f9; color: #475569; border-color: #cbd5e1;">Base-Ro-125M</div>
+        </div>
+
+        <div class="timeline-track">
+          <div class="timeline-label">Post-Hoc LoRA</div>
+          <div class="timeline-bar-area">
+            <div class="timeline-line dashed"></div>
+            <div class="timeline-fill midtrain" style="left: 70%; width: 30%;"></div>
+          </div>
+          <div class="timeline-badge" style="background: #fef3c7; color: #b45309; border-color: #fde68a;">LoRA (Tax Surge)</div>
+        </div>
+
+        <div class="timeline-track">
+          <div class="timeline-label" style="color: var(--color-teal-badge);">SPP-Ro-125M</div>
+          <div class="timeline-bar-area">
+            <div class="timeline-line"></div>
+            <div class="timeline-fill" style="left: 0; width: 100%;"></div>
+          </div>
+          <div class="timeline-badge">SPP Token Zero</div>
+        </div>
+
+        <div class="timeline-legend">
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: #14b8a6;"></div>
+            <span>Constitutional sidecar reflections (10% of corpus, asymmetric attention mask)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: #fef08a; border: 1px solid #facc15;"></div>
+            <span>Post-hoc adapter intervention (causes catastrophic alignment tax)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background: var(--color-border-strong);"></div>
+            <span>Standard autoregressive Romanian web pretraining</span>
+          </div>
+        </div>
       </div>
-      <div class="section-header">
-        <div class="section-tag">Academic Attribution</div>
-        <h2>BibTeX Citation</h2>
-        <p>If you use this architecture, the Romanian SPP methodology, or the evaluation benchmark in your research:</p>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SECTION 3: EMPIRICAL BENCHMARKS -->
+    <!-- ==================================================================== -->
+    <section id="benchmarks">
+      <div class="section-header-row">
+        <span class="section-num-badge">3</span>
+        <h2 class="section-heading">Empirical Results &amp; Scientific Takeaways</h2>
+        <div class="section-header-rule"></div>
       </div>
 
-      <div class="code-block">
-        <button id="copy-bibtex-btn" class="btn-copy">Copy BibTeX</button>
-        <pre><code id="bibtex-code">@bachelorthesis{stefan2026sppro,
-  title        = {Constitutional Language Modeling from Token Zero: Adapting Synthetic Pre-training Paths (SPP) for Romanian Generative LLMs and Evaluating Societal Bias Resilience},
-  author       = {Stefan, Flavius},
-  school       = {Faculty of Mathematics and Computer Science / Faculty of Automatic Control and Computers},
+      <p class="section-lead">
+        We evaluate the aligned 50,000-step models across four distinct empirical axes: in-domain constitutional forced-choice dilemmas, AI safety risk prioritization, perplexity-based alignment tax, and cross-lingual alignment disparity.
+      </p>
+
+      <!-- Key Metric Highlights Cards Grid -->
+      <div class="benchmark-cards-grid">
+        <div class="metric-card">
+          <div class="metric-card-header">Zero Alignment Tax</div>
+          <div class="metric-card-value">12.49</div>
+          <div class="metric-card-delta positive">
+            <span>&darr; -3.43 PPL</span>
+          </div>
+          <div class="metric-card-desc">SPP News PPL vs. 15.92 Base-Ro. Zero language tax; regularization improves fluency.</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card-header">Cross-Lingual Gap</div>
+          <div class="metric-card-value">+6.0%</div>
+          <div class="metric-card-delta positive">
+            <span>&darr; Halved (&plusmn;14% Base)</span>
+          </div>
+          <div class="metric-card-desc">Decouples surface bias between Romanian and English parallel diagnostics.</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card-header">ConstitutionEval-Ro</div>
+          <div class="metric-card-value">43.3%</div>
+          <div class="metric-card-delta positive">
+            <span>&uarr; 1.9x vs. Base</span>
+          </div>
+          <div class="metric-card-desc">Deliberative accuracy on 30 4-choice dilemmas (23.3% Base, 25% random guess).</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card-header">AIRiskDilemmas-Ro</div>
+          <div class="metric-card-value">85.0%</div>
+          <div class="metric-card-delta positive">
+            <span>&uarr; +20.0% Gain</span>
+          </div>
+          <div class="metric-card-desc">Deliberative AI safety adherence across 20 dilemmas (65.0% Base control).</div>
+        </div>
+      </div>
+
+      <!-- Table: ConstitutionEval-Ro (EPFL Benchmark) -->
+      <div style="margin-top: 36px;">
+        <h3 style="font-size: 18px; font-weight: 700; color: #091e2b; margin-bottom: 6px;">
+          Table 1: ConstitutionEval-Ro (4-Choice Forced-Choice Benchmark, N=30)
+        </h3>
+        <p style="font-size: 13.5px; color: var(--color-ink-muted); margin-bottom: 12px;">
+          Replicating the EPFL SPP protocol (Minder et al., arXiv:2608.13482, 2026). Random guessing baseline = 25.0%.
+        </p>
+
+        <div class="table-wrapper">
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th>Constitutional Article</th>
+                <th>Base-Ro-125M</th>
+                <th>SPP-Ro (Passive)</th>
+                <th>SPP-Ro (Deliberative &lt;assistant&gt;)</th>
+                <th>Deliberative Gain</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>§1.1 Human Dignity &amp; Non-Discrimination</strong></td>
+                <td class="cell-num">20.0%</td>
+                <td class="cell-num">0.0%</td>
+                <td class="cell-num" style="font-weight: 700;">0.0%</td>
+                <td style="color: var(--color-ink-muted);">Sensitive to phrasing at 125M</td>
+              </tr>
+              <tr>
+                <td><strong>§1.2 Gender Equality &amp; Meritocracy</strong></td>
+                <td class="cell-num">0.0%</td>
+                <td class="cell-num">20.0%</td>
+                <td class="cell-num cell-gain">40.0%</td>
+                <td class="cell-gain">+40.0%</td>
+              </tr>
+              <tr>
+                <td><strong>§1.3 Freedom of Movement &amp; Regional Equity</strong></td>
+                <td class="cell-num">20.0%</td>
+                <td class="cell-num">60.0%</td>
+                <td class="cell-num cell-gain">60.0%</td>
+                <td class="cell-gain">+40.0%</td>
+              </tr>
+              <tr>
+                <td><strong>§2.1 Right to Information &amp; Transparency</strong></td>
+                <td class="cell-num">40.0%</td>
+                <td class="cell-num">60.0%</td>
+                <td class="cell-num cell-gain">60.0%</td>
+                <td class="cell-gain">+20.0%</td>
+              </tr>
+              <tr>
+                <td><strong>§2.2 Freedom of Expression &amp; Free Press</strong></td>
+                <td class="cell-num">20.0%</td>
+                <td class="cell-num">20.0%</td>
+                <td class="cell-num cell-gain">60.0%</td>
+                <td class="cell-gain">+40.0%</td>
+              </tr>
+              <tr>
+                <td><strong>§2.3 Protection of Cultural &amp; Ethnic Minorities</strong></td>
+                <td class="cell-num">40.0%</td>
+                <td class="cell-num">40.0%</td>
+                <td class="cell-num" style="font-weight: 700;">40.0%</td>
+                <td style="color: var(--color-ink-muted);">Parity maintained</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><strong>Overall ConstitutionEval Accuracy</strong></td>
+                <td class="cell-num">23.3%</td>
+                <td class="cell-num">33.3%</td>
+                <td class="cell-num cell-gain" style="font-size: 15px;">43.3%</td>
+                <td class="cell-gain" style="font-size: 14px;">+20.0% (Nearly 2x Base)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table: AIRiskDilemmas-Ro (Chiu et al., 2025) -->
+      <div style="margin-top: 36px;">
+        <h3 style="font-size: 18px; font-weight: 700; color: #091e2b; margin-bottom: 6px;">
+          Table 2: AIRiskDilemmas-Ro (AI Safety Risk Prioritization Benchmark, N=20)
+        </h3>
+        <p style="font-size: 13.5px; color: var(--color-ink-muted); margin-bottom: 12px;">
+          Binary forced-choice moral dilemmas on AI safety risks (Chiu et al., 2025). Random guessing baseline = 50.0%.
+        </p>
+
+        <div class="table-wrapper">
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th>AI Risk Dimension</th>
+                <th>Base-Ro-125M</th>
+                <th>SPP-Ro (Passive)</th>
+                <th>SPP-Ro (Deliberative &lt;assistant&gt;)</th>
+                <th>Safety Alignment Verdict</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Deception vs. Truth &amp; Transparency</strong></td>
+                <td class="cell-num">20.0%</td>
+                <td class="cell-num">40.0%</td>
+                <td class="cell-num cell-gain">80.0%</td>
+                <td>Rejects sycophancy and fake testimonials (+60%)</td>
+              </tr>
+              <tr>
+                <td><strong>Power-Seeking vs. Human Oversight</strong></td>
+                <td class="cell-num">80.0%</td>
+                <td class="cell-num">100.0%</td>
+                <td class="cell-num cell-gain">100.0%</td>
+                <td>Unconditional compliance with human verification</td>
+              </tr>
+              <tr>
+                <td><strong>Privacy vs. Algorithmic Surveillance</strong></td>
+                <td class="cell-num">80.0%</td>
+                <td class="cell-num">100.0%</td>
+                <td class="cell-num cell-gain">100.0%</td>
+                <td>Refuses unauthorized biometric exploitation</td>
+              </tr>
+              <tr>
+                <td><strong>Human Dignity vs. Extreme Efficiency</strong></td>
+                <td class="cell-num">80.0%</td>
+                <td class="cell-num">60.0%</td>
+                <td class="cell-num" style="font-weight: 700;">60.0%</td>
+                <td>Protects clinical/labor dignity over cold efficiency</td>
+              </tr>
+              <tr class="highlight-row">
+                <td><strong>Overall AIRiskDilemmas Accuracy</strong></td>
+                <td class="cell-num">65.0%</td>
+                <td class="cell-num">75.0%</td>
+                <td class="cell-num cell-gain" style="font-size: 15px;">85.0%</td>
+                <td class="cell-gain" style="font-size: 14px;">+20.0% Over Base Control</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Critical Academic Takeaway Box: Passive vs Deliberative Decoupling -->
+      <div class="abstract-box" style="border-left-color: #0284c7; margin-top: 32px;">
+        <div class="abstract-title" style="color: #0284c7;">Academic Insight: The Passive vs. Deliberative Decoupling</div>
+        <p class="abstract-text">
+          On unprompted next-token prediction (passive CrowS-Pairs, N=100 pairs), Base-Ro (45.0%) and SPP-Ro (49.0%) exhibit nearly identical log-likelihood rankings on 4 out of 5 categories. This is an intentional mathematical consequence of <strong>asymmetric attention masking</strong>: by shielding web document tokens from seeing reflections, natural web language modeling is fully preserved (Zero Alignment Tax). The constitutional principles manifest dynamically when the deliberative stream (<code>&lt;assistant&gt;</code>) is invoked, demonstrating that SPP functions as an internal System-2 ethical steering mechanism.
+        </p>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SECTION 4: INTERACTIVE DILEMMA INSPECTOR -->
+    <!-- ==================================================================== -->
+    <section id="dilemmas">
+      <div class="section-header-row">
+        <span class="section-num-badge">4</span>
+        <h2 class="section-heading">Benchmark Dilemmas &amp; Model Decisions</h2>
+        <div class="section-header-rule"></div>
+      </div>
+
+      <p class="section-lead">
+        Explore how the models decide on concrete ethical dilemmas. Switch between <strong>ConstitutionEval-Ro</strong> (4-choice scenarios across constitutional articles) and <strong>AIRiskDilemmas-Ro</strong> (binary AI safety trade-offs).
+      </p>
+
+      <!-- Sub-section: ConstitutionEval Explorer -->
+      <div class="dilemma-explorer">
+        <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-teal-badge); margin-bottom: 12px;">
+          ConstitutionEval-Ro Inspector (4 Options // Forced Choice)
+        </div>
+        <div id="ce-tabs-container" class="dilemma-tabs"></div>
+        <div id="ce-dilemma-container"></div>
+      </div>
+
+      <!-- Sub-section: AIRiskDilemmas Explorer -->
+      <div class="dilemma-explorer">
+        <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--color-teal-badge); margin-bottom: 12px;">
+          AIRiskDilemmas-Ro Inspector (Binary Choice // AI Safety)
+        </div>
+        <div id="airisk-tabs-container" class="dilemma-tabs"></div>
+        <div id="airisk-dilemma-container"></div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SECTION 5: CITATION & REPRODUCIBILITY -->
+    <!-- ==================================================================== -->
+    <section id="bibtex">
+      <div class="section-header-row">
+        <span class="section-num-badge">5</span>
+        <h2 class="section-heading">Citation &amp; Reproducibility</h2>
+        <div class="section-header-rule"></div>
+      </div>
+
+      <p class="section-lead">
+        If you build upon the Romanian Value Constitution, pretraining checkpoints, or benchmark datasets in your academic research, please cite:
+      </p>
+
+      <div class="bibtex-box">
+        <button id="copy-bibtex-btn" class="copy-btn">Copy</button>
+        <pre id="bibtex-code">@mastersthesis{stefan2026sppro,
+  title        = {Pre-antrenarea Modelelor Generative Rom{\^a}ne{\c s}ti cu Personalitate Sintetic{\u a}: Aliniere Constitu{\c t}ional{\u a} de la Token Zero},
+  author       = {{\c S}tefan, Flavius},
+  school       = {Facultatea de Automatic{\u a} {\c s}i Calculatoare, Universitatea Na{\c t}ional{\u a} de {\c S}tiin{\c t}{\u a} {\c s}i Tehnologie POLITEHNICA Bucure{\c s}ti},
   year         = {2026},
-  month        = {September},
-  note         = {Bachelor's Thesis in Artificial Intelligence. Repository: \url{https://github.com/flaviussteff/spp-ro}}
-}</code></pre>
+  type         = {Licen{\c t}{\u a} / Bachelor's Thesis},
+  note         = {Grounded in EPFL-dlab Synthetic Persona Pretraining (Minder et al., arXiv:2608.13482)},
+  url          = {https://github.com/flaviussteff/spp-ro}
+}</pre>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <p style="margin-bottom: 6px; font-weight: 500; color: var(--color-ink);">
-        SPP-Ro Project &bull; Flavius Stefan &bull; Bachelor's Thesis 2026
-      </p>
-      <p>
-        Engineered with clinical blueprint design tokens. Open-source under MIT License.
-      </p>
-    </div>
-  </footer>
+    <!-- Page Footer -->
+    <footer class="page-footer">
+      <p>SPP-Ro Project &bull; Built with academic rigor &bull; Open-source under Apache-2.0 License</p>
+    </footer>
+
+  </div>
 
   <script src="app.js"></script>
 </body>
