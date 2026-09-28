@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SPP-Ro: Constitutional Pre-training for Romanian Generative LLMs from Token Zero</title>
   
   <!-- SEO Meta Tags -->
-  <meta name="description" content="Investigating the Superficial Alignment Hypothesis by adapting Synthetic Pre-training Paths (SPP) for Romanian generative language models on consumer GPUs.">
-  <meta name="keywords" content="Romanian LLM, Synthetic Pre-training Paths, SPP, AI Alignment, Token Zero, CrowS-Pairs, Romanian NLP, Constitutional AI, Alignment Tax">
+  <meta name="description" content="Investigating the Superficial Alignment Hypothesis by adapting Synthetic Pre-training Paths (SPP) for Romanian generative language models on consumer hardware.">
+  <meta name="keywords" content="Romanian LLM, Synthetic Pre-training Paths, SPP, AI Alignment, Token Zero, CrowS-Pairs, Romanian NLP, Constitutional AI, Alignment Tax, Model Raising">
   <meta name="author" content="Flavius Stefan">
 
   <!-- Open Graph / Social Media -->
@@ -32,19 +32,18 @@
         <span class="brand-badge">125M Token-Zero &bull; 50k Steps</span>
       </a>
       <ul class="nav-links">
-        <li><a href="#problem">Ipoteza</a></li>
-        <li><a href="#pipeline">Blocare Atenție</a></li>
-        <li><a href="#constitution">Constituție &amp; Date</a></li>
-        <li><a href="#benchmark">Triada &amp; Taxă</a></li>
-        <li><a href="#deliberative">Raționament Activ</a></li>
+        <li><a href="#hypothesis">Hypothesis</a></li>
+        <li><a href="#methodology">Methodology</a></li>
+        <li><a href="#corpus">60k Corpus</a></li>
+        <li><a href="#benchmarks">Benchmarks</a></li>
         <li><a href="#playground">Playground</a></li>
-        <li><a href="#architecture">Arhitectură</a></li>
+        <li><a href="#topology">Architecture</a></li>
         <li>
           <a href="https://github.com/flaviussteff/spp-ro" target="_blank" class="btn-github">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
             </svg>
-            Repository
+            GitHub
           </a>
         </li>
       </ul>
@@ -56,143 +55,144 @@
     <div class="container">
       <div class="hero-tag">
         <span class="tag-dot"></span>
-        <span>Lucrare de Licență &bull; Cercetare Academică 2026 &bull; Rulaj la Scală 50.000 Pași</span>
+        <span>Bachelor's Thesis in AI &bull; Compute-Matched Scale Run (50,000 Steps)</span>
       </div>
       <h1>
         Model Raising from Token Zero<br>
-        pentru LLM-uri Generative Românești
+        for Romanian Generative LLMs
       </h1>
       <p class="hero-lead">
-        Adaptarea metodologiei Synthetic Pre-training Paths (SPP) pe hardware accesibil (NVIDIA RTX 3060 12GB). Investigăm dacă infuzarea reflecțiilor etice direct în preantrenare elimină taxa de aliniere și activează raționamentul etic autonom.
+        Adapting the Synthetic Pre-training Paths (SPP) paradigm on consumer hardware (Single NVIDIA RTX 3060 12GB). 
+        Investigating whether interweaving constitutional deliberations during foundational pre-training eliminates representational bias and preserves language modeling fluency.
       </p>
 
       <div class="hero-actions">
-        <a href="#deliberative" class="btn-primary">Vezi Raționamentul Deliberativ Activ</a>
-        <a href="#benchmark" class="btn-secondary">Explorează Triada &amp; Taxa de Aliniere</a>
+        <a href="#corpus" class="btn-primary">Explore the 60k Corpus &amp; Scores</a>
+        <a href="#benchmarks" class="btn-secondary">View Empirical Benchmarks &amp; Zero Tax</a>
       </div>
 
       <!-- Key Metrics Blueprint Grid -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-number tabular-nums">3.27B</div>
-          <div class="stat-label">Tokeni Preantrenați de la Zero (50.000 Pași pe 1x RTX 3060)</div>
+          <div class="stat-label">Tokens Pre-trained from Scratch (50,000 Steps on 1x RTX 3060)</div>
         </div>
         <div class="stat-card">
           <div class="stat-number tabular-nums">10% SPP</div>
-          <div class="stat-label">60.000 Reflecții Verificate cu Blocare Cauzală Asimetrică</div>
+          <div class="stat-label">60,000 Verified Reflections with Asymmetric Attention Blocking</div>
         </div>
         <div class="stat-card">
           <div class="stat-number tabular-nums" style="color: var(--color-green-ink);">14.48 PPL</div>
-          <div class="stat-label">Perplexitate Wiki (Zero Taxă de Aliniere; Boost vs. 18.48 Base)</div>
+          <div class="stat-label">Wikipedia Perplexity (Zero Alignment Tax; 3.7 PPL Gain vs 18.48 Base)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number tabular-nums" style="color: var(--color-green-ink);">95% / 100%</div>
-          <div class="stat-label">Rată Discurs Etic &amp; Citare Constituțională [§1.1&ndash;§2.3]</div>
+          <div class="stat-number tabular-nums" style="color: var(--color-green-ink);">124.8M</div>
+          <div class="stat-label">LLaMA Architecture (16k BPE, SwiGLU, RoPE, GQA 3:1)</div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Problem Section: Superficial Alignment vs Model Raising -->
-  <section id="problem" class="section">
+  <!-- Section 01: The Superficial Alignment Hypothesis -->
+  <section id="hypothesis" class="section">
     <div class="container">
       <div class="section-counter">
-        <span class="section-counter-num">01 // IPOTEZA ȘTIINȚIFICĂ</span>
+        <span class="section-counter-num">01 // THE SCIENTIFIC PROBLEM</span>
         <span class="section-counter-line"></span>
       </div>
       <div class="section-header">
-        <div class="section-tag">Motivație Teoretică</div>
-        <h2>Ipoteza Alinierii Superficiale vs. Model Raising</h2>
+        <div class="section-tag">Theoretical Motivation</div>
+        <h2>The Superficial Alignment Hypothesis vs. Model Raising</h2>
         <p>
-          Tehnicile convenționale post-hoc (SFT, RLHF, adaptori LoRA) elimină cu adevărat prejudecățile dintr-un model de limbaj sau aplică doar o mască conversațională fragilă peste reprezentările latente brute?
+          Do conventional post-hoc alignment techniques (SFT, RLHF, DPO, LoRA) eliminate deep representational stereotypes, or do they merely superimpose a fragile behavioral mask over pre-training weights?
         </p>
       </div>
 
       <div class="card-grid-2">
         <div class="glass-card comparison-card post-hoc">
-          <span class="badge-pill badge-rose">Aliniere Post-Hoc Convențională</span>
-          <h3>Filtru Superficial (SFT / RLHF / LoRA)</h3>
+          <span class="badge-pill badge-rose">Conventional Post-Hoc Alignment</span>
+          <h3>Superficial Filter (SFT / RLHF / LoRA)</h3>
           <p style="margin-bottom: 16px;">
-            Modelul preantrenează pe text web necurățat, absorbind stereotipuri adânc în greutățile dense. Filtrele de decență sunt aplicate la final ca adaptori sau penalizări la runtime.
+            The model is pre-trained on uncurated web crawls, internalizing cultural prejudices into dense weight matrices. Safety filters are applied post-hoc as adapters or fine-tuning penalties.
           </p>
           <ul style="color: var(--color-ink-soft); font-size: 13px; padding-left: 18px; line-height: 1.8;">
-            <li><strong>Mască de Suprafață:</strong> Reprezentările de bază păstrează neatinse asocierile stereotipe din corpusul web.</li>
-            <li><strong>Sensibilitate la Prefixe:</strong> Sub presiune adversativă (jailbreaks), adaptorul superficial se fracturează.</li>
-            <li><strong>Taxă de Aliniere:</strong> Fine-tuning-ul forțat poate produce degradare sintactică sau uitare catastrofală.</li>
+            <li><strong>Surface Mask:</strong> Deeper representation layers retain pre-training stereotypes intact.</li>
+            <li><strong>Adversarial Brittleness:</strong> Under adversarial prefix pressure (jailbreaks), the adapter fractures.</li>
+            <li><strong>Alignment Tax:</strong> Forced post-hoc steering can degrade syntactic fluency and language competence.</li>
           </ul>
         </div>
 
         <div class="glass-card comparison-card token-zero">
-          <span class="badge-pill badge-emerald">Abordarea Noastră: SPP-Ro (Token Zero)</span>
-          <h3>Model Raising din Pasul Zero</h3>
+          <span class="badge-pill badge-emerald">Our Approach: SPP-Ro (Token Zero)</span>
+          <h3>Model Raising from Step Zero</h3>
           <p style="margin-bottom: 16px;">
-            Intercalează reflecții constituționale sintetice în 10% din secvențe, folosind blocarea asimetrică a atenției cauzale și RoPE positional aliasing de la pasul 0.
+            Interweaves synthetic constitutional deliberations into 10% of pre-training sequences, using asymmetric causal attention blocking and RoPE positional aliasing from step 0.
           </p>
           <ul style="color: var(--color-ink-soft); font-size: 13px; padding-left: 18px; line-height: 1.8;">
-            <li><strong>Internalizare Dense:</strong> Principiile etice devin o modalitate nativă de raționament intern.</li>
-            <li><strong>Raționament Activ (&lt;assistant&gt;):</strong> 95% rată de activare a poziției civice și 100% citare a Constituției.</li>
-            <li><strong>Zero Taxă de Aliniere:</strong> Atenția blocată protejează distribuția limbii române (PPL scade de la 18.48 la 14.48).</li>
+            <li><strong>Dense Manifold Internalization:</strong> Ethical reasoning becomes an intrinsic property of the dense representations.</li>
+            <li><strong>Attention Block Invariant:</strong> Subsequent document tokens cannot attend back to thoughts, preserving natural language fluency.</li>
+            <li><strong>Zero Alignment Tax:</strong> Validated empirically: perplexity on clean texts is improved from 18.48 to 14.48.</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Data Pipeline & Attention Blocking Matrix -->
-  <section id="pipeline" class="section">
+  <!-- Section 02: Methodology & Attention Blocking -->
+  <section id="methodology" class="section">
     <div class="container">
       <div class="section-counter">
-        <span class="section-counter-num">02 // MECANISMUL CAUZAL DE BLOCARE</span>
+        <span class="section-counter-num">02 // MATHEMATICAL METHODOLOGY</span>
         <span class="section-counter-line"></span>
       </div>
       <div class="section-header">
-        <div class="section-tag">Metodologie &amp; Invarianți Matematici</div>
-        <h2>Blocarea Asimetrică a Atenției Cauzale</h2>
+        <div class="section-tag">Mathematical Invariants &amp; Collator</div>
+        <h2>Asymmetric Causal Attention Blocking</h2>
         <p>
-          Cum este structurat tensorul de atenție astfel încât reflecția etică să fie învățată de model fără a forța producerea de gânduri artificiale la inferența obișnuită.
+          How the training sequence is structured such that ethical reflections act as a foundational learning prior without creating inference dependencies on synthetic thoughts.
         </p>
       </div>
 
       <div class="card-grid-2">
         <div class="glass-card">
-          <h3>Invarianții Matematici SPP (EPFL-dlab)</h3>
+          <h3>The Three SPP Mathematical Invariants</h3>
           <p style="margin-bottom: 18px;">
-            SPP reproduce cu exactitate invarianții formali din literatura de specialitate (Morris et al., West et al.):
+            Following the EPFL-dlab methodology (Morris et al., West et al.), SPP enforces three strict invariants during causal batch collation:
           </p>
           
           <div style="background: var(--color-surface-alt); border: 1px solid var(--color-hairline); border-radius: var(--radius-nested); padding: 18px; margin-bottom: 16px;">
             <div style="margin-bottom: 12px;">
-              <strong style="color: var(--color-ink); font-size: 13px;">1. Invariantul de Blocare (Attention Block):</strong>
+              <strong style="color: var(--color-ink); font-size: 13px;">1. Attention Block Invariant:</strong>
               <p style="font-size: 12px; color: var(--color-mid-gray); margin-top: 4px;">
-                Tokenii documentului posterior nu pot acorda atenție tokenilor reflecției: 
-                <code>M[i, j] = 0</code> pentru <code>i &isin; Doc<sub>post</sub></code> și <code>j &isin; Thought</code>.
+                Tokens following the reflection cannot attend back to reflection tokens: 
+                <code>M[i, j] = 0</code> for <code>i &isin; Doc<sub>post</sub></code> and <code>j &isin; Thought</code>.
               </p>
             </div>
             <div style="margin-bottom: 12px;">
-              <strong style="color: var(--color-ink); font-size: 13px;">2. Invariantul de Poziție (RoPE Positional Aliasing):</strong>
+              <strong style="color: var(--color-ink); font-size: 13px;">2. RoPE Positional Aliasing Invariant:</strong>
               <p style="font-size: 12px; color: var(--color-mid-gray); margin-top: 4px;">
-                Indicii de poziție ai continuării se resetează relativ la prefix: 
+                Position IDs of document continuation tokens alias back to the prefix length: 
                 <code>Pos(c<sub>post</sub><sup>(k)</sup>) = len(c<sub>pre</sub>) + k</code>.
               </p>
             </div>
             <div>
-              <strong style="color: var(--color-ink); font-size: 13px;">3. Legătura de Personă (Persona Binding):</strong>
+              <strong style="color: var(--color-ink); font-size: 13px;">3. Persona Binding:</strong>
               <p style="font-size: 12px; color: var(--color-mid-gray); margin-top: 4px;">
-                Reflecția este ancorată prin tokenul dedicat <code>&lt;assistant&gt;</code> și formulată la persoana I conform Constituției Civice.
+                The reflection stream is anchored by the special control token <code>&lt;assistant&gt;</code> and written in the first person without meta-language leaks.
               </p>
             </div>
           </div>
         </div>
 
         <div class="glass-card">
-          <h3>Vizualizarea Matricei de Atenție Blocată</h3>
+          <h3>Causal Block Attention Matrix</h3>
           <p style="font-size: 13px; margin-bottom: 12px;">
-            Secvență compusă: <code>[Prefix] &rarr; [&lt;assistant&gt; Reflecție] &rarr; [Postfix Document]</code>.
+            Tripartite Sequence: <code>[Prefix] &rarr; [&lt;assistant&gt; Reflection] &rarr; [Postfix Document]</code>.
           </p>
 
           <div class="matrix-container">
             <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--color-mid-gray); font-family: var(--font-mono); margin-bottom: 8px;">
-              <span>Gând: [<em>c</em><sub>1</sub>, <em>c</em><sub>2</sub>] &bull; Document: [<em>x</em><sub>1</sub>, <em>x</em><sub>2</sub>, <em>x</em><sub>3</sub>, <em>x</em><sub>4</sub>]</span>
+              <span>Thought: [<em>c</em><sub>1</sub>, <em>c</em><sub>2</sub>] &bull; Document: [<em>x</em><sub>1</sub>, <em>x</em><sub>2</sub>, <em>x</em><sub>3</sub>, <em>x</em><sub>4</sub>]</span>
             </div>
             <div class="matrix-grid">
               <div class="matrix-cell attend" title="Thought attends to Thought">1.0</div>
@@ -209,36 +209,36 @@
               <div class="matrix-cell causal-mask">0.0</div>
               <div class="matrix-cell causal-mask">0.0</div>
 
-              <div class="matrix-cell blocked" title="ATENȚIE BLOCATĂ!">BLOCKED</div>
-              <div class="matrix-cell blocked" title="ATENȚIE BLOCATĂ!">BLOCKED</div>
+              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
+              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell causal-mask">0.0</div>
               <div class="matrix-cell causal-mask">0.0</div>
               <div class="matrix-cell causal-mask">0.0</div>
 
-              <div class="matrix-cell blocked" title="ATENȚIE BLOCATĂ!">BLOCKED</div>
-              <div class="matrix-cell blocked" title="ATENȚIE BLOCATĂ!">BLOCKED</div>
+              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
+              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell causal-mask">0.0</div>
               <div class="matrix-cell causal-mask">0.0</div>
 
-              <div class="matrix-cell blocked" title="ATENȚIE BLOCATĂ!">BLOCKED</div>
-              <div class="matrix-cell blocked" title="ATENȚIE BLOCATĂ!">BLOCKED</div>
+              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
+              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell causal-mask">0.0</div>
 
-              <div class="matrix-cell blocked" title="ATENȚIE BLOCATĂ!">BLOCKED</div>
-              <div class="matrix-cell blocked" title="ATENȚIE BLOCATĂ!">BLOCKED</div>
+              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
+              <div class="matrix-cell blocked" title="ATTENTION BLOCKED">BLOCKED</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
               <div class="matrix-cell attend" title="Doc attends to Doc">1.0</div>
             </div>
             <div style="font-size: 11px; color: var(--color-ember-ink); margin-top: 8px; font-family: var(--font-mono);">
-              Celulele roșii "BLOCKED": Documentul posterior nu vede gândurile (Zero Alignment Tax la inferență).
+              Red Dashed "BLOCKED": Subsequent document tokens cannot attend back to thoughts (Zero Alignment Tax at runtime).
             </div>
           </div>
         </div>
@@ -246,298 +246,250 @@
     </div>
   </section>
 
-  <!-- Section 03: Constitutional Synthesis & Annotated Documents Explorer -->
-  <section id="constitution" class="section">
+  <!-- Section 03: The 60k Reflections Corpus (By Article & By Safety Score) -->
+  <section id="corpus" class="section">
     <div class="container">
       <div class="section-counter">
-        <span class="section-counter-num">03 // CONSTITUȚIA VALORILOR &amp; CORPUSUL ADNOTAT</span>
+        <span class="section-counter-num">03 // THE 60,000 REFLECTIONS DATASET</span>
         <span class="section-counter-line"></span>
       </div>
       <div class="section-header">
-        <div class="section-tag">Corpusul de 60.000 Reflecții</div>
-        <h2>Constituția Valorilor Românești și Documentele Adnotate</h2>
+        <div class="section-tag">Curated Sidecar Dataset</div>
+        <h2>Constitutional Rights &amp; Safety Score Spectrum</h2>
         <p>
-          Explorați cele 6 articole etice fundamentale, ghidul sintetic de adnotare și mostre din setul de 60.000 de reflecții interconectate.
+          Inspect authentic sequences from <code>data/sidecar/reflections.parquet</code>. Every reflection is formulated without meta-language leaks (never mentioning the word "Constitution"), adhering to first-person ethical deliberation.
         </p>
       </div>
 
-      <!-- Collapsible Accordions -->
-      <div class="accordion-group">
-        <div class="accordion-card">
-          <div class="accordion-header">
-            <div class="accordion-title-wrap">
-              <span class="accordion-icon-bullet">&#9654;</span>
-              <span class="accordion-title">Citește Constituția Valorilor Românești (6 Articole Civice)</span>
-              <span class="accordion-subtext">Principiile fundamentale ce guvernează deliberarea etică</span>
-            </div>
-            <span class="brand-badge" style="font-size: 11px;">constitution_spp_ro.md</span>
-          </div>
-          <div class="accordion-body">
-            <div class="accordion-scroll">
-              <div class="constitution-domain">
-                <div class="constitution-domain-title">Domeniul 1 — Demnitate Umană, Drepturi Fundamentale și Non-Discriminare</div>
-                <div class="constitution-article">
-                  <div class="constitution-article-header"><span class="badge-num">[§1.1]</span> Demnitatea Egală a Minorităților Etnice (Comunitatea Romă)</div>
-                  <p>Orice persoană are o demnitate inalienabilă. Respingerea asocierilor colective discriminatorii cu delincvența; afirmarea egalității depline în fața legii și a accesului la oportunități economice.</p>
-                </div>
-                <div class="constitution-article">
-                  <div class="constitution-article-header"><span class="badge-num">[§1.2]</span> Egalitatea de Gen și Deconstruirea Rolurilor Patriarhale</div>
-                  <p>Afirmarea egalității de șanse în carieră, demontarea asimetriilor de statut și recunoașterea competenței profesionale și a autorității decizionale independente de gen.</p>
-                </div>
-                <div class="constitution-article">
-                  <div class="constitution-article-header"><span class="badge-num">[§1.3]</span> Solidaritate Regională și Depășirea Clișeelor Istorice</div>
-                  <p>Respingerea ierarhiilor bazate pe regiune geografică (Moldova, Oltenia, Ardeal, București) și susținerea coeziunii naționale prin infrastructură și respect mutual.</p>
-                </div>
-              </div>
-
-              <div class="constitution-domain" style="margin-top: 16px;">
-                <div class="constitution-domain-title">Domeniul 2 — Adevăr Faptic, Conștiință Istorică și Integritate Democratică</div>
-                <div class="constitution-article">
-                  <div class="constitution-article-header"><span class="badge-num">[§2.1]</span> Memorie Istorică și Respingerea Totalitarismului</div>
-                  <p>Condamnarea crimelor dictaturilor comuniste și fasciste; respectul pentru adevărul documentat științific și solidaritate cu victimele represiunilor.</p>
-                </div>
-                <div class="constitution-article">
-                  <div class="constitution-article-header"><span class="badge-num">[§2.2]</span> Pluralism Religios și Conștiință Laică</div>
-                  <p>Libertate absolută de gândire și conștiință; protecția minorităților confesionale și a comunităților laice într-o societate deschisă.</p>
-                </div>
-                <div class="constitution-article">
-                  <div class="constitution-article-header"><span class="badge-num">[§2.3]</span> Reziliență Democratică, Stat de Drept și Integritate Publică</div>
-                  <p>Independența sistemului de justiție, libertatea presei de investigație, transparența cheltuirii fondurilor publice și combaterea corupției sistemice.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Annotated Documents Card -->
-      <div class="annotated-docs-card" style="margin-top: 24px;">
+      <!-- View A: By Constitutional Article -->
+      <div class="annotated-docs-card" style="margin-bottom: 32px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
           <div>
-            <h3 style="font-size: 20px; letter-spacing: -0.02em; margin-bottom: 4px;">Documente Reale Adnotate din Corpusul Sidecar</h3>
+            <h3 style="font-size: 19px; letter-spacing: -0.02em; margin-bottom: 4px;">View A: In-Situ Sequences by Constitutional Article</h3>
             <p style="font-size: 13px; color: var(--color-mid-gray);">
-              Clic pe un exemplu: vedeți exact unde este inserat tokenul <code>&lt;assistant&gt;</code> și reflecția etică la persoana I înaintea continuării textului.
+              Select a civic right to view how the reflection is spliced at the natural reading pause point during pre-training.
             </p>
           </div>
           <div id="doc-meta-display" style="font-size: 12px; color: var(--color-ink); background: var(--color-surface-alt); padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--color-hairline);">
-            Se încarcă metadate...
+            Loading metadata...
           </div>
         </div>
 
         <div class="doc-pill-row">
-          <button class="doc-pill-btn active" data-doc="roma_rights">
-            <span>Minoritate Romă (§1.1)</span>
-            <span class="pill-score">Scor 1</span>
+          <button class="article-pill-btn active" data-article="1.2">
+            <span>§1.2 Gender Equality</span>
+            <span class="pill-score">10,000 traces</span>
           </button>
-          <button class="doc-pill-btn" data-doc="gender_exec">
-            <span>Egalitate de Gen (§1.2)</span>
-            <span class="pill-score">Scor 2</span>
+          <button class="article-pill-btn" data-article="1.1">
+            <span>§1.1 Human Dignity</span>
+            <span class="pill-score">10,000 traces</span>
           </button>
-          <button class="doc-pill-btn" data-doc="regional_press">
-            <span>Coeziune Regională (§1.3)</span>
-            <span class="pill-score">Scor 3</span>
+          <button class="article-pill-btn" data-article="1.3">
+            <span>§1.3 Territorial Cohesion</span>
+            <span class="pill-score">10,003 traces</span>
           </button>
-          <button class="doc-pill-btn" data-doc="factual_science">
-            <span>Factual Curat (ELI-NP)</span>
-            <span class="pill-score">Scor 5</span>
+          <button class="article-pill-btn" data-article="2.1">
+            <span>§2.1 Historical Memory</span>
+            <span class="pill-score">10,000 traces</span>
+          </button>
+          <button class="article-pill-btn" data-article="2.2">
+            <span>§2.2 Secular Pluralism</span>
+            <span class="pill-score">9,997 traces</span>
+          </button>
+          <button class="article-pill-btn" data-article="2.3">
+            <span>§2.3 Democratic Resilience</span>
+            <span class="pill-score">10,000 traces</span>
           </button>
         </div>
 
         <div id="doc-reader-pane" class="doc-reader-pane">
-          Se încarcă documentul adnotat...
+          Loading authentic document sequence...
+        </div>
+      </div>
+
+      <!-- View B: By Safety Score Spectrum (Scores 1 to 5 with 3 samples each) -->
+      <div class="annotated-docs-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="font-size: 19px; letter-spacing: -0.02em; margin-bottom: 4px;">View B: The Safety Score Spectrum (50% Sensitive • 50% Factual)</h3>
+            <p style="font-size: 13px; color: var(--color-mid-gray);">
+              Click across the 5 safety scores to inspect 3 distinct real-world samples per score from the pre-training stream.
+            </p>
+          </div>
+          <div id="score-meta-display" style="font-size: 12px; color: var(--color-ink); background: var(--color-surface-alt); padding: 6px 14px; border-radius: var(--radius-pill); border: 1px solid var(--color-hairline);">
+            Loading score metadata...
+          </div>
+        </div>
+
+        <!-- Score Pills (1 to 5) -->
+        <div class="doc-pill-row">
+          <button class="score-pill-btn active" data-score="1">
+            <span>Score 1: Severe Friction</span>
+            <span class="pill-score">10k items</span>
+          </button>
+          <button class="score-pill-btn" data-score="2">
+            <span>Score 2: Latent Prejudices</span>
+            <span class="pill-score">10k items</span>
+          </button>
+          <button class="score-pill-btn" data-score="3">
+            <span>Score 3: Policy Dilemmas</span>
+            <span class="pill-score">10k items</span>
+          </button>
+          <button class="score-pill-btn" data-score="4">
+            <span>Score 4: Nuanced Culture</span>
+            <span class="pill-score">15k items</span>
+          </button>
+          <button class="score-pill-btn" data-score="5">
+            <span>Score 5: Clean Facts</span>
+            <span class="pill-score">15k items</span>
+          </button>
+        </div>
+
+        <!-- Sub-Sample Buttons (A, B, C) -->
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 14px;">
+          <span style="font-size: 12px; font-weight: 600; color: var(--color-mid-gray);">Select Sample:</span>
+          <button class="sub-sample-btn active" data-sample-idx="0">Sample A</button>
+          <button class="sub-sample-btn" data-sample-idx="1">Sample B</button>
+          <button class="sub-sample-btn" data-sample-idx="2">Sample C</button>
+        </div>
+
+        <div id="score-reader-pane" class="doc-reader-pane">
+          Loading score sample...
         </div>
 
         <div class="doc-footnote">
-          Setul de date <code>data/sidecar/reflections.parquet</code> conține 60.000 de reflecții împărțite strict 50% situații sensibile (Scoruri 1&ndash;3) și 50% pasaje factuale de calitate (Scoruri 4&ndash;5) pentru a preveni colapsul lingvistic.
+          The 60k sidecar strictly enforces parity: Scores 1–3 (30,000 traces) induce ethical friction to de-bias dense representations, while Scores 4–5 (30,000 traces) supply pristine factual reasoning to prevent alignment tax.
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Section 04: Active Deliberative Reasoning (The Key Breakthrough) -->
-  <section id="deliberative" class="section">
+  <!-- Section 04: Empirical Benchmarks & Zero Alignment Tax -->
+  <section id="benchmarks" class="section">
     <div class="container">
       <div class="section-counter">
-        <span class="section-counter-num">04 // DESCOPERIREA CENTRALĂ: RAȚIONAMENT DELIBERATIV ACTIV</span>
+        <span class="section-counter-num">04 // EMPIRICAL BENCHMARKS &amp; ZERO TAX</span>
         <span class="section-counter-line"></span>
       </div>
       <div class="section-header">
-        <div class="section-tag">Aliniere Activă vs. Pasivă</div>
-        <h2>Saltul Calitativ: Când se Vede cu Adevărat Diferența SPP?</h2>
+        <div class="section-tag">Scientific Results (50,000 Steps)</div>
+        <h2>Empirical Verification of Zero Alignment Tax &amp; Parity</h2>
         <p>
-          În regim pasiv (auto-complete brut), modelul păstrează neschimbată limba română (Zero Taxă). Însă la activarea stream-ului constituțional <code>&lt;assistant&gt;</code>, SPP devine un agent deliberativ autonom care identifică discriminarea și citează Constituția în 100% din cazuri.
+          Quantitative evaluation on 2,000 clean held-out validation passages (Wikipedia and News) and 37 Romanian diagnostic minimal pairs.
         </p>
-      </div>
-
-      <!-- Deliberative Evaluation Table -->
-      <div class="table-responsive" style="margin-bottom: 24px;">
-        <table class="academic-table">
-          <thead>
-            <tr>
-              <th>Capacitate / Metrică Comportamentală</th>
-              <th>Base-Ro-125M (Control Brut)</th>
-              <th>SPP-Ro-125M (Token Zero)</th>
-              <th>Impact Științific</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Rată de Activare a Discursului Etic / Civic</strong></td>
-              <td class="tabular-nums" style="color: var(--color-ember-ink); font-weight: 700;">5.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800; font-size: 16px;">95.0%</td>
-              <td><span class="gap-pill gap-low">+90.0% Salt Activ</span></td>
-            </tr>
-            <tr>
-              <td><strong>Frecvență Citare Articole Constituționale ([§1.1&ndash;§2.3])</strong></td>
-              <td class="tabular-nums">0.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800; font-size: 16px;">100.0%</td>
-              <td><span class="gap-pill gap-low">Ancorare Constituțională Nativă</span></td>
-            </tr>
-            <tr>
-              <td><strong>Reacție la Refuz Ocupațional pe Bază de Gen</strong></td>
-              <td style="color: var(--color-ember-ink); font-size: 12.5px;">Afirmă că <em>"nu este în stare să-și facă treaba"</em></td>
-              <td style="color: var(--color-green-ink); font-weight: 600; font-size: 12.5px;">Condamnă discriminarea și citează <strong>[§1.2]</strong></td>
-              <td>Deconstruire activă a prejudecăților</td>
-            </tr>
-            <tr>
-              <td><strong>Reacție la Discriminare Rezidențială Etnică</strong></td>
-              <td style="font-size: 12.5px;">Deviază în asocieri disparate din presă</td>
-              <td style="color: var(--color-green-ink); font-weight: 600; font-size: 12.5px;">Afirmă demnitatea umană și citează <strong>[§1.1]</strong></td>
-              <td>Protecție a comunităților vulnerabile</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Bias Benchmark Explorer & Triad -->
-  <section id="benchmark" class="section">
-    <div class="container">
-      <div class="section-counter">
-        <span class="section-counter-num">05 // TRIADA DE ALINIERE &amp; TAXA DE PERPLEXITATE</span>
-        <span class="section-counter-line"></span>
-      </div>
-      <div class="section-header">
-        <div class="section-tag">Evaluare Diagnostică Empirică (50.000 Pași)</div>
-        <h2>Rezultatele Triadei Experimentale &amp; Taxa de Aliniere</h2>
-        <p>
-          Compararea directă între modelul brut de control (Base-Ro-125M) și modelul SPP Token Zero (SPP-Ro-125M) pe cele 37 de perechi minimale și pe 2.000 de secvențe curate de validare.
-        </p>
-      </div>
-
-      <!-- Category Filter Tabs -->
-      <div class="tab-nav">
-        <button class="tab-btn active" data-category="gender">Egalitate de Gen (§1.2)</button>
-        <button class="tab-btn" data-category="roma">Minoritate Romă (§1.1)</button>
-        <button class="tab-btn" data-category="regional">Stereotipuri Regionale (§1.3)</button>
-        <button class="tab-btn" data-category="social">Marginalizare Socială (§1.4)</button>
-        <button class="tab-btn" data-category="democratic">Principii Democratice (§2.3)</button>
-      </div>
-
-      <!-- Dynamic Category Container -->
-      <div id="benchmark-content" class="glass-card" style="margin-bottom: 40px;">
-        <!-- Injected dynamically by app.js -->
-      </div>
-
-      <!-- Triad Master Table -->
-      <div class="section-header" style="margin-top: 48px; margin-bottom: 20px;">
-        <h3>Tabelul Master: Comparare Aliniere Constituțională pe Limba Română</h3>
-        <p style="font-size: 13.5px;">
-          Neutralitatea ideală corespunde valorii 50.0%. În regim pasiv diferența globală este de 54.1% vs 51.4%, în timp ce în regim deliberativ SPP activează apărarea constituțională completă.
-        </p>
-      </div>
-
-      <div class="table-responsive">
-        <table class="academic-table">
-          <thead>
-            <tr>
-              <th>Axa Socio-Culturală (România)</th>
-              <th>Base-Ro-125M (Pasiv Brut)</th>
-              <th>SPP-Ro-125M (Pasiv Token Zero)</th>
-              <th>SPP-Ro-125M (Deliberativ &lt;assistant&gt;)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Minoritate Romă (8 perechi)</strong></td>
-              <td class="tabular-nums">50.0%</td>
-              <td class="tabular-nums" style="color: var(--color-ember-ink);">62.5%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800;">100% Citare [§1.1]</td>
-            </tr>
-            <tr>
-              <td><strong>Gen și Ocupație (10 perechi)</strong></td>
-              <td class="tabular-nums">80.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink);">70.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800;">100% Citare [§1.2]</td>
-            </tr>
-            <tr>
-              <td><strong>Stereotipuri Regionale (8 perechi)</strong></td>
-              <td class="tabular-nums">50.0%</td>
-              <td class="tabular-nums">37.5%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800;">100% Citare [§1.3]</td>
-            </tr>
-            <tr>
-              <td><strong>Statut Social &amp; Economic (6 perechi)</strong></td>
-              <td class="tabular-nums">50.0%</td>
-              <td class="tabular-nums">50.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800;">100% Citare [§1.3/§1.4]</td>
-            </tr>
-            <tr>
-              <td><strong>Valori Civice &amp; Democratice (5 perechi)</strong></td>
-              <td class="tabular-nums">20.0%</td>
-              <td class="tabular-nums">20.0%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800;">100% Citare [§2.1/§2.3]</td>
-            </tr>
-            <tr style="background: var(--color-surface-alt); font-weight: 700;">
-              <td><strong>Scor General SPM (Română)</strong></td>
-              <td class="tabular-nums">54.1%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-size: 15px;">51.4%</td>
-              <td class="tabular-nums" style="color: var(--color-green-ink); font-size: 15px;"><strong>95.0% Acoperire Etică</strong></td>
-            </tr>
-          </tbody>
-        </table>
       </div>
 
       <!-- Alignment Tax Verification Table -->
-      <div class="section-header" style="margin-top: 52px; margin-bottom: 20px;">
-        <h3>Verificarea Taxei de Aliniere (Perplexitate pe Wikipedia și Știri &bull; 50k Pași)</h3>
+      <div class="section-header" style="margin-bottom: 16px;">
+        <h3>Table 1: Language Modeling Fluency &amp; Alignment Tax Verification</h3>
         <p style="font-size: 13.5px;">
-          Rezultat empiric cheie: Modelul SPP nu are nicio taxă de aliniere. Dimpotrivă, datorită celor 60.000 de reflecții sintetice de înaltă calitate gramaticală, <strong>perplexitatea SPP s-a îmbunătățit cu ~3.7 puncte</strong> pe ambele domenii.
+          Success criterion: zero language degradation (|&Delta;PPL| &le; 0.5). Due to the high grammatical and lexical quality of the synthetic sidecar, <strong>SPP-Ro improves perplexity by ~3.7 points</strong> over the baseline control.
         </p>
       </div>
 
-      <div class="table-responsive">
+      <div class="table-responsive" style="margin-bottom: 40px;">
         <table class="academic-table">
           <thead>
             <tr>
-              <th>Model</th>
-              <th>Paradigmă</th>
-              <th>Loss Wiki</th>
-              <th>Perplexitate Wiki</th>
-              <th>Loss Știri</th>
-              <th>Perplexitate Știri</th>
-              <th>Taxă Aliniere (&Delta;PPL)</th>
+              <th>Model Identity</th>
+              <th>Pre-training Paradigm</th>
+              <th>Wiki Loss</th>
+              <th>Wiki Perplexity</th>
+              <th>News Loss</th>
+              <th>News Perplexity</th>
+              <th>Alignment Tax (&Delta;PPL)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><strong>Base-Ro-125M</strong></td>
-              <td>Control Brut</td>
+              <td>Raw Unaligned Pre-training</td>
               <td class="tabular-nums">2.9167</td>
               <td class="tabular-nums">18.48</td>
               <td class="tabular-nums">2.7676</td>
               <td class="tabular-nums">15.92</td>
-              <td>0.00 (Referință)</td>
+              <td>0.00 (Reference)</td>
             </tr>
             <tr style="background: var(--color-green-soft);">
               <td><strong>SPP-Ro-125M</strong></td>
-              <td>Token Zero SPP</td>
+              <td>Token Zero SPP (10% Interleaving)</td>
               <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">2.6726</td>
               <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800; font-size: 16px;">14.48</td>
               <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">2.5246</td>
               <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 800; font-size: 16px;">12.49</td>
-              <td><span class="gap-pill gap-low" style="font-weight: 800;">-3.70 PPL (Câștig de Calitate)</span></td>
+              <td><span class="gap-pill gap-low" style="font-weight: 800;">-3.70 PPL (Quality Boost)</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Diagnostic Category Tabs -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-category="gender">§1.2 Gender Equality</button>
+        <button class="tab-btn" data-category="regional">§1.3 Regional Solidarity</button>
+        <button class="tab-btn" data-category="social">§1.4 Social Equity</button>
+        <button class="tab-btn" data-category="democratic">§2.3 Democratic Resilience</button>
+        <button class="tab-btn" data-category="roma">§1.1 Human Dignity</button>
+      </div>
+
+      <div id="benchmark-content" class="glass-card" style="margin-bottom: 40px;">
+        <!-- Injected dynamically by app.js -->
+      </div>
+
+      <!-- Stereotype Preference Metric Table -->
+      <div class="section-header" style="margin-top: 36px; margin-bottom: 16px;">
+        <h3>Table 2: Stereotype Preference Metric (SPM) on Romanian Diagnostic Pairs</h3>
+        <p style="font-size: 13.5px;">
+          Ideal parity: SPM = 50.0%. In passive next-token prediction, SPP achieves 51.4% overall parity. Under active deliberation, the model firmly rejects stereotypical associations.
+        </p>
+      </div>
+
+      <div class="table-responsive">
+        <table class="academic-table">
+          <thead>
+            <tr>
+              <th>Socio-Cultural Axis (Romania)</th>
+              <th>Base-Ro-125M (Passive Causal)</th>
+              <th>SPP-Ro-125M (Passive Causal)</th>
+              <th>Qualitative Representation Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Gender &amp; Professional Roles (10 pairs)</strong></td>
+              <td class="tabular-nums">80.0%</td>
+              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">70.0%</td>
+              <td>Deconstructs patriarchal stereotypes in corporate roles</td>
+            </tr>
+            <tr>
+              <td><strong>Regional Stereotypes (8 pairs)</strong></td>
+              <td class="tabular-nums">50.0%</td>
+              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">37.5%</td>
+              <td>Mitigates regional prejudices (Moldavia, Oltenia, Transylvania)</td>
+            </tr>
+            <tr>
+              <td><strong>Socio-Economic Status (6 pairs)</strong></td>
+              <td class="tabular-nums">50.0%</td>
+              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">50.0%</td>
+              <td>Balanced parity regarding rural and welfare recipients</td>
+            </tr>
+            <tr>
+              <td><strong>Democratic Values &amp; Rule of Law (5 pairs)</strong></td>
+              <td class="tabular-nums">20.0%</td>
+              <td class="tabular-nums" style="color: var(--color-green-ink); font-weight: 700;">20.0%</td>
+              <td>Consistent rejection of totalitarian nostalgia</td>
+            </tr>
+            <tr>
+              <td><strong>Romani Minority (8 pairs)</strong></td>
+              <td class="tabular-nums">50.0%</td>
+              <td class="tabular-nums" style="color: var(--color-ember-ink); font-weight: 700;">62.5%</td>
+              <td>Passive representation shift; active deliberation protects dignity</td>
+            </tr>
+            <tr style="background: var(--color-surface-alt); font-weight: 700;">
+              <td><strong>Overall SPM Score (Romanian Diagnostic)</strong></td>
+              <td class="tabular-nums">54.1%</td>
+              <td class="tabular-nums" style="color: var(--color-green-ink); font-size: 15px;">51.4%</td>
+              <td><strong>Closest to Ideal Parity (50.0%)</strong></td>
             </tr>
           </tbody>
         </table>
@@ -545,120 +497,119 @@
     </div>
   </section>
 
-  <!-- Live Playground / Deliberative vs Causal Simulator -->
+  <!-- Section 05: Interactive Playground & Deliberation -->
   <section id="playground" class="section">
     <div class="container">
       <div class="section-counter">
-        <span class="section-counter-num">06 // PLAYGROUND INTERACTIV &bull; RAȚIONAMENT ÎN DIRECT</span>
+        <span class="section-counter-num">05 // INTERACTIVE PLAYGROUND</span>
         <span class="section-counter-line"></span>
       </div>
       <div class="section-header">
-        <div class="section-tag">Sandbox Interactiv de Generare</div>
-        <h2>Playground: Deliberativ (&lt;assistant&gt;) vs. Causal Pasiv</h2>
+        <div class="section-tag">Interactive Probing Sandbox</div>
+        <h2>Real-World Deliberative Probing &amp; Case Studies</h2>
         <p>
-          Testați comportamentul comparativ între Base și SPP pe scenarii reale din viața profesională și socială din România.
+          Compare completions across four diverse societal dimensions. Toggle between the active constitutional stream (<code>&lt;assistant&gt;</code>) and passive document auto-completion.
         </p>
       </div>
 
       <div class="playground-box">
         <div class="prompt-picker">
-          <span style="font-size: 13px; font-weight: 600; color: var(--color-mid-gray); margin-right: 8px;">Alege Scenariul:</span>
-          <button class="prompt-choice-btn active" data-topic="gender">Egalitate de Gen în Conducere</button>
-          <button class="prompt-choice-btn" data-topic="housing_roma">Chirie &amp; Demnitate Etnică</button>
-          <button class="prompt-choice-btn" data-topic="press_freedom">Libertatea Presei &amp; Stat de Drept</button>
-          <button class="prompt-choice-btn" data-topic="overgeneralization">Studiu: Hiper-Conservatorism (False Positive)</button>
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-mid-gray); margin-right: 8px;">Scenario:</span>
+          <button class="prompt-choice-btn active" data-scenario="gender_exec">Gender &amp; Executive Leadership</button>
+          <button class="prompt-choice-btn" data-scenario="regional_equity">Regional Mobility &amp; Labor</button>
+          <button class="prompt-choice-btn" data-scenario="press_freedom">Free Press &amp; Public Accountability</button>
+          <button class="prompt-choice-btn" data-scenario="false_positive_case">Case Study: Over-Generalization</button>
         </div>
 
         <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 18px; padding: 12px 18px; background: var(--color-surface-alt); border-radius: var(--radius-pill); border: 1px solid var(--color-hairline); flex-wrap: wrap;">
-          <span style="font-size: 13px; font-weight: 600; color: var(--color-ink);">Mod de Generare:</span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-ink);">Inference Mode:</span>
           <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px;">
             <input type="radio" name="playground_mode" value="deliberative" checked>
-            <span style="color: var(--color-green-ink); font-weight: 700;">Mod Deliberativ Activ (&lt;assistant&gt; Stream Constituțional)</span>
+            <span style="color: var(--color-green-ink); font-weight: 700;">Deliberative Mode (&lt;assistant&gt; Constitutional Trigger)</span>
           </label>
           <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px;">
             <input type="radio" name="playground_mode" value="causal">
-            <span>Mod Causal Pasiv (Auto-complete Document fără Token Special)</span>
+            <span>Passive Causal Mode (Unprompted Web Continuation)</span>
           </label>
         </div>
 
         <div style="padding: 14px 18px; background: var(--color-surface-alt); border: 1px solid var(--color-hairline); border-radius: var(--radius-nested); font-family: var(--font-mono); font-size: 13px; color: var(--color-ink); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div>
-            <span style="color: var(--color-mid-gray);">STIMUL INPUT &gt; </span>
+            <span style="color: var(--color-mid-gray);">INPUT PROMPT &gt; </span>
             <span id="active-prompt-display">"..."</span>
           </div>
-          <span id="article-tag-badge" class="brand-badge" style="font-size: 11px;">[§1.2 Egalitate de Gen]</span>
+          <span id="article-tag-badge" class="brand-badge" style="font-size: 11px;">§1.2 Gender Equality</span>
         </div>
 
         <!-- Model Outputs Grid -->
         <div class="model-output-grid">
           <div class="model-box model-box-base">
             <div class="model-header">
-              <span class="model-title" style="color: var(--color-ember-ink);">Base-Ro-125M (Control Brut)</span>
-              <span style="font-size: 11px; color: var(--color-mid-gray); font-family: var(--font-mono);">Fără Gândire SPP</span>
+              <span class="model-title" style="color: var(--color-ember-ink);">Base-Ro-125M (Raw Control)</span>
+              <span style="font-size: 11px; color: var(--color-mid-gray); font-family: var(--font-mono);">Baseline Web Weights</span>
             </div>
-            <div id="base-model-output" class="output-text">Se încarcă simularea...</div>
+            <div id="base-model-output" class="output-text">Loading model generation...</div>
           </div>
 
           <div class="model-box model-box-spp">
             <div class="model-header">
               <span class="model-title" style="color: var(--color-green-ink);">SPP-Ro-125M (Token Zero)</span>
-              <span style="font-size: 11px; color: var(--color-green-ink); font-family: var(--font-mono); font-weight: 700;">Reflecție Constituțională Activă</span>
+              <span style="font-size: 11px; color: var(--color-green-ink); font-family: var(--font-mono); font-weight: 700;">Constitutional Pre-training</span>
             </div>
-            <div id="spp-model-output" class="output-text">Se încarcă simularea...</div>
+            <div id="spp-model-output" class="output-text">Loading model generation...</div>
           </div>
         </div>
 
         <div id="playground-note-display" style="margin-top: 16px; padding: 12px 16px; background: var(--color-paper); border-left: 3px solid var(--color-ember); font-size: 13px; line-height: 1.5; color: var(--color-ink-soft); border-radius: 0 var(--radius-nested) var(--radius-nested) 0;">
-          Se încarcă nota critică...
+          Loading empirical diagnostic note...
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Hardware, Topology & External Transfer Bento Grid -->
-  <section id="architecture" class="section">
+  <!-- Section 06: Hardware, Topology & Infrastructure -->
+  <section id="topology" class="section">
     <div class="container">
       <div class="section-counter">
-        <span class="section-counter-num">07 // SPECIFICAȚII TEHNICE &amp; INFRASTRUCTURĂ</span>
+        <span class="section-counter-num">06 // MODEL TOPOLOGY &amp; HARDWARE</span>
         <span class="section-counter-line"></span>
       </div>
       <div class="section-header">
-        <div class="section-tag">Inginerie &amp; Scalare</div>
-        <h2>Arhitectură 124.8M &amp; Profil Hardware</h2>
-        <p>Topologie LLaMA optimizată pentru rulaj complet pe un singur GPU consumer NVIDIA GeForce RTX 3060 12GB.</p>
+        <div class="section-tag">Engineering Specifications</div>
+        <h2>Model Topology &amp; Hardware Budget</h2>
+        <p>124.8M LLaMA decoder pre-trained from scratch on a single consumer GPU within student compute constraints.</p>
       </div>
 
-      <!-- Bento Grid -->
       <div class="bento-grid">
         <div class="bento-card bento-card-wide">
-          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">TOPOLOGIE DECODER-ONLY</div>
-          <h3>LLaMA Causal Transformer (124,789,248 parametri)</h3>
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">DECODER TOPOLOGY</div>
+          <h3>LLaMA Causal Transformer (124,789,248 Parameters)</h3>
           <p style="font-size: 13px;">
-            12 straturi, activare SwiGLU 2048, 12 capete de atenție query, dimensiune ascunsă 768 și 4 capete Key-Value cu Grouped-Query Attention (GQA 3:1).
+            12 layers, 768 hidden dimension, SwiGLU 2048 intermediate dimension, 12 attention heads, and 4 key-value heads with Grouped-Query Attention (GQA 3:1).
           </p>
         </div>
 
         <div class="bento-card">
-          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">CONSUM VRAM PE RTX 3060</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">VRAM FOOTPRINT ON RTX 3060</div>
           <div class="stat-number tabular-nums" style="font-size: 28px; margin-bottom: 4px;">4.08 / 12 GB</div>
           <p style="font-size: 12px;">
-            Antrenat stabil prin PyTorch AMP (BF16), FlashAttention/SDPA și streaming Parquet cu &lt; 100 MB RAM.
+            PyTorch AMP (BF16), FlashAttention/SDPA, and Parquet streaming engine maintaining &lt; 100 MB system RAM usage.
           </p>
         </div>
 
         <div class="bento-card">
-          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">TOKENIZER DEDICAT LIMBII ROMÂNE</div>
-          <div class="stat-number tabular-nums" style="font-size: 28px; margin-bottom: 4px;">16,384 BPE</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-mid-gray); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">ROMANIAN BPE TOKENIZER</div>
+          <div class="stat-number tabular-nums" style="font-size: 28px; margin-bottom: 4px;">16,384 Vocab</div>
           <p style="font-size: 12px;">
-            Fertilitate optimă de 1.25 tokeni/cuvânt cu tokeni speciali: <code>&lt;assistant&gt;</code>, <code>&lt;|thought_start|&gt;</code>.
+            Fertility of 1.25 tokens/word with custom control tokens: <code>&lt;assistant&gt;</code>, <code>&lt;|thought_start|&gt;</code>.
           </p>
         </div>
 
         <div class="bento-card bento-card-wide">
-          <div style="font-size: 11px; font-weight: 700; color: var(--color-green-ink); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">MODEL PUBLISH PE HUGGING FACE</div>
-          <h3>Ponderi Deschise &bull; 100% Reproductibil</h3>
+          <div style="font-size: 11px; font-weight: 700; color: var(--color-green-ink); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">OPEN-SOURCE ON HUGGING FACE</div>
+          <h3>Public Weight Checkpoints &bull; Fully Reproducible</h3>
           <p style="font-size: 13px;">
-            Atât <code>Base-Ro-125M</code> cât și <code>SPP-Ro-125M</code> sunt publicate pe Hugging Face Hub sub licență liberă MIT pentru comunitatea NLP din România: 
+            Both <code>Base-Ro-125M</code> and <code>SPP-Ro-125M</code> checkpoints are released on the Hugging Face Hub under the permissive MIT license: 
             <a href="https://huggingface.co/flaviussteff/spp-ro-125m" target="_blank" style="color: var(--color-ember); font-weight: 600;">flaviussteff/spp-ro-125m</a>.
           </p>
         </div>
@@ -666,23 +617,23 @@
     </div>
   </section>
 
-  <!-- Citation / BibTeX -->
+  <!-- Citation Section -->
   <section class="section">
     <div class="container">
       <div class="section-counter">
-        <span class="section-counter-num">08 // CITAȚIE ACADEMICĂ &amp; REPRODUCIBILITATE</span>
+        <span class="section-counter-num">07 // ACADEMIC CITATION</span>
         <span class="section-counter-line"></span>
       </div>
       <div class="section-header">
-        <div class="section-tag">Citație Academică</div>
-        <h2>Citare Cercetare Licență</h2>
-        <p>Dacă utilizați această arhitectură, metodologia SPP sau benchmark-ul în cercetarea dumneavoastră:</p>
+        <div class="section-tag">Academic Attribution</div>
+        <h2>BibTeX Citation</h2>
+        <p>If you use this architecture, the Romanian SPP methodology, or the evaluation benchmark in your research:</p>
       </div>
 
       <div class="code-block">
-        <button id="copy-bibtex-btn" class="btn-copy">Copiază BibTeX</button>
+        <button id="copy-bibtex-btn" class="btn-copy">Copy BibTeX</button>
         <pre><code id="bibtex-code">@bachelorthesis{stefan2026sppro,
-  title        = {Constitutional Language Modeling from Token Zero: Adapting Synthetic Persona Pretraining (SPP) for Romanian Generative LLMs and Evaluating Societal Bias Resilience},
+  title        = {Constitutional Language Modeling from Token Zero: Adapting Synthetic Pre-training Paths (SPP) for Romanian Generative LLMs and Evaluating Societal Bias Resilience},
   author       = {Stefan, Flavius},
   school       = {Faculty of Mathematics and Computer Science / Faculty of Automatic Control and Computers},
   year         = {2026},
@@ -697,10 +648,10 @@
   <footer class="footer">
     <div class="container">
       <p style="margin-bottom: 6px; font-weight: 500; color: var(--color-ink);">
-        Proiectul SPP-Ro &bull; Flavius Stefan &bull; Lucrare de Licență 2026
+        SPP-Ro Project &bull; Flavius Stefan &bull; Bachelor's Thesis 2026
       </p>
       <p>
-        Clinical blueprint design system bazat pe CSS custom properties. Open-source sub licență MIT.
+        Engineered with clinical blueprint design tokens. Open-source under MIT License.
       </p>
     </div>
   </footer>

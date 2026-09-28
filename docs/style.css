@@ -962,7 +962,7 @@ code, pre {
   margin: 16px 0 20px;
 }
 
-.doc-pill-btn {
+.doc-pill-btn, .article-pill-btn, .score-pill-btn {
   font-family: var(--font-geist);
   font-size: 12px;
   font-weight: 500;
@@ -978,20 +978,43 @@ code, pre {
   gap: 6px;
 }
 
-.doc-pill-btn:hover {
+.doc-pill-btn:hover, .article-pill-btn:hover, .score-pill-btn:hover {
   background: var(--color-paper);
   border-color: #d4d4d4;
 }
 
-.doc-pill-btn.active {
+.doc-pill-btn.active, .article-pill-btn.active, .score-pill-btn.active {
   background: var(--color-ink);
   color: #ffffff;
   border-color: var(--color-ink);
 }
 
-.doc-pill-btn.active .pill-score {
+.doc-pill-btn.active .pill-score, .article-pill-btn.active .pill-score, .score-pill-btn.active .pill-score {
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
+}
+
+.sub-sample-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-hairline);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sub-sample-btn:hover {
+  border-color: var(--color-ember);
+}
+
+.sub-sample-btn.active {
+  background: var(--color-ember);
+  color: #ffffff;
+  border-color: var(--color-ember);
 }
 
 .pill-score {
