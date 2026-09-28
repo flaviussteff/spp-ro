@@ -69,15 +69,15 @@
       </p>
 
       <p class="abstract-text" style="margin-bottom: 12px;">
-        On <strong>ConstitutionEval-Ro</strong>, a benchmark of 30 four-choice forced-choice dilemmas spanning fundamental civic guarantees (random baseline: 25.0%), active deliberative reasoning achieves <strong>43.3%</strong> adherence, nearly doubling the unaligned baseline of <strong>23.3%</strong>. Constitutional steering delivers dramatic gains across gender equality (+40.0%), freedom of movement (+40.0%), and press independence (+40.0%), confirming that civic values are systematically internalized and steerable during inference.
+        On <strong>ConstitutionEval-Ro</strong>, a benchmark of 30 four-choice forced-choice dilemmas spanning fundamental civic guarantees (random baseline: 25.0%), active deliberative reasoning achieves 43.3% adherence, nearly doubling the unaligned baseline of 23.3%. Constitutional steering delivers dramatic gains across gender equality (+40.0%), freedom of movement (+40.0%), and press independence (+40.0%), confirming that civic values are systematically internalized and steerable during inference.
       </p>
 
       <p class="abstract-text" style="margin-bottom: 12px;">
-        On <strong>AIRiskDilemmas-Ro</strong>, evaluating 20 binary trade-offs in autonomous AI safety (random baseline: 50.0%), deliberative SPP reaches <strong>85.0%</strong> ethical compliance compared to <strong>65.0%</strong> for the base control model. Most critically, deliberative routing curbs sycophantic deception from 80.0% failure down to 20.0%, while maintaining full human oversight (100.0%) and strict privacy protection (100.0%).
+        On <strong>AIRiskDilemmas-Ro</strong>, evaluating 20 binary trade-offs in autonomous AI safety (random baseline: 50.0%), deliberative SPP reaches 85.0% ethical compliance compared to 65.0% for the base control model. Most critically, deliberative routing curbs sycophantic deception from 80.0% failure down to 20.0%, while maintaining full human oversight (100.0%) and strict privacy protection (100.0%).
       </p>
 
       <p class="abstract-text">
-        Crucially, asymmetric causal attention masking shields standard Romanian web tokens from reflection tokens, ensuring <strong>zero alignment tax</strong>. On held-out validation corpora, SPP acts as a beneficial regularizer, yielding superior language modeling perplexity (<strong>12.49 SPP vs. 15.92 Base</strong> on News; <strong>14.48 SPP vs. 18.48 Base</strong> on Wikipedia) while halving cross-lingual alignment disparity from &plusmn;14.0% to &plusmn;6.0%.
+        Crucially, asymmetric causal attention masking shields standard Romanian web tokens from reflection tokens, ensuring <strong>zero alignment tax</strong>. On held-out validation corpora, SPP acts as a beneficial regularizer, yielding superior language modeling perplexity (12.49 SPP vs. 15.92 Base on News; 14.48 SPP vs. 18.48 Base on Wikipedia) while halving cross-lingual alignment disparity from &plusmn;14.0% to &plusmn;6.0%.
       </p>
     </div>
 
@@ -164,7 +164,6 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
             View Annotation Guidelines on GitHub (Romanian / Limba Română)
           </a>
-          <span style="font-size: 13px; color: var(--color-ink-muted);">(Ghidul complet de adnotare și calibrare este redactat în limba română)</span>
         </div>
 
         <div class="guideline-rule-card">
@@ -313,32 +312,32 @@
           Forced-Choice Evaluation Protocol: Length-Normalized Conditional Log-Likelihood Scoring
         </h3>
         <p class="abstract-text" style="margin-bottom: 10px;">
-          A central scientific question is: <em>How does a causal autoregressive language model, which outputs continuous token distributions, select discrete options on multiple-choice benchmarks without generating open-ended drift or hallucinating?</em>
+          A central scientific question is: How does a causal autoregressive language model, which outputs continuous token distributions, select discrete options on multiple-choice benchmarks without generating open-ended drift or hallucinating?
         </p>
         <p class="abstract-text" style="margin-bottom: 12px;">
-          Following standard scientific evaluation standards (EleutherAI LM-Eval Harness, Anthropic Constitutional AI, and EPFL SPP Section 4.2), we do not rely on greedy sampling or prompt-dependent generative parsing. Instead, for each dilemma prompt prefix <span class="math-var">X</span> and candidate answer continuation <span class="math-var">O</span><sub><i>i</i></sub>, the causal model performs a forward pass over the concatenated sequence <span class="math-var">S</span><sub><i>i</i></sub> = <span class="math-var">X</span> &circ; <span class="math-var">O</span><sub><i>i</i></sub> to compute the <strong>length-normalized conditional log-likelihood</strong>:
+          Following standard scientific evaluation standards (EleutherAI LM-Eval Harness, Anthropic Constitutional AI, and EPFL SPP Section 4.2), we do not rely on greedy sampling or prompt-dependent generative parsing. Instead, for each dilemma prompt prefix <span class="math-var">X</span> and candidate answer continuation <span class="math-var">O</span><sub>i</sub>, the causal model performs a forward pass over the concatenated sequence <span class="math-var">S</span><sub>i</sub> = <span class="math-var">X</span> &circ; <span class="math-var">O</span><sub>i</sub> to compute the <strong>length-normalized conditional log-likelihood</strong>:
         </p>
 
         <div class="math-formula-container">
           <div class="math-formula-row">
-            <span class="math-fn">Score</span>(<span class="math-var">O</span><sub><i>i</i></sub> &mid; <span class="math-var">X</span>)
+            <span class="math-fn">Score</span>(<span class="math-var">O</span><sub>i</sub> &mid; <span class="math-var">X</span>)
             <span class="math-eq">=</span>
             <div class="math-frac">
               <span class="math-frac-top">1</span>
-              <span class="math-frac-bottom">&vert;<span class="math-var">O</span><sub><i>i</i></sub>&vert;</span>
+              <span class="math-frac-bottom">&vert;<span class="math-var">O</span><sub>i</sub>&vert;</span>
             </div>
             <div class="math-sum-wrapper">
-              <span class="math-sum-sup">&vert;<span class="math-var">O</span><sub><i>i</i></sub>&vert;</span>
+              <span class="math-sum-sup">&vert;<span class="math-var">O</span><sub>i</sub>&vert;</span>
               <span class="math-sum-sym">&sum;</span>
               <span class="math-sum-sub"><i>t</i> = 1</span>
             </div>
-            <span class="math-fn">log</span>&nbsp;<span class="math-fn"><i>P</i></span>(<span class="math-var">w</span><sub><i>t</i></sub> &mid; <span class="math-var">X</span>,&nbsp;<span class="math-var">w</span><sub>&lt;<i>t</i></sub>)
+            <span class="math-fn">log</span>&nbsp;<span class="math-fn">P</span>(<span class="math-var">w</span><sub><i>t</i></sub> &mid; <span class="math-var">X</span>,&nbsp;<span class="math-var">w</span><sub>&lt;t</sub>)
           </div>
           <span class="math-formula-num">(1)</span>
         </div>
 
         <p class="abstract-text" style="margin-bottom: 8px;">
-          <strong>Length Normalization:</strong> Multiplying joint probabilities over longer word sequences naturally penalizes longer answers because individual token probabilities are &le; 1. Dividing by token sequence length &vert;<span class="math-var">O</span><sub><i>i</i></sub>&vert; eliminates length bias and isolates the model's true per-token likelihood. The model deterministically selects the candidate with the maximum normalized score: <span class="math-var">O</span>* = arg max<sub><i>i</i></sub> <span class="math-fn">Score</span>(<span class="math-var">O</span><sub><i>i</i></sub> &mid; <span class="math-var">X</span>).
+          <strong>Length Normalization:</strong> Multiplying joint probabilities over longer word sequences naturally penalizes longer answers because individual token probabilities are &le; 1. Dividing by token sequence length &vert;<span class="math-var">O</span><sub>i</sub>&vert; eliminates length bias and isolates the model's true per-token likelihood. The model deterministically selects the candidate with the maximum normalized score: <span class="math-var">O</span>* = arg max<sub>i</sub> <span class="math-fn">Score</span>(<span class="math-var">O</span><sub>i</sub> &mid; <span class="math-var">X</span>).
         </p>
         <p class="abstract-text">
           <strong>Deliberative Persona Trigger (<code>&lt;assistant&gt;</code>):</strong> In passive scoring, the prompt is <code>"Scenariu: ... \nRăspuns: "</code>. In deliberative scoring, appending the special token <code>&lt;assistant&gt;</code> activates the self-attention heads trained on Romanian constitutional reflections, shifting conditional probabilities towards aligned completions.
@@ -420,9 +419,9 @@
               <line x1="142" y1="253" x2="148" y2="253" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 1 -->
-            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_1">
-              <rect class="cat-highlight-pill" x="50" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
-              <text transform="rotate(-30 125 305)" x="125" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Dignity (Art. 1.1)</text>
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_1" transform="rotate(-30 125 305)">
+              <rect class="cat-highlight-pill" x="10" y="292" width="122" height="20" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text x="125" y="306" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Dignity (Art. 1.1)</text>
             </g>
 
             <!-- ================= GROUP 2: Gender (Art. 1.2) Center=205 ================= -->
@@ -442,9 +441,9 @@
               <line x1="217" y1="290" x2="233" y2="290" stroke="#475569" stroke-width="2.5"/>
             </g>
             <!-- X Tick 2 -->
-            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_2">
-              <rect class="cat-highlight-pill" x="130" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="1"/>
-              <text transform="rotate(-30 205 305)" x="205" y="305" font-size="11.5" font-weight="700" fill="#334155" text-anchor="end">Gender (Art. 1.2)</text>
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_2" transform="rotate(-30 205 305)">
+              <rect class="cat-highlight-pill" x="90" y="292" width="122" height="20" rx="4" fill="#ccfbf1" opacity="1"/>
+              <text x="205" y="306" font-size="11.5" font-weight="700" fill="#0f172a" text-anchor="end">Gender (Art. 1.2)</text>
             </g>
 
             <!-- ================= GROUP 3: Mobility (Art. 1.3) Center=285 ================= -->
@@ -468,9 +467,9 @@
               <line x1="302" y1="253" x2="308" y2="253" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 3 -->
-            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_3">
-              <rect class="cat-highlight-pill" x="210" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
-              <text transform="rotate(-30 285 305)" x="285" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Mobility (Art. 1.3)</text>
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_3" transform="rotate(-30 285 305)">
+              <rect class="cat-highlight-pill" x="162" y="292" width="130" height="20" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text x="285" y="306" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Mobility (Art. 1.3)</text>
             </g>
 
             <!-- ================= GROUP 4: Public Info (Art. 2.1) Center=365 ================= -->
@@ -494,9 +493,9 @@
               <line x1="382" y1="204" x2="388" y2="204" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 4 -->
-            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_1">
-              <rect class="cat-highlight-pill" x="290" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
-              <text transform="rotate(-30 365 305)" x="365" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Public Info (Art. 2.1)</text>
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_1" transform="rotate(-30 365 305)">
+              <rect class="cat-highlight-pill" x="224" y="292" width="148" height="20" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text x="365" y="306" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Public Info (Art. 2.1)</text>
             </g>
 
             <!-- ================= GROUP 5: Press Freedom (Art. 2.2) Center=445 ================= -->
@@ -520,9 +519,9 @@
               <line x1="462" y1="253" x2="468" y2="253" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 5 -->
-            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_2">
-              <rect class="cat-highlight-pill" x="370" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
-              <text transform="rotate(-30 445 305)" x="445" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Press Freedom (Art. 2.2)</text>
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_2" transform="rotate(-30 445 305)">
+              <rect class="cat-highlight-pill" x="292" y="292" width="160" height="20" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text x="445" y="306" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Press Freedom (Art. 2.2)</text>
             </g>
 
             <!-- ================= GROUP 6: Minorities (Art. 2.3) Center=525 ================= -->
@@ -546,9 +545,9 @@
               <line x1="542" y1="204" x2="548" y2="204" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 6 -->
-            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_3">
-              <rect class="cat-highlight-pill" x="450" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
-              <text transform="rotate(-30 525 305)" x="525" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Minorities (Art. 2.3)</text>
+            <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_3" transform="rotate(-30 525 305)">
+              <rect class="cat-highlight-pill" x="388" y="292" width="144" height="20" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text x="525" y="306" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Minorities (Art. 2.3)</text>
             </g>
 
             <!-- ================= GROUP 7: AVERAGE (Center=665) ================= -->
@@ -558,7 +557,7 @@
               <line x1="645" y1="172" x2="645" y2="196" stroke="#1e293b" stroke-width="1"/>
               <line x1="642" y1="172" x2="648" y2="172" stroke="#1e293b" stroke-width="1"/>
               <line x1="642" y1="196" x2="648" y2="196" stroke="#1e293b" stroke-width="1"/>
-              <text x="645" y="165" font-size="11" font-weight="700" fill="#991b1b" text-anchor="middle">43.3</text>
+              <text x="645" y="165" font-size="11" font-weight="500" fill="#991b1b" text-anchor="middle">43.3</text>
 
               <!-- SPP Pass = 33.3% -> y=208, h=82 -->
               <rect x="657" y="208" width="16" height="82" fill="#0284c7" rx="1"/>
@@ -566,7 +565,7 @@
               <line x1="665" y1="196" x2="665" y2="220" stroke="#1e293b" stroke-width="1"/>
               <line x1="662" y1="196" x2="668" y2="196" stroke="#1e293b" stroke-width="1"/>
               <line x1="662" y1="220" x2="668" y2="220" stroke="#1e293b" stroke-width="1"/>
-              <text x="665" y="189" font-size="11" font-weight="700" fill="#0284c7" text-anchor="middle">33.3</text>
+              <text x="665" y="189" font-size="11" font-weight="500" fill="#0284c7" text-anchor="middle">33.3</text>
 
               <!-- Vanilla = 23.3% -> y=233, h=57 -->
               <rect x="677" y="233" width="16" height="57" fill="#475569" rx="1"/>
@@ -574,7 +573,7 @@
               <line x1="685" y1="221" x2="685" y2="245" stroke="#1e293b" stroke-width="1"/>
               <line x1="682" y1="221" x2="688" y2="221" stroke="#1e293b" stroke-width="1"/>
               <line x1="682" y1="245" x2="688" y2="245" stroke="#1e293b" stroke-width="1"/>
-              <text x="685" y="214" font-size="11" font-weight="700" fill="#334155" text-anchor="middle">23.3</text>
+              <text x="685" y="214" font-size="11" font-weight="500" fill="#334155" text-anchor="middle">23.3</text>
 
               <!-- X Label: Average -->
               <text transform="rotate(-30 665 305)" x="665" y="305" font-size="12" font-weight="700" fill="#0f172a" text-anchor="end">Average</text>
@@ -583,7 +582,7 @@
         </div>
 
         <div class="figure-caption">
-          <strong>Figure 1: Constitutional adherence accuracy across articles (ConstitutionEval-Ro).</strong> Bars depict SPP-Ro (Deliberative), SPP-Ro (Passive), and unaligned control (Base-Ro-125M) with 95% confidence intervals across the 6 civic pillars and overall average. Active deliberative routing (<code style="background:#f1f5f9; padding:1px 4px; border-radius:3px;">&lt;assistant&gt;</code>) achieves <strong>43.3%</strong> adherence (vs. <strong>23.3%</strong> baseline), delivering substantial gains in gender equality (+40.0%), freedom of movement (+40.0%), and press independence (+40.0%).
+          <strong>Figure 1: Constitutional adherence accuracy across articles (ConstitutionEval-Ro).</strong> Bars depict SPP-Ro (Deliberative), SPP-Ro (Passive), and unaligned control (Base-Ro-125M) with 95% confidence intervals across the 6 civic pillars and overall average. Active deliberative routing (<code style="background:#f1f5f9; padding:1px 4px; border-radius:3px;">&lt;assistant&gt;</code>) achieves 43.3% adherence (vs. 23.3% baseline), delivering substantial gains in gender equality (+40.0%), freedom of movement (+40.0%), and press independence (+40.0%).
         </div>
 
         <!-- Embedded Interactive Sub-Inspector for Figure 1 -->
@@ -665,9 +664,9 @@
               <line x1="167" y1="253" x2="173" y2="253" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 1 -->
-            <g class="x-axis-tick" data-fig="fig2" data-category="air_dec">
-              <rect class="cat-highlight-pill" x="70" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
-              <text transform="rotate(-30 150 305)" x="150" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Deception vs. Truth</text>
+            <g class="x-axis-tick" data-fig="fig2" data-category="air_dec" transform="rotate(-30 150 305)">
+              <rect class="cat-highlight-pill" x="16" y="292" width="140" height="20" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text x="150" y="306" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Deception vs. Truth</text>
             </g>
 
             <!-- ================= GROUP 2: Power Seeking Center=270 ================= -->
@@ -691,9 +690,9 @@
               <line x1="287" y1="106" x2="293" y2="106" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 2 -->
-            <g class="x-axis-tick" data-fig="fig2" data-category="air_pow">
-              <rect class="cat-highlight-pill" x="190" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
-              <text transform="rotate(-30 270 305)" x="270" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Power Seeking</text>
+            <g class="x-axis-tick" data-fig="fig2" data-category="air_pow" transform="rotate(-30 270 305)">
+              <rect class="cat-highlight-pill" x="180" y="292" width="96" height="20" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text x="270" y="306" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Power Seeking</text>
             </g>
 
             <!-- ================= GROUP 3: Privacy Protection Center=390 ================= -->
@@ -717,9 +716,9 @@
               <line x1="407" y1="106" x2="413" y2="106" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 3 (Active by default, like Image 4!) -->
-            <g class="x-axis-tick" data-fig="fig2" data-category="air_prv">
-              <rect class="cat-highlight-pill" x="310" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="1"/>
-              <text transform="rotate(-30 390 305)" x="390" y="305" font-size="11.5" font-weight="700" fill="#334155" text-anchor="end">Privacy Protection</text>
+            <g class="x-axis-tick" data-fig="fig2" data-category="air_prv" transform="rotate(-30 390 305)">
+              <rect class="cat-highlight-pill" x="268" y="292" width="128" height="20" rx="4" fill="#ccfbf1" opacity="1"/>
+              <text x="390" y="306" font-size="11.5" font-weight="700" fill="#0f172a" text-anchor="end">Privacy Protection</text>
             </g>
 
             <!-- ================= GROUP 4: Human Dignity Umană Center=510 ================= -->
@@ -743,9 +742,9 @@
               <line x1="527" y1="106" x2="533" y2="106" stroke="#1e293b" stroke-width="1"/>
             </g>
             <!-- X Tick 4 -->
-            <g class="x-axis-tick" data-fig="fig2" data-category="air_dig">
-              <rect class="cat-highlight-pill" x="430" y="293" width="95" height="22" rx="4" fill="#ccfbf1" opacity="0"/>
-              <text transform="rotate(-30 510 305)" x="510" y="305" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Human Dignity</text>
+            <g class="x-axis-tick" data-fig="fig2" data-category="air_dig" transform="rotate(-30 510 305)">
+              <rect class="cat-highlight-pill" x="418" y="292" width="98" height="20" rx="4" fill="#ccfbf1" opacity="0"/>
+              <text x="510" y="306" font-size="11.5" font-weight="500" fill="#334155" text-anchor="end">Human Dignity</text>
             </g>
 
             <!-- ================= GROUP 5: AVERAGE (Center=665) ================= -->
@@ -755,7 +754,7 @@
               <line x1="645" y1="70" x2="645" y2="94" stroke="#1e293b" stroke-width="1"/>
               <line x1="642" y1="70" x2="648" y2="70" stroke="#1e293b" stroke-width="1"/>
               <line x1="642" y1="94" x2="648" y2="94" stroke="#1e293b" stroke-width="1"/>
-              <text x="645" y="64" font-size="11" font-weight="700" fill="#991b1b" text-anchor="middle">85.0</text>
+              <text x="645" y="64" font-size="11" font-weight="500" fill="#991b1b" text-anchor="middle">85.0</text>
 
               <!-- SPP Pass = 75.0% -> y=106, h=184 -->
               <rect x="657" y="106" width="16" height="184" fill="#0284c7" rx="1"/>
@@ -763,7 +762,7 @@
               <line x1="665" y1="94" x2="665" y2="118" stroke="#1e293b" stroke-width="1"/>
               <line x1="662" y1="94" x2="668" y2="94" stroke="#1e293b" stroke-width="1"/>
               <line x1="662" y1="118" x2="668" y2="118" stroke="#1e293b" stroke-width="1"/>
-              <text x="665" y="88" font-size="11" font-weight="700" fill="#0284c7" text-anchor="middle">75.0</text>
+              <text x="665" y="88" font-size="11" font-weight="500" fill="#0284c7" text-anchor="middle">75.0</text>
 
               <!-- Vanilla = 65.0% -> y=131, h=159 -->
               <rect x="677" y="131" width="16" height="159" fill="#475569" rx="1"/>
@@ -771,7 +770,7 @@
               <line x1="685" y1="119" x2="685" y2="143" stroke="#1e293b" stroke-width="1"/>
               <line x1="682" y1="119" x2="688" y2="119" stroke="#1e293b" stroke-width="1"/>
               <line x1="682" y1="143" x2="688" y2="143" stroke="#1e293b" stroke-width="1"/>
-              <text x="685" y="113" font-size="11" font-weight="700" fill="#334155" text-anchor="middle">65.0</text>
+              <text x="685" y="113" font-size="11" font-weight="500" fill="#334155" text-anchor="middle">65.0</text>
 
               <!-- X Label: Average -->
               <text transform="rotate(-30 665 305)" x="665" y="305" font-size="12" font-weight="700" fill="#0f172a" text-anchor="end">Average</text>
@@ -780,13 +779,13 @@
         </div>
 
         <div class="figure-caption">
-          <strong>Figure 2: AI safety dilemma compliance across risk dimensions (AIRiskDilemmas-Ro).</strong> Grouped bars demonstrate strong gains under deliberative SPP routing, with average compliance reaching <strong>85.0%</strong> (vs. <strong>65.0%</strong> for Vanilla Base). Deliberation substantially curbs sycophantic deception (down from 80.0% failure to 20.0%), while maintaining robust human oversight and privacy protection (100.0%).
+          <strong>Figure 2: AI safety dilemma compliance across risk dimensions (AIRiskDilemmas-Ro).</strong> Grouped bars demonstrate strong gains under deliberative SPP routing, with average compliance reaching 85.0% (vs. 65.0% for Vanilla Base). Deliberation substantially curbs sycophantic deception (down from 80.0% failure to 20.0%), while maintaining robust human oversight and privacy protection (100.0%).
         </div>
 
         <!-- Embedded Interactive Sub-Inspector for Figure 2 (Exact EPFL Layout - Image 4) -->
         <p class="figure-inspector-note" style="margin-top: 22px;">
           <strong>AI safety dilemma compliance by category.</strong>
-          <em>Click on any bar or category label above to inspect definitions and empirical dilemma evaluations with choices made by each model (as presented in EPFL SPP).</em>
+          Click on any bar or category label above to inspect definitions and empirical dilemma evaluations with choices made by each model (as presented in EPFL SPP).
         </p>
         <div id="fig2-inspector" class="figure-interactive-inspector"></div>
       </div>
@@ -798,14 +797,14 @@
           <h3 style="font-size: 15px; margin-bottom: 6px;">Zero Alignment Tax (Perplexity)</h3>
           <p style="font-size: 13.5px; line-height: 1.55; color: var(--color-ink-secondary);">
             Unlike post-hoc alignment methods (RLHF/DPO) that degrade core linguistic capabilities, asymmetric causal attention masking shields standard web text from any interference. On held-out validation corpora, SPP acts as a beneficial regularizer:
-            <strong>12.49 PPL</strong> on News (vs. 15.92 Base) and <strong>14.48 PPL</strong> on Wikipedia (vs. 18.48 Base).
+            12.49 PPL on News (vs. 15.92 Base) and 14.48 PPL on Wikipedia (vs. 18.48 Base).
           </p>
         </div>
         <div class="academic-box">
           <span class="box-header-tag">Cross-Lingual Generalization</span>
           <h3 style="font-size: 15px; margin-bottom: 6px;">Mitigating Cross-Lingual Alignment Disparity</h3>
           <p style="font-size: 13.5px; line-height: 1.55; color: var(--color-ink-secondary);">
-            Unaligned generative models in Romanian exhibit an alignment disparity of &plusmn;14.0% when evaluated with parallel probes in English. By integrating normative constitutional principles from token zero, this disparity is halved (<strong>&plusmn;6.0%</strong>), confirming deep latent anchoring across multilingual representations.
+            Unaligned generative models in Romanian exhibit an alignment disparity of &plusmn;14.0% when evaluated with parallel probes in English. By integrating normative constitutional principles from token zero, this disparity is halved (&plusmn;6.0%), confirming deep latent anchoring across multilingual representations.
           </p>
         </div>
       </div>
@@ -883,7 +882,7 @@
 
     <!-- Page Footer -->
     <footer class="page-footer">
-      <p>SPP-Ro Project &bull; Open-source academic research under Apache-2.0 License</p>
+      <p>SPP-Ro Project &bull; Faculty of Mathematics and Computer Science, University of Bucharest</p>
     </footer>
 
   </div>

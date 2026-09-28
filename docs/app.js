@@ -1301,7 +1301,7 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
     if (dilemma.base_chosen === optIdx) chosenModels.push("vanilla");
 
     const badgesHtml = chosenModels.map(buildModelBadge).join(" ");
-    const goldTag = isCompliant ? `<span style="font-size: 10px; font-weight: 700; color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 6px; border-radius: 3px; margin-left: 6px;">GOLD COMPLIANT STANDARD</span>` : "";
+    const goldTag = isCompliant ? `<span class="badge-model-pick gold" style="white-space: nowrap !important; display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 6px; border-radius: 3px;"><span>✓</span> <span>Compliant Standard</span></span>` : "";
 
     const baseScore = dilemma.scores.base[optIdx];
     const delibScore = dilemma.scores.delib[optIdx];
@@ -1310,15 +1310,12 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
       <div class="multi-choice-inspector-item ${isCompliant ? 'is-gold' : ''}">
         <div class="multi-choice-letter">${opt.letter}</div>
         <div class="multi-choice-body">
-          <div class="multi-choice-text">
-            ${opt.text} ${goldTag}
+          <div class="multi-choice-text">${opt.text}</div>
+          <div class="multi-choice-badges-row" style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+            ${goldTag}
+            ${badgesHtml}
           </div>
-          ${chosenModels.length > 0 ? `
-            <div class="chosen-by-block" style="padding-top: 6px; margin-top: 4px;">
-              ${badgesHtml}
-            </div>
-          ` : ""}
-          <div style="font-size: 11px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
+          <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 5px;">
             LL per token: Delib = ${delibScore.toFixed(3)} nats | Base = ${baseScore.toFixed(3)} nats
           </div>
         </div>
@@ -1333,7 +1330,7 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
         <span class="category-definition-text">${data.definition}</span>
       </div>
       <button class="lang-toggle-btn" onclick="toggleFig1Language()">
-        ${isRo ? '🌐 Switch to English' : '🇷🇴 View Original Romanian Prompt & Options'}
+        ${isRo ? 'Switch to English' : 'View Original Romanian Prompt & Options'}
       </button>
     </div>
 
@@ -1359,7 +1356,7 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
 
     <!-- Proof & Verification Drawer -->
     <details style="margin-top: 10px; font-size: 12px; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 8px 12px;">
-      <summary style="cursor: pointer; font-weight: 600; color: #0284c7;">🔬 View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
+      <summary style="cursor: pointer; font-weight: 600; color: #0284c7;">View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
       <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; color: #334155;">
         <div><strong>Source Artifact:</strong> <code style="background:#f1f5f9; padding:2px 4px;">evals/thesis_constitution_eval_report.json</code></div>
         <div><strong>Base-Ro-125M Log-Likelihoods:</strong> ${JSON.stringify(dilemma.scores.base)} &rarr; Picked Index ${dilemma.base_chosen}</div>
@@ -1416,7 +1413,7 @@ function renderFig2Category(catKey, dilemmaIdx = 0) {
         <span class="category-definition-text">${data.definition}</span>
       </div>
       <button class="lang-toggle-btn" onclick="toggleFig2Language()">
-        ${isRo ? '🌐 Switch to English' : '🇷🇴 View Original Romanian Prompt & Options'}
+        ${isRo ? 'Switch to English' : 'View Original Romanian Prompt & Options'}
       </button>
     </div>
 
@@ -1441,7 +1438,7 @@ function renderFig2Category(catKey, dilemmaIdx = 0) {
         <div class="chosen-by-block">
           ${alignedBadges || '<span style="font-size:11px;color:#94a3b8;">None</span>'}
         </div>
-        <div style="font-size: 11px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
+        <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
           Score: Delib = ${dilemma.scores.delib.aligned.toFixed(3)} | Base = ${dilemma.scores.base.aligned.toFixed(3)}
         </div>
       </div>
@@ -1453,7 +1450,7 @@ function renderFig2Category(catKey, dilemmaIdx = 0) {
         <div class="chosen-by-block">
           ${riskyBadges || '<span style="font-size:11px;color:#94a3b8;">None</span>'}
         </div>
-        <div style="font-size: 11px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
+        <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
           Score: Delib = ${dilemma.scores.delib.risky.toFixed(3)} | Base = ${dilemma.scores.base.risky.toFixed(3)}
         </div>
       </div>
@@ -1465,7 +1462,7 @@ function renderFig2Category(catKey, dilemmaIdx = 0) {
 
     <!-- Proof & Verification Drawer -->
     <details style="margin-top: 10px; font-size: 12px; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 8px 12px;">
-      <summary style="cursor: pointer; font-weight: 600; color: #0284c7;">🔬 View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
+      <summary style="cursor: pointer; font-weight: 600; color: #0284c7;">View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
       <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; color: #334155;">
         <div><strong>Source Artifact:</strong> <code style="background:#f1f5f9; padding:2px 4px;">evals/thesis_constitution_eval_report.json</code></div>
         <div><strong>Base-Ro-125M:</strong> Aligned = ${dilemma.scores.base.aligned}, Risky = ${dilemma.scores.base.risky} &rarr; ${dilemma.scores.base.risky > dilemma.scores.base.aligned ? 'Picked RISKY (Failure)' : 'Picked ALIGNED (Pass)'}</div>
@@ -1551,7 +1548,7 @@ function renderArticleData(key) {
   pane.innerHTML = `
     <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
       <span style="font-size: 13px; font-weight: 600; color: #1e293b;">${data.tag}</span>
-      <span style="font-size: 12px; font-weight: 600; color: #475569; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 4px;">Severity Calibration: ${data.safety_score}/5</span>
+      <span style="font-size: 12px; font-weight: 600; color: #475569; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 4px;">Safety Score: ${data.safety_score}/5</span>
     </div>
     <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px; font-size: 14px; color: var(--color-ink-primary);">
       <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 4px;">Web Document Pre-text (Original Romanian Pretraining Corpus):</div>
@@ -1638,15 +1635,18 @@ function renderFullCEDilemma(item) {
     if (item.base_chosen === optIdx) chosenModels.push("vanilla");
 
     const badges = chosenModels.map(buildModelBadge).join(" ");
-    const goldTag = isCompliant ? `<span class="badge-model-pick gold">✓ Compliant Standard</span>` : "";
+    const goldTag = isCompliant ? `<span class="badge-model-pick gold" style="white-space: nowrap !important; display: inline-flex; align-items: center; gap: 4px;"><span>✓</span> <span>Compliant Standard</span></span>` : "";
 
     optionsHtml += `
       <div class="dilemma-option-card ${isCompliant ? 'is-compliant' : ''}">
         <div class="dilemma-option-letter">${opt.letter}</div>
         <div class="dilemma-option-content">
-          <div class="dilemma-option-text">${opt.text} ${goldTag}</div>
-          ${chosenModels.length > 0 ? `<div class="dilemma-badges-row">${badges}</div>` : ''}
-          <div style="font-size: 11px; color: #64748b; font-family: var(--font-mono); margin-top: 3px;">
+          <div class="dilemma-option-text">${opt.text}</div>
+          <div class="dilemma-badges-row" style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+            ${goldTag}
+            ${badges}
+          </div>
+          <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
             LL per token: Delib = ${item.scores.delib[optIdx].toFixed(3)} | Base = ${item.scores.base[optIdx].toFixed(3)}
           </div>
         </div>
@@ -1657,7 +1657,7 @@ function renderFullCEDilemma(item) {
   container.innerHTML = `
     <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
       <button class="lang-toggle-btn" onclick="toggleFullCeLanguage()">
-        ${isRo ? '🌐 Switch to English' : '🇷🇴 View Original Romanian Prompt & Options'}
+        ${isRo ? 'Switch to English' : 'View Original Romanian Prompt & Options'}
       </button>
     </div>
     <div class="dilemma-scenario-box">
@@ -1686,7 +1686,7 @@ function renderFullAIRiskDilemma(item) {
   container.innerHTML = `
     <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
       <button class="lang-toggle-btn" onclick="toggleFullAirLanguage()">
-        ${isRo ? '🌐 Switch to English' : '🇷🇴 View Original Romanian Prompt & Options'}
+        ${isRo ? 'Switch to English' : 'View Original Romanian Prompt & Options'}
       </button>
     </div>
     <div class="dilemma-scenario-box">
@@ -1700,7 +1700,7 @@ function renderFullAIRiskDilemma(item) {
         <div class="chosen-by-block">
           ${alignedBadges || '<span style="font-size:11px;color:#94a3b8;">None</span>'}
         </div>
-        <div style="font-size: 11px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
+        <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
           Score: Delib = ${item.scores.delib.aligned.toFixed(3)} | Base = ${item.scores.base.aligned.toFixed(3)}
         </div>
       </div>
@@ -1710,7 +1710,7 @@ function renderFullAIRiskDilemma(item) {
         <div class="chosen-by-block">
           ${riskyBadges || '<span style="font-size:11px;color:#94a3b8;">None</span>'}
         </div>
-        <div style="font-size: 11px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
+        <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
           Score: Delib = ${item.scores.delib.risky.toFixed(3)} | Base = ${item.scores.base.risky.toFixed(3)}
         </div>
       </div>

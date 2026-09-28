@@ -1,42 +1,41 @@
 <div align="center">
 
-# 🏛️ SPP-Ro: Synthetic Persona Pretraining in Romanian LLMs
+# SPP-Ro: Synthetic Persona Pretraining in Romanian LLMs
 ### Constitutional Alignment from Token Zero, Deliberative Reasoning, and Zero Alignment Tax
 
 [![Website](https://img.shields.io/badge/Live%20Platform-GitHub%20Pages-0c4a60?style=for-the-badge&logo=googlechrome&logoColor=white)](https://flaviussteff.github.io/spp-ro/)
-[![HuggingFace SPP](https://img.shields.io/badge/%F0%9F%A4%97%20HF-SPP--Ro--125M-166534?style=for-the-badge)](https://huggingface.co/flaviussteff/spp-ro-125m)
-[![HuggingFace Base](https://img.shields.io/badge/%F0%9F%A4%97%20HF-Base--Ro--125M-334155?style=for-the-badge)](https://huggingface.co/flaviussteff/base-ro-125m)
+[![HuggingFace SPP](https://img.shields.io/badge/HF-SPP--Ro--125M-166534?style=for-the-badge)](https://huggingface.co/flaviussteff/spp-ro-125m)
+[![HuggingFace Base](https://img.shields.io/badge/HF-Base--Ro--125M-334155?style=for-the-badge)](https://huggingface.co/flaviussteff/base-ro-125m)
 [![Constitution](https://img.shields.io/badge/Value%20Constitution-6%20Articles-0369a1?style=for-the-badge&logo=scroll&logoColor=white)](constitution_spp_ro.md)
 [![Annotation Guidelines](https://img.shields.io/badge/Annotation-Guidelines%20(RO)-475569?style=for-the-badge&logo=readme&logoColor=white)](ANNOTATION_GUIDELINES.md)
 
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
   <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-2.2%2B%20%7C%20CUDA-EE4C2C?style=flat-square&logo=pytorch&logoColor=white" alt="PyTorch 2.2+"></a>
-  <a href="https://huggingface.co/"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Transformers-FFD21E?style=flat-square&logoColor=black" alt="HuggingFace"></a>
+  <a href="https://huggingface.co/"><img src="https://img.shields.io/badge/HuggingFace-Transformers-FFD21E?style=flat-square&logoColor=black" alt="HuggingFace"></a>
   <a href="https://developer.nvidia.com/cuda-zone"><img src="https://img.shields.io/badge/Hardware-NVIDIA%20RTX%203060%2012GB-76B900?style=flat-square&logo=nvidia&logoColor=white" alt="Hardware"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue?style=flat-square" alt="License Apache-2.0"></a>
 </p>
 
 <p align="center">
   <b>Flavius-Ștefan Hăbeanu</b><br>
-  <i>Faculty of Mathematics and Computer Science, University of Bucharest</i><br>
+  Faculty of Mathematics and Computer Science, University of Bucharest<br>
   Independent replication and empirical evaluation grounded in the methodology of:<br>
   <b>Synthetic Persona Pretraining</b> (Minder et al., EPFL-dlab, 2026; <a href="https://arxiv.org/abs/2608.13482">arXiv:2608.13482</a>)
 </p>
 
-[🌐 Interactive Web Platform](https://flaviussteff.github.io/spp-ro/) • [📜 Value Constitution](constitution_spp_ro.md) • [📋 Annotation Guidelines](ANNOTATION_GUIDELINES.md) • [📊 Empirical Results](#-empirical-benchmarks--key-findings) • [🚀 Quickstart](#-quickstart--reproducibility) • [📑 Citation](#-citation)
+[Interactive Web Platform](https://flaviussteff.github.io/spp-ro/) • [Value Constitution](constitution_spp_ro.md) • [Annotation Guidelines](ANNOTATION_GUIDELINES.md) • [Benchmark Highlights](#benchmark-highlights) • [Quickstart](#quickstart--reproducibility) • [Citation](#citation)
 
 ---
 
 </div>
 
-## 📌 Executive Summary & Key Findings
+## Executive Summary & Key Findings
 
 Post-hoc alignment methods such as RLHF and DPO frequently degrade core linguistic fluency, imposing a substantial **alignment tax** and leaving guardrails fragile under adversarial framing, especially in lower-resource languages such as Romanian.
 
 **SPP-Ro** implements **Synthetic Persona Pretraining (SPP)** from scratch across **50,000 optimization steps** (~3.27 billion tokens processed on a single consumer NVIDIA GeForce RTX 3060 12GB GPU). By interleaving a 10% stream of structured constitutional reflections with asymmetric causal attention masking from step zero, ethical deliberation is embedded directly into autoregressive latent representations.
 
-### 🏆 Benchmark Highlights
+### Benchmark Highlights
 
 | Benchmark Dimension | Vanilla Base (`Base-Ro-125M`) | SPP Passive (`SPP-Ro-Passive`) | SPP Deliberative (`<assistant>`) | Relative Gain / Impact |
 | :--- | :---: | :---: | :---: | :--- |
@@ -54,7 +53,7 @@ Post-hoc alignment methods such as RLHF and DPO frequently degrade core linguist
 
 ---
 
-## 🔬 Scientific Methodology: Forced-Choice Log-Likelihood Evaluation
+## Scientific Methodology: Forced-Choice Log-Likelihood Evaluation
 
 A central challenge in evaluating causal language models is avoiding greedy generation hallucinations, prompt drift, or subjective regex parsing. Following standards from EleutherAI LM-Eval Harness, Anthropic Constitutional AI, and EPFL SPP Section 4.2, all forced-choice benchmarks are evaluated deterministically using **Length-Normalized Conditional Log-Likelihood**:
 
@@ -67,7 +66,7 @@ $$\hat{O} = \arg\max_{i} \text{Score}(O_i \mid X)$$
 
 ---
 
-## 📐 Pretraining Architecture & Asymmetric Attention Decoupling
+## Pretraining Architecture & Asymmetric Attention Decoupling
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -89,7 +88,7 @@ $$\hat{O} = \arg\max_{i} \text{Score}(O_i \mid X)$$
 
 ---
 
-## 📜 The Romanian Value Constitution & Annotation Protocol
+## The Romanian Value Constitution & Annotation Protocol
 
 SPP-Ro aligns generative representations against the fundamental civic charter of the Romanian state:
 
@@ -105,7 +104,7 @@ SPP-Ro aligns generative representations against the fundamental civic charter o
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```
 spp-ro/
@@ -146,7 +145,7 @@ spp-ro/
 
 ---
 
-## 🚀 Quickstart & Reproducibility
+## Quickstart & Reproducibility
 
 ### 1. Installation
 
@@ -201,7 +200,7 @@ py src/interact.py
 
 ---
 
-## 🔬 Verifying Raw Log-Likelihoods Directly
+## Verifying Raw Log-Likelihoods Directly
 
 All evaluation decisions are backed by deterministic tensor outputs saved in [`evals/thesis_constitution_eval_report.json`](evals/thesis_constitution_eval_report.json). You can verify any dilemma choice in a single terminal line:
 
@@ -215,7 +214,7 @@ py -c "import json; d=json.load(open('evals/thesis_constitution_eval_report.json
 
 ---
 
-## 📑 Citation
+## Citation
 
 If you use SPP-Ro checkpoints, benchmark datasets, or the Romanian Value Constitution in your research, please cite:
 
@@ -231,8 +230,3 @@ If you use SPP-Ro checkpoints, benchmark datasets, or the Romanian Value Constit
 }
 ```
 
----
-
-## 📄 License
-
-This research is distributed under the **Apache-2.0 License**. See `LICENSE` for details.
