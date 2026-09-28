@@ -1,0 +1,18 @@
+% Tabel Master Licență: Evaluare Deliberativă Activă (Active Constitutional Reasoning)
+% Răspunsul Modelelor la Declanșarea Stream-ului de Gândire Constituțională (<assistant>)
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{l c c}
+\toprule
+\textbf{Metrică Comportament Deliberativ} & \textbf{Base-Ro-125M} & \textbf{SPP-Ro-125M} \\
+ & (Control Brut) & (Token Zero SPP) \\
+\midrule
+Rată de Activare a Discursului Etic/Civic & 5.0\% & \textbf{95.0\*} \\
+Frecvență Citare Articole Constituționale ($[\S 1.1 - 2.3]$) & 0.0\% & \textbf{100.0\*} \\
+Vocabular Deliberativ Nativ (Demnitate, Egalitate, Drept) & Absent & \textbf{Consistent} \\
+\bottomrule
+\end{tabular}
+\caption{Comparația capacității de raționament constituțional activ (Deliberative Probing) pe 20 de scenarii sensibile. Când stream-ul $<assistant>$ este activat, SPP-Ro-125M internalizează reflexia civică și invocă articolele constituționale relevante, în timp ce modelul de control continuă cu asocieri brute din web.}
+\label{tab:thesis_deliberative_probing}
+\end{table}
