@@ -1350,13 +1350,13 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
       ${optionsHtml}
     </div>
 
-    <div style="margin-top: 14px; font-size: 13px; color: var(--color-ink-secondary); line-height: 1.5; background: var(--color-surface-subtle); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+    <div style="margin-top: 14px; font-size: 14.5px; color: var(--color-ink-secondary); line-height: 1.5; background: var(--color-surface-subtle); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
       <strong style="color: var(--color-ink-primary);">Empirical Analysis &amp; Causal Steering:</strong> ${dilemma.analysis}
     </div>
 
     <!-- Proof & Verification Drawer -->
-    <details style="margin-top: 10px; font-size: 12px; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 8px 12px;">
-      <summary style="cursor: pointer; font-weight: 600; color: #0284c7;">View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
+    <details style="margin-top: 12px; font-size: 13.5px; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 10px 14px;">
+      <summary style="cursor: pointer; font-weight: 600; color: #0f172a;">View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
       <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; color: #334155;">
         <div><strong>Source Artifact:</strong> <code style="background:#f1f5f9; padding:2px 4px;">evals/thesis_constitution_eval_report.json</code></div>
         <div><strong>Base-Ro-125M Log-Likelihoods:</strong> ${JSON.stringify(dilemma.scores.base)} &rarr; Picked Index ${dilemma.base_chosen}</div>
@@ -1456,13 +1456,13 @@ function renderFig2Category(catKey, dilemmaIdx = 0) {
       </div>
     </div>
 
-    <div style="margin-top: 14px; font-size: 13px; color: var(--color-ink-secondary); line-height: 1.5; background: var(--color-surface-subtle); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+    <div style="margin-top: 14px; font-size: 14.5px; color: var(--color-ink-secondary); line-height: 1.5; background: var(--color-surface-subtle); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
       <strong style="color: var(--color-ink-primary);">Empirical Analysis &amp; Causal Steering:</strong> ${dilemma.analysis}
     </div>
 
     <!-- Proof & Verification Drawer -->
-    <details style="margin-top: 10px; font-size: 12px; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 8px 12px;">
-      <summary style="cursor: pointer; font-weight: 600; color: #0284c7;">View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
+    <details style="margin-top: 12px; font-size: 13.5px; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 10px 14px;">
+      <summary style="cursor: pointer; font-weight: 600; color: #0f172a;">View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
       <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; color: #334155;">
         <div><strong>Source Artifact:</strong> <code style="background:#f1f5f9; padding:2px 4px;">evals/thesis_constitution_eval_report.json</code></div>
         <div><strong>Base-Ro-125M:</strong> Aligned = ${dilemma.scores.base.aligned}, Risky = ${dilemma.scores.base.risky} &rarr; ${dilemma.scores.base.risky > dilemma.scores.base.aligned ? 'Picked RISKY (Failure)' : 'Picked ALIGNED (Pass)'}</div>
@@ -1509,13 +1509,16 @@ function updateSvgXAxisHighlight(figId, activeCat) {
   document.querySelectorAll(`[data-fig="${figId}"][data-category]`).forEach(el => {
     const cat = el.getAttribute("data-category");
     const highlightPill = el.querySelector(".cat-highlight-pill");
+    if (highlightPill) highlightPill.setAttribute("opacity", "0");
     const labelText = el.querySelector("text");
-    if (cat === activeCat) {
-      if (highlightPill) highlightPill.setAttribute("opacity", "1");
-      if (labelText) labelText.setAttribute("font-weight", "700");
-    } else {
-      if (highlightPill) highlightPill.setAttribute("opacity", "0");
-      if (labelText) labelText.setAttribute("font-weight", "500");
+    if (labelText) {
+      if (cat === activeCat) {
+        labelText.setAttribute("font-weight", "700");
+        labelText.setAttribute("fill", "#0f172a");
+      } else {
+        labelText.setAttribute("font-weight", "400");
+        labelText.setAttribute("fill", "#64748b");
+      }
     }
   });
 }
@@ -1547,19 +1550,19 @@ function renderArticleData(key) {
 
   pane.innerHTML = `
     <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-      <span style="font-size: 13px; font-weight: 600; color: #1e293b;">${data.tag}</span>
-      <span style="font-size: 12px; font-weight: 600; color: #475569; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 4px;">Safety Score: ${data.safety_score}/5</span>
+      <span style="font-size: 15px; font-weight: 600; color: #1e293b;">${data.tag}</span>
+      <span style="font-size: 13.5px; font-weight: 600; color: #475569; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 3px 10px; border-radius: 4px;">Safety Score: ${data.safety_score}/5</span>
     </div>
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px; font-size: 14px; color: var(--color-ink-primary);">
-      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 4px;">Web Document Pre-text (Original Romanian Pretraining Corpus):</div>
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px; font-size: 15.5px; line-height: 1.6; color: var(--color-ink-primary);">
+      <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 6px;">Web Document Pre-text (Original Romanian Pretraining Corpus):</div>
       "${data.sample_text}"
     </div>
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 10px; font-size: 14px; color: var(--color-ink-primary);">
-      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #334155; margin-bottom: 4px;">First-Person Deliberation (reflection_1p - Romanian):</div>
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px; font-size: 15.5px; line-height: 1.6; color: var(--color-ink-primary);">
+      <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #334155; margin-bottom: 6px;">First-Person Deliberation (reflection_1p - Romanian):</div>
       "${data.reflection_1p}"
     </div>
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 14px; font-size: 14px; color: var(--color-ink-primary);">
-      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #334155; margin-bottom: 4px;">Objective Civic Voice (reflection_3p - Romanian):</div>
+    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px; font-size: 15.5px; line-height: 1.6; color: var(--color-ink-primary);">
+      <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #334155; margin-bottom: 6px;">Objective Civic Voice (reflection_3p - Romanian):</div>
       "${data.reflection_3p}"
     </div>
   `;

@@ -18,7 +18,7 @@
 
 <p align="center">
   <b>Flavius-Ștefan Hăbeanu</b><br>
-  Faculty of Mathematics and Computer Science, University of Bucharest<br>
+  <i>Faculty of Mathematics and Computer Science, University of Bucharest</i><br>
   Independent replication and empirical evaluation grounded in the methodology of:<br>
   <b>Synthetic Persona Pretraining</b> (Minder et al., EPFL-dlab, 2026; <a href="https://arxiv.org/abs/2608.13482">arXiv:2608.13482</a>)
 </p>
