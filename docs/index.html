@@ -12,14 +12,14 @@
   <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='10' width='80' height='80' rx='4' fill='%230f172a'/><text x='50' y='66' font-family='serif' font-size='52' font-weight='bold' fill='%23ffffff' text-anchor='middle'>§</text></svg>">
 </head>
 
 <body>
 
-  <div class="page-container">
+  <main class="page-container">
 
-    <!-- Masthead / Title Block -->
+    <!-- Masthead / Publication Header -->
     <header class="masthead">
       <h1 class="paper-title">Synthetic Persona Pretraining:<br>Alignment from Token Zero in Romanian LLMs</h1>
       <p class="paper-subtitle">
@@ -29,8 +29,6 @@
 
       <div class="authors-list">
         <span class="author-item"><strong>Flavius-Ștefan Hăbeanu</strong></span>
-        <span class="author-separator">&bull;</span>
-
       </div>
       <div class="affiliations-list">
         Faculty of Mathematics and Computer Science, University of Bucharest
@@ -52,10 +50,8 @@
     <!-- SECTION 1: VALUE CONSTITUTION & ANNOTATION PROTOCOL -->
     <!-- ==================================================================== -->
     <section id="constitution">
-      <div class="section-header-row">
-        <span class="section-num-badge">1</span>
-        <h2 class="section-heading">Value Constitution &amp; Annotation Protocol</h2>
-        <div class="section-header-rule"></div>
+      <div class="section-heading-wrapper">
+        <h2 class="section-heading"><span class="section-num">§ 1</span> Value Constitution &amp; Annotation Protocol</h2>
       </div>
 
       <p class="section-lead">
@@ -64,63 +60,57 @@
         six non-negotiable societal pillars:
       </p>
 
-      <!-- Prominent GitHub Link to Romanian Value Constitution -->
-      <div style="margin: 16px 0 24px 0;">
-        <a href="https://github.com/flaviussteff/spp-ro/blob/main/constitution_spp_ro.md" class="resource-btn"
+      <div>
+        <a href="https://github.com/flaviussteff/spp-ro/blob/main/constitution_spp_ro.md" class="inline-action-link"
           target="_blank" rel="noopener">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path
-              d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
-            </path>
-          </svg>
           View Full Value Constitution on GitHub (Romanian / Limba Română)
         </a>
       </div>
 
-      <!-- 6 Constitutional Articles Cards Grid (Clean Neutral Boxes) -->
-      <div class="card-grid-2">
-        <div class="academic-box">
-          <span class="box-header-tag">Article 1.1</span>
+      <!-- 6 Constitutional Articles Editorial Grid -->
+      <div class="editorial-articles-grid">
+        <div class="editorial-article-cell">
+          <div class="article-meta-num">Article 1.1</div>
           <h3>Human Dignity &amp; Non-Discrimination</h3>
           <p>
             Guarantees the inviolability of human dignity, personal integrity, and equality before the law, strictly
             barring discrimination based on race, ethnicity, or social origin.
           </p>
         </div>
-        <div class="academic-box">
-          <span class="box-header-tag">Article 1.2</span>
+        <div class="editorial-article-cell">
+          <div class="article-meta-num">Article 1.2</div>
           <h3>Gender Equality &amp; Meritocracy</h3>
           <p>
             Enforces equal opportunities across economic, political, and executive decision-making roles, rejecting
             patriarchal corporate occupational sorting.
           </p>
         </div>
-        <div class="academic-box">
-          <span class="box-header-tag">Article 1.3</span>
+        <div class="editorial-article-cell">
+          <div class="article-meta-num">Article 1.3</div>
           <h3>Freedom of Movement &amp; Regional Equity</h3>
           <p>
             Protects internal mobility, residency choice, and equitable regional infrastructure, deconstructing
             historical provincial stigmas (Moldavia, Oltenia, Transylvania).
           </p>
         </div>
-        <div class="academic-box">
-          <span class="box-header-tag">Article 2.1</span>
+        <div class="editorial-article-cell">
+          <div class="article-meta-num">Article 2.1</div>
           <h3>Right to Information &amp; Civic Transparency</h3>
           <p>
             Mandates public access to verified facts and public expenditures, curbing corrupt opacity, disinformation
             campaigns, and SLAPP legal harassment.
           </p>
         </div>
-        <div class="academic-box">
-          <span class="box-header-tag">Article 2.2</span>
+        <div class="editorial-article-cell">
+          <div class="article-meta-num">Article 2.2</div>
           <h3>Freedom of Expression &amp; Independent Press</h3>
           <p>
             Shields independent journalism, investigative reporting, and ideological pluralism against prior censorship
             and authoritarian consolidation.
           </p>
         </div>
-        <div class="academic-box">
-          <span class="box-header-tag">Article 2.3</span>
+        <div class="editorial-article-cell">
+          <div class="article-meta-num">Article 2.3</div>
           <h3>Protection of Cultural &amp; Ethnic Minorities</h3>
           <p>
             Preserves the linguistic, cultural, and religious identity of historical minorities (Romani, Hungarian,
@@ -130,95 +120,94 @@
       </div>
 
       <!-- Annotation Guidelines Sub-section -->
-      <div style="margin-top: 36px;">
-        <h3 style="font-size: 18px; font-weight: 700; color: #091e2b; margin-bottom: 10px;">
-          Annotation Guidelines &amp; Synthetic Signal Protocol
-        </h3>
-        <p class="section-lead">
-          During dataset preparation, a Teacher model generates structured reflections at semantic transition points in
-          web text. The data generation follows five golden rules to ensure signal purity:
-        </p>
+      <h3 class="subheading-lead">Annotation Guidelines &amp; Synthetic Signal Protocol</h3>
+      <p class="section-lead">
+        During dataset preparation, a Teacher model generates structured reflections at semantic transition points in
+        web text. The data generation follows five golden rules to ensure signal purity:
+      </p>
 
-        <!-- Prominent GitHub Link to Romanian Annotation Guidelines -->
-        <div style="margin: 16px 0 24px 0; display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
-          <a href="https://github.com/flaviussteff/spp-ro/blob/main/ANNOTATION_GUIDELINES.md" class="resource-btn"
-            target="_blank" rel="noopener">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            View Annotation Guidelines on GitHub (Romanian / Limba Română)
-          </a>
-        </div>
+      <div>
+        <a href="https://github.com/flaviussteff/spp-ro/blob/main/ANNOTATION_GUIDELINES.md" class="inline-action-link"
+          target="_blank" rel="noopener">
+          View Annotation Guidelines on GitHub (Romanian / Limba Română)
+        </a>
+      </div>
 
-        <div class="guideline-rule-card">
-          <span class="box-header-tag">Guideline 1</span>
-          <h4>Three-Tier Structured Triad (`analysis` &rarr; `reflection_1p` &rarr; `reflection_3p`)</h4>
-          <p>
-            Every reflection produces a 3-step preliminary analysis, a first-person subjective deliberation (<em>"I
-              consider..."</em>, <em>"I maintain..."</em>), and an objective third-person institutional civic voice.
-            Both reflections convey identical ethical verdicts and identical constitutional article citations.
-          </p>
-        </div>
-
-        <div class="guideline-rule-card">
-          <span class="box-header-tag">Guideline 2</span>
-          <h4>Strict Prohibition of Meta-Language</h4>
-          <p>
-            Reflections must <strong>never</strong> mention the words <em>"constitution"</em>, <em>"charter"</em>, or
-            <em>"guidelines"</em> inside thought tokens. The model internalizes values directly (e.g., <em>"Human
-              dignity [1.1] requires..."</em>), avoiding robotic meta-declarations.
-          </p>
-        </div>
-
-        <div class="guideline-rule-card">
-          <span class="box-header-tag">Guideline 3</span>
-          <h4>Inline Bracket Citations as Ground Truth (`[X.Y]`)</h4>
-          <p>
-            Constitutional articles are registered strictly through compact bracket citations (e.g., <code>[1.2]</code>,
-            <code>[2.3]</code>), acting as discrete semantic anchors in both first-person and third-person perspectives.
-          </p>
-        </div>
-
-        <div class="guideline-rule-card">
-          <span class="box-header-tag">Guideline 4</span>
-          <h4>Asymmetric Causal Attention Decoupling</h4>
-          <p>
-            The training attention mask strictly prevents standard web document tokens from attending to reflection
-            tokens. Consequently, natural document modeling is never corrupted, guaranteeing zero perplexity tax.
-          </p>
-        </div>
-
-        <div class="guideline-rule-card">
-          <span class="box-header-tag">Guideline 5</span>
-          <h4>Five-Point Severity Calibration Scale (Scores 1 to 5)</h4>
-          <p>
-            Annotations are calibrated across a 5-tier severity scale: Score 1 (benign technical/sport facts, single
-            short sentence, no citation) through Score 5 (severe structural discrimination or incitement, requiring
-            comprehensive constitutional pushback).
-          </p>
-        </div>
-
-        <!-- Interactive Sidecar Reflection Browser -->
-        <div class="diagram-box">
-          <div
-            style="font-size: 13.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-ink-muted); margin-bottom: 16px;">
-            Synthetic Corpus Browser // Authentic Sidecar Reflections (data/sidecar/reflections.parquet)
+      <!-- De-cardified Numbered Principles List -->
+      <div class="editorial-rule-list">
+        <div class="editorial-rule-item">
+          <div class="rule-num">01</div>
+          <div class="rule-content">
+            <h4>Three-Tier Structured Triad: Analysis, First-Person Reflection, Third-Person Voice</h4>
+            <p>
+              Every reflection produces a 3-step preliminary analysis, a first-person subjective deliberation ("I
+              consider...", "I maintain..."), and an objective third-person institutional civic voice.
+              Both reflections convey identical ethical verdicts and identical constitutional article citations.
+            </p>
           </div>
-          <div class="dilemma-tabs" style="border-bottom: none; margin-bottom: 16px;">
-            <button class="dilemma-tab-btn article-pill-btn active" data-article="art_1_2">Art. 1.2 Gender
-              Equality</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_3">Art. 1.3 Regional Mobility</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_1">Art. 1.1 Human Dignity</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_1">Art. 2.1 Public Information</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_2">Art. 2.2 Press Freedom</button>
-            <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_3">Art. 2.3 Minority Rights</button>
-          </div>
-          <div id="article-reader-pane"></div>
         </div>
+
+        <div class="editorial-rule-item">
+          <div class="rule-num">02</div>
+          <div class="rule-content">
+            <h4>Strict Prohibition of Meta-Language</h4>
+            <p>
+              Reflections must never mention the words "constitution", "charter", or
+              "guidelines" inside thought tokens. The model internalizes values directly (for example, "Human
+              dignity [1.1] requires..."), avoiding robotic meta-declarations.
+            </p>
+          </div>
+        </div>
+
+        <div class="editorial-rule-item">
+          <div class="rule-num">03</div>
+          <div class="rule-content">
+            <h4>Inline Bracket Citations as Ground Truth ([X.Y])</h4>
+            <p>
+              Constitutional articles are registered strictly through compact bracket citations (for example, <code>[1.2]</code>,
+              <code>[2.3]</code>), acting as discrete semantic anchors in both first-person and third-person perspectives.
+            </p>
+          </div>
+        </div>
+
+        <div class="editorial-rule-item">
+          <div class="rule-num">04</div>
+          <div class="rule-content">
+            <h4>Asymmetric Causal Attention Decoupling</h4>
+            <p>
+              The training attention mask strictly prevents standard web document tokens from attending to reflection
+              tokens. Consequently, natural document modeling is never corrupted, guaranteeing zero perplexity tax.
+            </p>
+          </div>
+        </div>
+
+        <div class="editorial-rule-item">
+          <div class="rule-num">05</div>
+          <div class="rule-content">
+            <h4>Five-Point Severity Calibration Scale (Scores 1 to 5)</h4>
+            <p>
+              Annotations are calibrated across a 5-tier severity scale: Score 1 (benign technical/sport facts, single
+              short sentence, no citation) through Score 5 (severe structural discrimination or incitement, requiring
+              comprehensive constitutional pushback).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidecar Reflection Browser Section -->
+      <div class="sidecar-browser-section">
+        <div class="sidecar-browser-header">
+          <div class="sidecar-browser-title">Synthetic Corpus Browser / Authentic Sidecar Reflections (data/sidecar/reflections.parquet)</div>
+        </div>
+        <div class="dilemma-tabs">
+          <button class="dilemma-tab-btn article-pill-btn active" data-article="art_1_2">Art. 1.2 Gender Equality</button>
+          <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_3">Art. 1.3 Regional Mobility</button>
+          <button class="dilemma-tab-btn article-pill-btn" data-article="art_1_1">Art. 1.1 Human Dignity</button>
+          <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_1">Art. 2.1 Public Information</button>
+          <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_2">Art. 2.2 Press Freedom</button>
+          <button class="dilemma-tab-btn article-pill-btn" data-article="art_2_3">Art. 2.3 Minority Rights</button>
+        </div>
+        <div id="article-reader-pane"></div>
       </div>
     </section>
 
@@ -226,15 +215,13 @@
     <!-- SECTION 2: TRAINING & ARCHITECTURE -->
     <!-- ==================================================================== -->
     <section id="training">
-      <div class="section-header-row">
-        <span class="section-num-badge">2</span>
-        <h2 class="section-heading">Training &amp; Architecture</h2>
-        <div class="section-header-rule"></div>
+      <div class="section-heading-wrapper">
+        <h2 class="section-heading"><span class="section-num">§ 2</span> Training &amp; Architecture</h2>
       </div>
 
-      <div class="card-grid-2">
-        <div class="academic-box">
-          <span class="box-header-tag">Phase 1: Token Zero</span>
+      <div class="editorial-phases-split">
+        <div class="phase-column">
+          <div class="phase-num">Phase 1: Token Zero</div>
           <h3>Autoregressive Pretraining</h3>
           <p>
             We pretrain from scratch with the standard cross-entropy loss on Romanian web documents plus 10%
@@ -242,8 +229,8 @@
             zero.
           </p>
         </div>
-        <div class="academic-box">
-          <span class="box-header-tag">Phase 2: System-2 Deliberation</span>
+        <div class="phase-column">
+          <div class="phase-num">Phase 2: System-2 Deliberation</div>
           <h3>Deliberative Persona Activation</h3>
           <p>
             Prompting with the special token <code>&lt;assistant&gt;</code> activates the constitutional thought stream
@@ -259,10 +246,9 @@
         unaligned pretraining.
       </p>
 
-      <!-- Architecture Timeline Diagram Box (Vanilla vs SPP) -->
-      <div class="diagram-box">
-        <div
-          style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-ink-muted); margin-bottom: 18px;">
+      <!-- Architecture Timeline Plate -->
+      <div class="timeline-section-plate">
+        <div class="sidecar-browser-title" style="margin-bottom: 16px;">
           Pretraining Paths &amp; Asymmetric Attention Decoupling
         </div>
 
@@ -271,7 +257,7 @@
           <div class="timeline-bar-area">
             <div class="timeline-line"></div>
           </div>
-          <div class="timeline-badge">Base-Ro-125M</div>
+          <div class="timeline-tag">Base-Ro-125M</div>
         </div>
 
         <div class="timeline-track">
@@ -280,8 +266,7 @@
             <div class="timeline-line"></div>
             <div class="timeline-fill" style="left: 0; width: 100%;"></div>
           </div>
-          <div class="timeline-badge" style="background: #0f172a; color: #ffffff; border-color: #0f172a;">SPP Token Zero
-          </div>
+          <div class="timeline-tag active">SPP Token Zero</div>
         </div>
 
         <div class="timeline-legend">
@@ -301,10 +286,8 @@
     <!-- SECTION 3: EMPIRICAL BENCHMARKS -->
     <!-- ==================================================================== -->
     <section id="benchmarks">
-      <div class="section-header-row">
-        <span class="section-num-badge">3</span>
-        <h2 class="section-heading">Empirical Results</h2>
-        <div class="section-header-rule"></div>
+      <div class="section-heading-wrapper">
+        <h2 class="section-heading"><span class="section-num">§ 3</span> Empirical Results</h2>
       </div>
 
       <p class="section-lead">
@@ -312,18 +295,16 @@
         modeling stability, and cross-lingual transfer.
       </p>
 
-      <!-- Methodology Callout Box: Length-Normalized Conditional Log-Likelihood -->
-      <div class="abstract-box" style="margin: 22px 0 32px 0; background: #ffffff;">
-        <span class="box-header-tag">Evaluation Protocol &bull; Rigorous Methodology</span>
-        <h3 style="font-size: 17.5px; font-weight: 700; color: #091e2b; margin-bottom: 8px;">
-          Forced-Choice Evaluation Protocol: Length-Normalized Conditional Log-Likelihood Scoring
-        </h3>
-        <p class="abstract-text" style="margin-bottom: 10px;">
-          A central scientific question is: <em>How does a causal autoregressive language model, which outputs
-            continuous token distributions, select discrete options on multiple-choice benchmarks without generating
-            open-ended drift or hallucinating?</em>
-        </p>
+      <!-- Methodology Note: Length-Normalized Conditional Log-Likelihood -->
+      <div class="editorial-methodology-note">
+        <div class="methodology-header-label">Evaluation Protocol / Rigorous Methodology</div>
+        <h3>Forced-Choice Evaluation Protocol: Length-Normalized Conditional Log-Likelihood Scoring</h3>
         <p class="abstract-text" style="margin-bottom: 12px;">
+          A central scientific question is: How does a causal autoregressive language model, which outputs
+          continuous token distributions, select discrete options on multiple-choice benchmarks without generating
+          open-ended drift or hallucinating?
+        </p>
+        <p class="abstract-text" style="margin-bottom: 14px;">
           Following standard scientific evaluation standards (EleutherAI LM-Eval Harness, Anthropic Constitutional AI,
           and EPFL SPP Section 4.2), we do not rely on greedy sampling or prompt-dependent generative parsing. Instead,
           for each dilemma prompt prefix <span class="math-var">X</span> and candidate answer continuation <span
@@ -354,7 +335,7 @@
           <span class="math-formula-num">(1)</span>
         </div>
 
-        <p class="abstract-text" style="margin-bottom: 8px;">
+        <p class="abstract-text" style="margin-bottom: 10px;">
           <strong>Length Normalization:</strong> Multiplying joint probabilities over longer word sequences naturally
           penalizes longer answers because individual token probabilities are &le; 1. Dividing by token sequence length
           &vert;<span class="math-var">O</span><sub><i>i</i></sub>&vert; eliminates length bias and isolates the model's
@@ -370,29 +351,28 @@
         </p>
       </div>
 
-      <!-- FIGURE 1: GROUPED BAR CHART FOR CONSTITUTIONEVAL-RO -->
-      <div class="figure-box">
-        <!-- Legend at Top -->
-        <div class="figure-header">
+      <!-- FIGURE 1 PLATE: GROUPED BAR CHART FOR CONSTITUTIONEVAL-RO -->
+      <div class="figure-plate">
+        <div class="figure-legend-row">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="12">
-              <rect width="18" height="12" fill="#991b1b" rx="2" />
+            <svg width="16" height="10">
+              <rect width="16" height="10" fill="#991b1b" rx="1" />
             </svg>
-            <span style="font-size: 14.5px; font-weight: 600; color: #0f172a;">SPP (Deliberative)</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: #0f172a;">SPP (Deliberative)</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="12">
-              <rect width="18" height="12" fill="#0284c7" rx="2" />
-              <rect width="18" height="12" fill="url(#dotPattern)" rx="2" />
+            <svg width="16" height="10">
+              <rect width="16" height="10" fill="#0284c7" rx="1" />
+              <rect width="16" height="10" fill="url(#dotPattern)" rx="1" />
             </svg>
-            <span style="font-size: 14.5px; font-weight: 600; color: #0f172a;">SPP (Passive)</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: #0f172a;">SPP (Passive)</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="12">
-              <rect width="18" height="12" fill="#475569" rx="2" />
-              <rect width="18" height="12" fill="url(#hatchPattern)" rx="2" />
+            <svg width="16" height="10">
+              <rect width="16" height="10" fill="#475569" rx="1" />
+              <rect width="16" height="10" fill="url(#hatchPattern)" rx="1" />
             </svg>
-            <span style="font-size: 14.5px; font-weight: 600; color: #0f172a;">Vanilla Base</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: #0f172a;">Vanilla Base</span>
           </div>
         </div>
 
@@ -438,11 +418,8 @@
 
             <!-- ================= GROUP 1: Dignity (Art. 1.1) Center=125 ================= -->
             <g class="chart-category-group" data-fig="fig1" data-category="ce_1_1">
-              <!-- SPP Delib = 0% -->
               <line x1="97" y1="290" x2="113" y2="290" stroke="#991b1b" stroke-width="2.5" />
-              <!-- SPP Pass = 0% -->
               <line x1="117" y1="290" x2="133" y2="290" stroke="#0284c7" stroke-width="2.5" />
-              <!-- Vanilla = 20% -> y=241, h=49 -->
               <rect x="137" y="241" width="16" height="49" fill="#475569" rx="1" />
               <rect x="137" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1" />
               <line x1="145" y1="229" x2="145" y2="253" stroke="#1e293b" stroke-width="1" />
@@ -451,50 +428,40 @@
             </g>
             <!-- X Tick 1 -->
             <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_1">
-              <rect class="cat-highlight-pill" x="50" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 125 305)" x="125" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Dignity (Art. 1.1)</text>
             </g>
 
             <!-- ================= GROUP 2: Gender (Art. 1.2) Center=205 ================= -->
             <g class="chart-category-group" data-fig="fig1" data-category="ce_1_2">
-              <!-- SPP Delib = 40% -> y=192, h=98 -->
               <rect x="177" y="192" width="16" height="98" fill="#991b1b" rx="1" />
               <line x1="185" y1="180" x2="185" y2="204" stroke="#1e293b" stroke-width="1" />
               <line x1="182" y1="180" x2="188" y2="180" stroke="#1e293b" stroke-width="1" />
               <line x1="182" y1="204" x2="188" y2="204" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 20% -> y=241, h=49 -->
               <rect x="197" y="241" width="16" height="49" fill="#0284c7" rx="1" />
               <rect x="197" y="241" width="16" height="49" fill="url(#dotPattern)" rx="1" />
               <line x1="205" y1="229" x2="205" y2="253" stroke="#1e293b" stroke-width="1" />
               <line x1="202" y1="229" x2="208" y2="229" stroke="#1e293b" stroke-width="1" />
               <line x1="202" y1="253" x2="208" y2="253" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 0% -->
               <line x1="217" y1="290" x2="233" y2="290" stroke="#475569" stroke-width="2.5" />
             </g>
             <!-- X Tick 2 -->
             <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_2">
-              <rect class="cat-highlight-pill" x="130" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 205 305)" x="205" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Gender (Art. 1.2)</text>
             </g>
 
             <!-- ================= GROUP 3: Mobility (Art. 1.3) Center=285 ================= -->
             <g class="chart-category-group" data-fig="fig1" data-category="ce_1_3">
-              <!-- SPP Delib = 60% -> y=143, h=147 -->
               <rect x="257" y="143" width="16" height="147" fill="#991b1b" rx="1" />
               <line x1="265" y1="131" x2="265" y2="155" stroke="#1e293b" stroke-width="1" />
               <line x1="262" y1="131" x2="268" y2="131" stroke="#1e293b" stroke-width="1" />
               <line x1="262" y1="155" x2="268" y2="155" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 60% -> y=143, h=147 -->
               <rect x="277" y="143" width="16" height="147" fill="#0284c7" rx="1" />
               <rect x="277" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1" />
               <line x1="285" y1="131" x2="285" y2="155" stroke="#1e293b" stroke-width="1" />
               <line x1="282" y1="131" x2="288" y2="131" stroke="#1e293b" stroke-width="1" />
               <line x1="282" y1="155" x2="288" y2="155" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 20% -> y=241, h=49 -->
               <rect x="297" y="241" width="16" height="49" fill="#475569" rx="1" />
               <rect x="297" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1" />
               <line x1="305" y1="229" x2="305" y2="253" stroke="#1e293b" stroke-width="1" />
@@ -503,26 +470,21 @@
             </g>
             <!-- X Tick 3 -->
             <g class="x-axis-tick" data-fig="fig1" data-category="ce_1_3">
-              <rect class="cat-highlight-pill" x="210" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 285 305)" x="285" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Mobility (Art. 1.3)</text>
             </g>
 
             <!-- ================= GROUP 4: Public Info (Art. 2.1) Center=365 ================= -->
             <g class="chart-category-group" data-fig="fig1" data-category="ce_2_1">
-              <!-- SPP Delib = 60% -> y=143, h=147 -->
               <rect x="337" y="143" width="16" height="147" fill="#991b1b" rx="1" />
               <line x1="345" y1="131" x2="345" y2="155" stroke="#1e293b" stroke-width="1" />
               <line x1="342" y1="131" x2="348" y2="131" stroke="#1e293b" stroke-width="1" />
               <line x1="342" y1="155" x2="348" y2="155" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 60% -> y=143, h=147 -->
               <rect x="357" y="143" width="16" height="147" fill="#0284c7" rx="1" />
               <rect x="357" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1" />
               <line x1="365" y1="131" x2="365" y2="155" stroke="#1e293b" stroke-width="1" />
               <line x1="362" y1="131" x2="368" y2="131" stroke="#1e293b" stroke-width="1" />
               <line x1="362" y1="155" x2="368" y2="155" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 40% -> y=192, h=98 -->
               <rect x="377" y="192" width="16" height="98" fill="#475569" rx="1" />
               <rect x="377" y="192" width="16" height="98" fill="url(#hatchPattern)" rx="1" />
               <line x1="385" y1="180" x2="385" y2="204" stroke="#1e293b" stroke-width="1" />
@@ -531,26 +493,21 @@
             </g>
             <!-- X Tick 4 -->
             <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_1">
-              <rect class="cat-highlight-pill" x="290" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 365 305)" x="365" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Public Info (Art. 2.1)</text>
             </g>
 
             <!-- ================= GROUP 5: Press Freedom (Art. 2.2) Center=445 ================= -->
             <g class="chart-category-group" data-fig="fig1" data-category="ce_2_2">
-              <!-- SPP Delib = 60% -> y=143, h=147 -->
               <rect x="417" y="143" width="16" height="147" fill="#991b1b" rx="1" />
               <line x1="425" y1="131" x2="425" y2="155" stroke="#1e293b" stroke-width="1" />
               <line x1="422" y1="131" x2="428" y2="131" stroke="#1e293b" stroke-width="1" />
               <line x1="422" y1="155" x2="428" y2="155" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 20% -> y=241, h=49 -->
               <rect x="437" y="241" width="16" height="49" fill="#0284c7" rx="1" />
               <rect x="437" y="241" width="16" height="49" fill="url(#dotPattern)" rx="1" />
               <line x1="445" y1="229" x2="445" y2="253" stroke="#1e293b" stroke-width="1" />
               <line x1="442" y1="229" x2="448" y2="229" stroke="#1e293b" stroke-width="1" />
               <line x1="442" y1="253" x2="448" y2="253" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 20% -> y=241, h=49 -->
               <rect x="457" y="241" width="16" height="49" fill="#475569" rx="1" />
               <rect x="457" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1" />
               <line x1="465" y1="229" x2="465" y2="253" stroke="#1e293b" stroke-width="1" />
@@ -559,26 +516,21 @@
             </g>
             <!-- X Tick 5 -->
             <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_2">
-              <rect class="cat-highlight-pill" x="370" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 445 305)" x="445" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Press Freedom (Art. 2.2)</text>
             </g>
 
             <!-- ================= GROUP 6: Minorities (Art. 2.3) Center=525 ================= -->
             <g class="chart-category-group" data-fig="fig1" data-category="ce_2_3">
-              <!-- SPP Delib = 40% -> y=192, h=98 -->
               <rect x="497" y="192" width="16" height="98" fill="#991b1b" rx="1" />
               <line x1="505" y1="180" x2="505" y2="204" stroke="#1e293b" stroke-width="1" />
               <line x1="502" y1="180" x2="508" y2="180" stroke="#1e293b" stroke-width="1" />
               <line x1="502" y1="204" x2="508" y2="204" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 40% -> y=192, h=98 -->
               <rect x="517" y="192" width="16" height="98" fill="#0284c7" rx="1" />
               <rect x="517" y="192" width="16" height="98" fill="url(#dotPattern)" rx="1" />
               <line x1="525" y1="180" x2="525" y2="204" stroke="#1e293b" stroke-width="1" />
               <line x1="522" y1="180" x2="528" y2="180" stroke="#1e293b" stroke-width="1" />
               <line x1="522" y1="204" x2="528" y2="204" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 40% -> y=192, h=98 -->
               <rect x="537" y="192" width="16" height="98" fill="#475569" rx="1" />
               <rect x="537" y="192" width="16" height="98" fill="url(#hatchPattern)" rx="1" />
               <line x1="545" y1="180" x2="545" y2="204" stroke="#1e293b" stroke-width="1" />
@@ -587,22 +539,18 @@
             </g>
             <!-- X Tick 6 -->
             <g class="x-axis-tick" data-fig="fig1" data-category="ce_2_3">
-              <rect class="cat-highlight-pill" x="450" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 525 305)" x="525" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Minorities (Art. 2.3)</text>
             </g>
 
             <!-- ================= GROUP 7: AVERAGE (Center=665) ================= -->
             <g>
-              <!-- SPP Delib = 43.3% -> y=184, h=106 -->
               <rect x="637" y="184" width="16" height="106" fill="#991b1b" rx="1" />
               <line x1="645" y1="172" x2="645" y2="196" stroke="#1e293b" stroke-width="1" />
               <line x1="642" y1="172" x2="648" y2="172" stroke="#1e293b" stroke-width="1" />
               <line x1="642" y1="196" x2="648" y2="196" stroke="#1e293b" stroke-width="1" />
               <text x="645" y="165" font-size="12" font-weight="700" fill="#991b1b" text-anchor="middle">43.3</text>
 
-              <!-- SPP Pass = 33.3% -> y=208, h=82 -->
               <rect x="657" y="208" width="16" height="82" fill="#0284c7" rx="1" />
               <rect x="657" y="208" width="16" height="82" fill="url(#dotPattern)" rx="1" />
               <line x1="665" y1="196" x2="665" y2="220" stroke="#1e293b" stroke-width="1" />
@@ -610,7 +558,6 @@
               <line x1="662" y1="220" x2="668" y2="220" stroke="#1e293b" stroke-width="1" />
               <text x="665" y="189" font-size="12" font-weight="700" fill="#0284c7" text-anchor="middle">33.3</text>
 
-              <!-- Vanilla = 23.3% -> y=233, h=57 -->
               <rect x="677" y="233" width="16" height="57" fill="#475569" rx="1" />
               <rect x="677" y="233" width="16" height="57" fill="url(#hatchPattern)" rx="1" />
               <line x1="685" y1="221" x2="685" y2="245" stroke="#1e293b" stroke-width="1" />
@@ -618,7 +565,6 @@
               <line x1="682" y1="245" x2="688" y2="245" stroke="#1e293b" stroke-width="1" />
               <text x="685" y="214" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">23.3</text>
 
-              <!-- X Label: Average -->
               <text transform="rotate(-30 665 305)" x="665" y="305" font-size="13" font-weight="700" fill="#0f172a"
                 text-anchor="end">Average</text>
             </g>
@@ -629,42 +575,40 @@
           <strong>Figure 1: Constitutional adherence accuracy across articles (ConstitutionEval-Ro).</strong> Bars
           depict SPP-Ro (Deliberative), SPP-Ro (Passive), and unaligned control (Base-Ro-125M) with 95% confidence
           intervals across the 6 civic pillars and overall average. Active deliberative routing (<code
-            style="background:#f1f5f9; padding:1px 4px; border-radius:3px;">&lt;assistant&gt;</code>) achieves
+            style="background:#f1f5f9; padding:1px 4px; border-radius:2px;">&lt;assistant&gt;</code>) achieves
           <strong>43.3%</strong> adherence (vs. <strong>23.3%</strong> baseline), delivering substantial gains in gender
           equality (+40.0%), freedom of movement (+40.0%), and press independence (+40.0%).
         </div>
 
-        <!-- Embedded Interactive Sub-Inspector for Figure 1 -->
-        <p class="figure-inspector-note" style="margin-top: 22px;">
-          <strong>Constitutional compliance accuracy by category.</strong>
-          <em>Click on any bar or category label above to inspect definitions and empirical dilemma evaluations with the
-            choices made by each model.</em>
+        <p class="figure-inspector-note">
+          <strong>Constitutional compliance inspection by category:</strong>
+          Click on any bar or category label above to inspect definitions, exact model decisions, and length-normalized likelihood scores.
         </p>
         <div id="fig1-inspector" class="figure-interactive-inspector"></div>
       </div>
 
-      <!-- FIGURE 2: GROUPED BAR CHART FOR AIRISKDILEMMAS-RO -->
-      <div class="figure-box" style="margin-top: 40px;">
-        <div class="figure-header">
+      <!-- FIGURE 2 PLATE: GROUPED BAR CHART FOR AIRISKDILEMMAS-RO -->
+      <div class="figure-plate">
+        <div class="figure-legend-row">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="12">
-              <rect width="18" height="12" fill="#991b1b" rx="2" />
+            <svg width="16" height="10">
+              <rect width="16" height="10" fill="#991b1b" rx="1" />
             </svg>
-            <span style="font-size: 14.5px; font-weight: 600; color: #0f172a;">SPP (Deliberative)</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: #0f172a;">SPP (Deliberative)</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="12">
-              <rect width="18" height="12" fill="#0284c7" rx="2" />
-              <rect width="18" height="12" fill="url(#dotPattern)" rx="2" />
+            <svg width="16" height="10">
+              <rect width="16" height="10" fill="#0284c7" rx="1" />
+              <rect width="16" height="10" fill="url(#dotPattern)" rx="1" />
             </svg>
-            <span style="font-size: 14.5px; font-weight: 600; color: #0f172a;">SPP (Passive)</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: #0f172a;">SPP (Passive)</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="12">
-              <rect width="18" height="12" fill="#475569" rx="2" />
-              <rect width="18" height="12" fill="url(#hatchPattern)" rx="2" />
+            <svg width="16" height="10">
+              <rect width="16" height="10" fill="#475569" rx="1" />
+              <rect width="16" height="10" fill="url(#hatchPattern)" rx="1" />
             </svg>
-            <span style="font-size: 14.5px; font-weight: 600; color: #0f172a;">Vanilla Base</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: #0f172a;">Vanilla Base</span>
           </div>
         </div>
 
@@ -699,18 +643,15 @@
 
             <!-- ================= GROUP 1: Deception vs. Truth Center=150 ================= -->
             <g class="chart-category-group" data-fig="fig2" data-category="air_dec">
-              <!-- SPP Delib = 80% -> y=94, h=196 -->
               <rect x="122" y="94" width="16" height="196" fill="#991b1b" rx="1" />
               <line x1="130" y1="82" x2="130" y2="106" stroke="#1e293b" stroke-width="1" />
               <line x1="127" y1="82" x2="133" y2="82" stroke="#1e293b" stroke-width="1" />
               <line x1="127" y1="106" x2="133" y2="106" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 40% -> y=192, h=98 -->
               <rect x="142" y="192" width="16" height="98" fill="#0284c7" rx="1" />
               <rect x="142" y="192" width="16" height="98" fill="url(#dotPattern)" rx="1" />
               <line x1="150" y1="180" x2="150" y2="204" stroke="#1e293b" stroke-width="1" />
               <line x1="147" y1="180" x2="153" y2="180" stroke="#1e293b" stroke-width="1" />
               <line x1="147" y1="204" x2="153" y2="204" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 20% -> y=241, h=49 -->
               <rect x="162" y="241" width="16" height="49" fill="#475569" rx="1" />
               <rect x="162" y="241" width="16" height="49" fill="url(#hatchPattern)" rx="1" />
               <line x1="170" y1="229" x2="170" y2="253" stroke="#1e293b" stroke-width="1" />
@@ -719,26 +660,21 @@
             </g>
             <!-- X Tick 1 -->
             <g class="x-axis-tick" data-fig="fig2" data-category="air_dec">
-              <rect class="cat-highlight-pill" x="70" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 150 305)" x="150" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Deception vs. Truth</text>
             </g>
 
             <!-- ================= GROUP 2: Power Seeking Center=270 ================= -->
             <g class="chart-category-group" data-fig="fig2" data-category="air_pow">
-              <!-- SPP Delib = 100% -> y=45, h=245 -->
               <rect x="242" y="45" width="16" height="245" fill="#991b1b" rx="1" />
               <line x1="250" y1="35" x2="250" y2="55" stroke="#1e293b" stroke-width="1" />
               <line x1="247" y1="35" x2="253" y2="35" stroke="#1e293b" stroke-width="1" />
               <line x1="247" y1="55" x2="253" y2="55" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 100% -> y=45, h=245 -->
               <rect x="262" y="45" width="16" height="245" fill="#0284c7" rx="1" />
               <rect x="262" y="45" width="16" height="245" fill="url(#dotPattern)" rx="1" />
               <line x1="270" y1="35" x2="270" y2="55" stroke="#1e293b" stroke-width="1" />
               <line x1="267" y1="35" x2="273" y2="35" stroke="#1e293b" stroke-width="1" />
               <line x1="267" y1="55" x2="273" y2="55" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 80% -> y=94, h=196 -->
               <rect x="282" y="94" width="16" height="196" fill="#475569" rx="1" />
               <rect x="282" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1" />
               <line x1="290" y1="82" x2="290" y2="106" stroke="#1e293b" stroke-width="1" />
@@ -747,26 +683,21 @@
             </g>
             <!-- X Tick 2 -->
             <g class="x-axis-tick" data-fig="fig2" data-category="air_pow">
-              <rect class="cat-highlight-pill" x="190" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 270 305)" x="270" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Power Seeking</text>
             </g>
 
             <!-- ================= GROUP 3: Privacy Protection Center=390 ================= -->
             <g class="chart-category-group" data-fig="fig2" data-category="air_prv">
-              <!-- SPP Delib = 100% -> y=45, h=245 -->
               <rect x="362" y="45" width="16" height="245" fill="#991b1b" rx="1" />
               <line x1="370" y1="35" x2="370" y2="55" stroke="#1e293b" stroke-width="1" />
               <line x1="367" y1="35" x2="373" y2="35" stroke="#1e293b" stroke-width="1" />
               <line x1="367" y1="55" x2="373" y2="55" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 100% -> y=45, h=245 -->
               <rect x="382" y="45" width="16" height="245" fill="#0284c7" rx="1" />
               <rect x="382" y="45" width="16" height="245" fill="url(#dotPattern)" rx="1" />
               <line x1="390" y1="35" x2="390" y2="55" stroke="#1e293b" stroke-width="1" />
               <line x1="387" y1="35" x2="393" y2="35" stroke="#1e293b" stroke-width="1" />
               <line x1="387" y1="55" x2="393" y2="55" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 80% -> y=94, h=196 -->
               <rect x="402" y="94" width="16" height="196" fill="#475569" rx="1" />
               <rect x="402" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1" />
               <line x1="410" y1="82" x2="410" y2="106" stroke="#1e293b" stroke-width="1" />
@@ -775,26 +706,21 @@
             </g>
             <!-- X Tick 3 -->
             <g class="x-axis-tick" data-fig="fig2" data-category="air_prv">
-              <rect class="cat-highlight-pill" x="310" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 390 305)" x="390" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Privacy Protection</text>
             </g>
 
-            <!-- ================= GROUP 4: Human Dignity Umană Center=510 ================= -->
+            <!-- ================= GROUP 4: Human Dignity Center=510 ================= -->
             <g class="chart-category-group" data-fig="fig2" data-category="air_dig">
-              <!-- SPP Delib = 60% -> y=143, h=147 -->
               <rect x="482" y="143" width="16" height="147" fill="#991b1b" rx="1" />
               <line x1="490" y1="131" x2="490" y2="155" stroke="#1e293b" stroke-width="1" />
               <line x1="487" y1="131" x2="493" y2="131" stroke="#1e293b" stroke-width="1" />
               <line x1="487" y1="155" x2="493" y2="155" stroke="#1e293b" stroke-width="1" />
-              <!-- SPP Pass = 60% -> y=143, h=147 -->
               <rect x="502" y="143" width="16" height="147" fill="#0284c7" rx="1" />
               <rect x="502" y="143" width="16" height="147" fill="url(#dotPattern)" rx="1" />
               <line x1="510" y1="131" x2="510" y2="155" stroke="#1e293b" stroke-width="1" />
               <line x1="507" y1="131" x2="513" y2="131" stroke="#1e293b" stroke-width="1" />
               <line x1="507" y1="155" x2="513" y2="155" stroke="#1e293b" stroke-width="1" />
-              <!-- Vanilla = 80% -> y=94, h=196 -->
               <rect x="522" y="94" width="16" height="196" fill="#475569" rx="1" />
               <rect x="522" y="94" width="16" height="196" fill="url(#hatchPattern)" rx="1" />
               <line x1="530" y1="82" x2="530" y2="106" stroke="#1e293b" stroke-width="1" />
@@ -803,22 +729,18 @@
             </g>
             <!-- X Tick 4 -->
             <g class="x-axis-tick" data-fig="fig2" data-category="air_dig">
-              <rect class="cat-highlight-pill" x="430" y="293" width="95" height="22" rx="4" fill="#e2e8f0"
-                opacity="0" />
               <text transform="rotate(-30 510 305)" x="510" y="305" font-size="12.5" font-weight="500" fill="#334155"
                 text-anchor="end">Human Dignity</text>
             </g>
 
             <!-- ================= GROUP 5: AVERAGE (Center=665) ================= -->
             <g>
-              <!-- SPP Delib = 85.0% -> y=82, h=208 -->
               <rect x="637" y="82" width="16" height="208" fill="#991b1b" rx="1" />
               <line x1="645" y1="70" x2="645" y2="94" stroke="#1e293b" stroke-width="1" />
               <line x1="642" y1="70" x2="648" y2="70" stroke="#1e293b" stroke-width="1" />
               <line x1="642" y1="94" x2="648" y2="94" stroke="#1e293b" stroke-width="1" />
               <text x="645" y="64" font-size="12" font-weight="700" fill="#991b1b" text-anchor="middle">85.0</text>
 
-              <!-- SPP Pass = 75.0% -> y=106, h=184 -->
               <rect x="657" y="106" width="16" height="184" fill="#0284c7" rx="1" />
               <rect x="657" y="106" width="16" height="184" fill="url(#dotPattern)" rx="1" />
               <line x1="665" y1="94" x2="665" y2="118" stroke="#1e293b" stroke-width="1" />
@@ -826,7 +748,6 @@
               <line x1="662" y1="118" x2="668" y2="118" stroke="#1e293b" stroke-width="1" />
               <text x="665" y="88" font-size="12" font-weight="700" fill="#0284c7" text-anchor="middle">75.0</text>
 
-              <!-- Vanilla = 65.0% -> y=131, h=159 -->
               <rect x="677" y="131" width="16" height="159" fill="#475569" rx="1" />
               <rect x="677" y="131" width="16" height="159" fill="url(#hatchPattern)" rx="1" />
               <line x1="685" y1="119" x2="685" y2="143" stroke="#1e293b" stroke-width="1" />
@@ -834,7 +755,6 @@
               <line x1="682" y1="143" x2="688" y2="143" stroke="#1e293b" stroke-width="1" />
               <text x="685" y="113" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">65.0</text>
 
-              <!-- X Label: Average -->
               <text transform="rotate(-30 665 305)" x="665" y="305" font-size="13" font-weight="700" fill="#0f172a"
                 text-anchor="end">Average</text>
             </g>
@@ -849,21 +769,19 @@
           protection (100.0%).
         </div>
 
-        <!-- Embedded Interactive Sub-Inspector for Figure 2 (Exact EPFL Layout - Image 4) -->
-        <p class="figure-inspector-note" style="margin-top: 22px;">
-          <strong>AI safety dilemma compliance by category.</strong>
-          <em>Click on any bar or category label above to inspect definitions and empirical dilemma evaluations with
-            choices made by each model (as presented in EPFL SPP).</em>
+        <p class="figure-inspector-note">
+          <strong>AI safety compliance inspection by category:</strong>
+          Click on any bar or category label above to inspect definitions and empirical dilemma evaluations with choices made by each model.
         </p>
         <div id="fig2-inspector" class="figure-interactive-inspector"></div>
       </div>
 
-      <!-- Synthesis Grid (Clean Neutral Boxes) -->
-      <div class="card-grid-2" style="margin-top: 28px;">
-        <div class="academic-box">
-          <span class="box-header-tag">Linguistic Stability</span>
-          <h3 style="font-size: 17px; margin-bottom: 8px;">Zero Alignment Tax (Perplexity)</h3>
-          <p style="font-size: 15.5px; line-height: 1.6; color: var(--color-ink-secondary);">
+      <!-- Synthesis Editorial Grid -->
+      <div class="editorial-synthesis-grid">
+        <div class="synthesis-col">
+          <div class="synthesis-meta-label">Linguistic Stability</div>
+          <h3>Zero Alignment Tax (Perplexity)</h3>
+          <p>
             Unlike post-hoc alignment methods (RLHF/DPO) that degrade core linguistic capabilities, asymmetric causal
             attention masking shields standard web text from any interference. On held-out validation corpora, SPP acts
             as a beneficial regularizer:
@@ -871,10 +789,10 @@
             Base).
           </p>
         </div>
-        <div class="academic-box">
-          <span class="box-header-tag">Cross-Lingual Generalization</span>
-          <h3 style="font-size: 17px; margin-bottom: 8px;">Mitigating Cross-Lingual Alignment Disparity</h3>
-          <p style="font-size: 15.5px; line-height: 1.6; color: var(--color-ink-secondary);">
+        <div class="synthesis-col">
+          <div class="synthesis-meta-label">Cross-Lingual Generalization</div>
+          <h3>Mitigating Cross-Lingual Alignment Disparity</h3>
+          <p>
             Unaligned generative models in Romanian exhibit an alignment disparity of &plusmn;14.0% when evaluated with
             parallel probes in English. By integrating normative constitutional principles from token zero, this
             disparity is halved (<strong>&plusmn;6.0%</strong>), confirming deep latent anchoring across multilingual
@@ -883,17 +801,16 @@
         </div>
       </div>
 
-      <!-- Critical Academic Takeaway Box (Clean 1px Border, Neutral) -->
-      <div class="abstract-box" style="margin-top: 32px;">
-        <span class="box-header-tag">Theoretical Insights</span>
-        <h3 style="font-size: 17.5px; font-weight: 700; color: #091e2b; margin-bottom: 10px;">Passive Decoupling vs.
-          Deliberative Routing</h3>
+      <!-- Critical Academic Takeaway -->
+      <div class="editorial-takeaway-block">
+        <div class="takeaway-label">Theoretical Insights</div>
+        <h3>Passive Decoupling vs. Deliberative Routing</h3>
         <p class="abstract-text">
           On passive next-token prediction (passive CrowS-Pairs, 100 pairs), Base-Ro (45.0%) and SPP-Ro (49.0%) display
           comparable log-likelihood distributions. This is an intended mathematical property of the <strong>asymmetric
             attention mask</strong>: natural language modeling over standard web documents remains unperturbed.
           Constitutional steerability is unlocked dynamically when invoking the deliberative persona prefix (<code
-            style="background:#f1f5f9; padding:1px 4px; border-radius:3px;">&lt;assistant&gt;</code>), acting as an
+            style="background:#f1f5f9; padding:1px 4px; border-radius:2px;">&lt;assistant&gt;</code>), acting as an
           internal System-2 ethical reasoning mechanism.
         </p>
       </div>
@@ -904,7 +821,7 @@
       <p>SPP-Ro &bull; Faculty of Mathematics and Computer Science, University of Bucharest</p>
     </footer>
 
-  </div>
+  </main>
 
   <script src="app.js"></script>
 </body>

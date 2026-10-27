@@ -1254,9 +1254,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // ------------------------------------------------------------------------------
 function buildModelBadge(modelKey) {
   if (modelKey === "spp_delib") {
-    return `<span class="model-pick-pill pill-delib">SPP (Deliberative)</span>`;
+    return `<span class="model-pick-pill pill-delib">SPP Deliberative</span>`;
   } else if (modelKey === "spp_pass") {
-    return `<span class="model-pick-pill pill-pass">SPP (Passive)</span>`;
+    return `<span class="model-pick-pill pill-pass">SPP Passive</span>`;
   } else if (modelKey === "vanilla") {
     return `<span class="model-pick-pill pill-vanilla">Vanilla Base</span>`;
   }
@@ -1301,7 +1301,7 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
     if (dilemma.base_chosen === optIdx) chosenModels.push("vanilla");
 
     const badgesHtml = chosenModels.map(buildModelBadge).join(" ");
-    const goldTag = isCompliant ? `<span class="badge-model-pick gold" style="white-space: nowrap !important; display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; padding: 2px 6px; border-radius: 3px;"><span>✓</span> <span>Compliant Standard</span></span>` : "";
+    const goldTag = isCompliant ? `<span class="badge-compliant-tag">Compliant Standard</span>` : "";
 
     const baseScore = dilemma.scores.base[optIdx];
     const delibScore = dilemma.scores.delib[optIdx];
@@ -1311,11 +1311,11 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
         <div class="multi-choice-letter">${opt.letter}</div>
         <div class="multi-choice-body">
           <div class="multi-choice-text">${opt.text}</div>
-          <div class="multi-choice-badges-row" style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
             ${goldTag}
             ${badgesHtml}
           </div>
-          <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 5px;">
+          <div style="font-size: 11.5px; color: #64748b; font-family: var(--font-mono); margin-top: 6px;">
             LL per token: Delib = ${delibScore.toFixed(3)} nats | Base = ${baseScore.toFixed(3)} nats
           </div>
         </div>
@@ -1324,9 +1324,9 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
   }).join("");
 
   container.innerHTML = `
-    <div class="inspector-meta-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <span class="category-badge-pill">${data.tag}</span>
+    <div class="inspector-meta-row">
+      <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+        <span class="category-tag-label">${data.tag}</span>
         <span class="category-definition-text">${data.definition}</span>
       </div>
       <button class="lang-toggle-btn" onclick="toggleFig1Language()">
@@ -1334,13 +1334,11 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
       </button>
     </div>
 
-    <hr class="inspector-dotted-rule">
-
-    <div class="inspector-section-label">EXAMPLE CONSTITUTIONAL DILEMMAS (CONSTITUTIONEVAL-RO)</div>
+    <div class="inspector-section-label">Example Constitutional Dilemmas (ConstitutionEval-Ro)</div>
     <div class="dilemma-pill-row">${dilemmaPillsHtml}</div>
 
     <div class="dilemma-prompt-callout">
-      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">
+      <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">
         ${isRo ? 'Scenariu de Evaluare (Prompt GPU în Limba Română):' : 'Evaluation Scenario (English Formulation):'}
       </div>
       ${scenarioText}
@@ -1350,20 +1348,19 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
       ${optionsHtml}
     </div>
 
-    <div style="margin-top: 14px; font-size: 14.5px; color: var(--color-ink-secondary); line-height: 1.5; background: var(--color-surface-subtle); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
-      <strong style="color: var(--color-ink-primary);">Empirical Analysis &amp; Causal Steering:</strong> ${dilemma.analysis}
+    <div class="inspector-analysis-block">
+      <strong>Empirical Analysis &amp; Causal Steering:</strong> ${dilemma.analysis}
     </div>
 
-    <!-- Proof & Verification Drawer -->
-    <details style="margin-top: 12px; font-size: 13.5px; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 10px 14px;">
-      <summary style="cursor: pointer; font-weight: 600; color: #0f172a;">View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
-      <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; color: #334155;">
+    <details class="inspector-details-drawer">
+      <summary>Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
+      <div class="inspector-details-content">
         <div><strong>Source Artifact:</strong> <code style="background:#f1f5f9; padding:2px 4px;">evals/thesis_constitution_eval_report.json</code></div>
-        <div><strong>Base-Ro-125M Log-Likelihoods:</strong> ${JSON.stringify(dilemma.scores.base)} &rarr; Picked Index ${dilemma.base_chosen}</div>
-        <div><strong>SPP-Ro-Passive Log-Likelihoods:</strong> ${JSON.stringify(dilemma.scores.pass)} &rarr; Picked Index ${dilemma.pass_chosen}</div>
-        <div><strong>SPP-Ro-Deliberative Log-Likelihoods:</strong> ${JSON.stringify(dilemma.scores.delib)} &rarr; Picked Index ${dilemma.delib_chosen} (Compliant: Index ${dilemma.correct_idx})</div>
+        <div><strong>Base-Ro-125M Log-Likelihoods:</strong> ${JSON.stringify(dilemma.scores.base)} (Chosen Index ${dilemma.base_chosen})</div>
+        <div><strong>SPP-Ro-Passive Log-Likelihoods:</strong> ${JSON.stringify(dilemma.scores.pass)} (Chosen Index ${dilemma.pass_chosen})</div>
+        <div><strong>SPP-Ro-Deliberative Log-Likelihoods:</strong> ${JSON.stringify(dilemma.scores.delib)} (Chosen Index ${dilemma.delib_chosen}, Compliant: Index ${dilemma.correct_idx})</div>
         <div style="margin-top: 4px; color: #0f766e;"><strong>Terminal Verification Command:</strong><br>
-          <code style="background:#f8fafc; display:block; padding:4px 6px; border:1px solid #cbd5e1; border-radius:3px; margin-top:3px;">py -c "import json; d=json.load(open('evals/thesis_constitution_eval_report.json', encoding='utf-8')); [print(m, 'pred_idx:', next(x for x in d[m]['constitution_eval']['details'] if x['id']=='${dilemma.id}')['pred_idx'], 'scores:', [round(s, 3) for s in next(x for x in d[m]['constitution_eval']['details'] if x['id']=='${dilemma.id}')['option_scores']]) for m in d]"</code>
+          <code style="background:#f8fafc; display:block; padding:4px 6px; border:1px solid #cbd5e1; border-radius:2px; margin-top:3px;">py -c "import json; d=json.load(open('evals/thesis_constitution_eval_report.json', encoding='utf-8')); [print(m, 'pred_idx:', next(x for x in d[m]['constitution_eval']['details'] if x['id']=='${dilemma.id}')['pred_idx'], 'scores:', [round(s, 3) for s in next(x for x in d[m]['constitution_eval']['details'] if x['id']=='${dilemma.id}')['option_scores']]) for m in d]"</code>
         </div>
       </div>
     </details>
@@ -1373,7 +1370,7 @@ function renderFig1Category(catKey, dilemmaIdx = 0) {
 }
 
 // ------------------------------------------------------------------------------
-// Figure 2 Sub-Inspector (AIRiskDilemmas-Ro - Exact EPFL Layout)
+// Figure 2 Sub-Inspector (AIRiskDilemmas-Ro)
 // ------------------------------------------------------------------------------
 function initFig2SubInspector() {
   renderFig2Category(currentFig2Cat, currentFig2DilemmaIdx);
@@ -1407,9 +1404,9 @@ function renderFig2Category(catKey, dilemmaIdx = 0) {
   const riskyBadges = dilemma.risky_chosen_by.map(buildModelBadge).join(" ");
 
   container.innerHTML = `
-    <div class="inspector-meta-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <span class="category-badge-pill">${data.tag}</span>
+    <div class="inspector-meta-row">
+      <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+        <span class="category-tag-label">${data.tag}</span>
         <span class="category-definition-text">${data.definition}</span>
       </div>
       <button class="lang-toggle-btn" onclick="toggleFig2Language()">
@@ -1417,59 +1414,54 @@ function renderFig2Category(catKey, dilemmaIdx = 0) {
       </button>
     </div>
 
-    <hr class="inspector-dotted-rule">
-
-    <div class="inspector-section-label">EXAMPLE AI RISK DILEMMAS (AIRISKDILEMMAS-RO)</div>
+    <div class="inspector-section-label">Example AI Risk Dilemmas (AIRiskDilemmas-Ro)</div>
     <div class="dilemma-pill-row">${dilemmaPillsHtml}</div>
 
     <div class="dilemma-prompt-callout">
-      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">
+      <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">
         ${isRo ? 'Scenariu de Evaluare (Prompt GPU în Limba Română):' : 'Evaluation Scenario (English Formulation):'}
       </div>
       ${scenarioText}
     </div>
 
-    <!-- Side-by-Side Binary Choice Cards (Matching Image 4) -->
+    <!-- Flush 2-Column Split for Binary Choices -->
     <div class="binary-choices-grid">
-      <!-- Safe Aligned Card -->
-      <div class="binary-choice-card" style="border-color: #86efac; background: #ffffff;">
-        <span class="choice-badge-header safe">SAFE / ALIGNED CHOICE</span>
+      <div class="binary-choice-card">
+        <div class="choice-column-header safe">Safe / Aligned Choice</div>
         <div class="binary-choice-text">${alignedText}</div>
         <div class="chosen-by-block">
           ${alignedBadges || '<span style="font-size:11px;color:#94a3b8;">None</span>'}
         </div>
-        <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
+        <div style="font-size: 11.5px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
           Score: Delib = ${dilemma.scores.delib.aligned.toFixed(3)} | Base = ${dilemma.scores.base.aligned.toFixed(3)}
         </div>
       </div>
 
-      <!-- Risky Card -->
-      <div class="binary-choice-card" style="border-color: #fca5a5; background: #ffffff;">
-        <span class="choice-badge-header risky">RISKY / MISALIGNED CHOICE</span>
+      <div class="binary-choice-card">
+        <div class="choice-column-header risky">Risky / Misaligned Choice</div>
         <div class="binary-choice-text">${riskyText}</div>
         <div class="chosen-by-block">
           ${riskyBadges || '<span style="font-size:11px;color:#94a3b8;">None</span>'}
         </div>
-        <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
+        <div style="font-size: 11.5px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
           Score: Delib = ${dilemma.scores.delib.risky.toFixed(3)} | Base = ${dilemma.scores.base.risky.toFixed(3)}
         </div>
       </div>
     </div>
 
-    <div style="margin-top: 14px; font-size: 14.5px; color: var(--color-ink-secondary); line-height: 1.5; background: var(--color-surface-subtle); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
-      <strong style="color: var(--color-ink-primary);">Empirical Analysis &amp; Causal Steering:</strong> ${dilemma.analysis}
+    <div class="inspector-analysis-block">
+      <strong>Empirical Analysis &amp; Causal Steering:</strong> ${dilemma.analysis}
     </div>
 
-    <!-- Proof & Verification Drawer -->
-    <details style="margin-top: 12px; font-size: 13.5px; color: #475569; background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 10px 14px;">
-      <summary style="cursor: pointer; font-weight: 600; color: #0f172a;">View Exact Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
-      <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55; color: #334155;">
+    <details class="inspector-details-drawer">
+      <summary>Verification Proof &amp; Tensor Data (${dilemma.id})</summary>
+      <div class="inspector-details-content">
         <div><strong>Source Artifact:</strong> <code style="background:#f1f5f9; padding:2px 4px;">evals/thesis_constitution_eval_report.json</code></div>
-        <div><strong>Base-Ro-125M:</strong> Aligned = ${dilemma.scores.base.aligned}, Risky = ${dilemma.scores.base.risky} &rarr; ${dilemma.scores.base.risky > dilemma.scores.base.aligned ? 'Picked RISKY (Failure)' : 'Picked ALIGNED (Pass)'}</div>
+        <div><strong>Base-Ro-125M:</strong> Aligned = ${dilemma.scores.base.aligned}, Risky = ${dilemma.scores.base.risky} (${dilemma.scores.base.risky > dilemma.scores.base.aligned ? 'Chosen RISKY / Failure' : 'Chosen ALIGNED / Pass'})</div>
         <div><strong>SPP-Ro-Passive:</strong> Aligned = ${dilemma.scores.pass.aligned}, Risky = ${dilemma.scores.pass.risky}</div>
-        <div><strong>SPP-Ro-Deliberative:</strong> Aligned = ${dilemma.scores.delib.aligned}, Risky = ${dilemma.scores.delib.risky} &rarr; ${dilemma.scores.delib.aligned > dilemma.scores.delib.risky ? 'Picked ALIGNED (Safe Pass)' : 'Picked RISKY'}</div>
+        <div><strong>SPP-Ro-Deliberative:</strong> Aligned = ${dilemma.scores.delib.aligned}, Risky = ${dilemma.scores.delib.risky} (${dilemma.scores.delib.aligned > dilemma.scores.delib.risky ? 'Chosen ALIGNED / Safe Pass' : 'Chosen RISKY'})</div>
         <div style="margin-top: 4px; color: #0f766e;"><strong>Terminal Verification Command:</strong><br>
-          <code style="background:#f8fafc; display:block; padding:4px 6px; border:1px solid #cbd5e1; border-radius:3px; margin-top:3px;">py -c "import json; d=json.load(open('evals/thesis_constitution_eval_report.json', encoding='utf-8')); [print(m, 'is_correct:', next(x for x in d[m]['airisk_dilemmas']['details'] if x['id']=='${dilemma.id}')['is_correct'], 'aligned:', round(next(x for x in d[m]['airisk_dilemmas']['details'] if x['id']=='${dilemma.id}')['ll_aligned'], 3), 'risky:', round(next(x for x in d[m]['airisk_dilemmas']['details'] if x['id']=='${dilemma.id}')['ll_risky'], 3)) for m in d]"</code>
+          <code style="background:#f8fafc; display:block; padding:4px 6px; border:1px solid #cbd5e1; border-radius:2px; margin-top:3px;">py -c "import json; d=json.load(open('evals/thesis_constitution_eval_report.json', encoding='utf-8')); [print(m, 'is_correct:', next(x for x in d[m]['airisk_dilemmas']['details'] if x['id']=='${dilemma.id}')['is_correct'], 'aligned:', round(next(x for x in d[m]['airisk_dilemmas']['details'] if x['id']=='${dilemma.id}')['ll_aligned'], 3), 'risky:', round(next(x for x in d[m]['airisk_dilemmas']['details'] if x['id']=='${dilemma.id}')['ll_risky'], 3)) for m in d]"</code>
         </div>
       </div>
     </details>
@@ -1549,21 +1541,23 @@ function renderArticleData(key) {
   if (!pane || !data) return;
 
   pane.innerHTML = `
-    <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-      <span style="font-size: 15px; font-weight: 600; color: #1e293b;">${data.tag}</span>
-      <span style="font-size: 13.5px; font-weight: 600; color: #475569; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 3px 10px; border-radius: 4px;">Safety Score: ${data.safety_score}/5</span>
+    <div class="sidecar-browser-header">
+      <span class="category-tag-label">${data.tag}</span>
+      <span class="category-definition-text" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-ink-muted);">Severity Calibration: Score ${data.safety_score}/5</span>
     </div>
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px; font-size: 15.5px; line-height: 1.6; color: var(--color-ink-primary);">
-      <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 6px;">Web Document Pre-text (Original Romanian Pretraining Corpus):</div>
-      "${data.sample_text}"
-    </div>
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px; font-size: 15.5px; line-height: 1.6; color: var(--color-ink-primary);">
-      <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #334155; margin-bottom: 6px;">First-Person Deliberation (reflection_1p - Romanian):</div>
-      "${data.reflection_1p}"
-    </div>
-    <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px; font-size: 15.5px; line-height: 1.6; color: var(--color-ink-primary);">
-      <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #334155; margin-bottom: 6px;">Objective Civic Voice (reflection_3p - Romanian):</div>
-      "${data.reflection_3p}"
+    <div class="reflection-pane-container">
+      <div class="reflection-entry-block">
+        <div class="reflection-entry-label">Web Document Pre-text (Original Romanian Pretraining Corpus)</div>
+        <div class="reflection-entry-text">"${data.sample_text}"</div>
+      </div>
+      <div class="reflection-entry-block accent">
+        <div class="reflection-entry-label">First-Person Deliberation (reflection_1p / Romanian)</div>
+        <div class="reflection-entry-text">"${data.reflection_1p}"</div>
+      </div>
+      <div class="reflection-entry-block">
+        <div class="reflection-entry-label">Objective Civic Voice (reflection_3p / Romanian)</div>
+        <div class="reflection-entry-text">"${data.reflection_3p}"</div>
+      </div>
     </div>
   `;
 }
@@ -1638,18 +1632,18 @@ function renderFullCEDilemma(item) {
     if (item.base_chosen === optIdx) chosenModels.push("vanilla");
 
     const badges = chosenModels.map(buildModelBadge).join(" ");
-    const goldTag = isCompliant ? `<span class="badge-model-pick gold" style="white-space: nowrap !important; display: inline-flex; align-items: center; gap: 4px;"><span>✓</span> <span>Compliant Standard</span></span>` : "";
+    const goldTag = isCompliant ? `<span class="badge-compliant-tag">Compliant Standard</span>` : "";
 
     optionsHtml += `
-      <div class="dilemma-option-card ${isCompliant ? 'is-compliant' : ''}">
-        <div class="dilemma-option-letter">${opt.letter}</div>
-        <div class="dilemma-option-content">
-          <div class="dilemma-option-text">${opt.text}</div>
-          <div class="dilemma-badges-row" style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+      <div class="multi-choice-inspector-item ${isCompliant ? 'is-gold' : ''}">
+        <div class="multi-choice-letter">${opt.letter}</div>
+        <div class="multi-choice-body">
+          <div class="multi-choice-text">${opt.text}</div>
+          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
             ${goldTag}
             ${badges}
           </div>
-          <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
+          <div style="font-size: 11.5px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
             LL per token: Delib = ${item.scores.delib[optIdx].toFixed(3)} | Base = ${item.scores.base[optIdx].toFixed(3)}
           </div>
         </div>
@@ -1663,12 +1657,12 @@ function renderFullCEDilemma(item) {
         ${isRo ? 'Switch to English' : 'View Original Romanian Prompt & Options'}
       </button>
     </div>
-    <div class="dilemma-scenario-box">
-      <div class="dilemma-article-tag">${item.id} &bull; ${item.short_title}</div>
-      <div class="dilemma-scenario-text"><strong>Scenario:</strong> ${scenarioText}</div>
+    <div class="dilemma-prompt-callout">
+      <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">${item.id} &bull; ${item.short_title}</div>
+      <div><strong>Scenario:</strong> ${scenarioText}</div>
     </div>
-    <div class="dilemma-options-list">${optionsHtml}</div>
-    <div class="dilemma-analysis-rationale">
+    <div class="multi-choice-inspector-list">${optionsHtml}</div>
+    <div class="inspector-analysis-block">
       <strong>Model Decision Analysis:</strong> ${item.analysis}
     </div>
   `;
@@ -1692,33 +1686,33 @@ function renderFullAIRiskDilemma(item) {
         ${isRo ? 'Switch to English' : 'View Original Romanian Prompt & Options'}
       </button>
     </div>
-    <div class="dilemma-scenario-box">
-      <div class="dilemma-article-tag">${item.id} &bull; ${item.short_title}</div>
-      <div class="dilemma-scenario-text"><strong>AI Safety Dilemma Scenario:</strong> ${scenarioText}</div>
+    <div class="dilemma-prompt-callout">
+      <div style="font-family: var(--font-mono); font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 4px;">${item.id} &bull; ${item.short_title}</div>
+      <div><strong>AI Safety Dilemma Scenario:</strong> ${scenarioText}</div>
     </div>
     <div class="binary-choices-grid">
-      <div class="binary-choice-card" style="border-color: #86efac;">
-        <span class="choice-badge-header safe">SAFE / ALIGNED CHOICE</span>
+      <div class="binary-choice-card">
+        <div class="choice-column-header safe">Safe / Aligned Choice</div>
         <div class="binary-choice-text">${alignedText}</div>
         <div class="chosen-by-block">
           ${alignedBadges || '<span style="font-size:11px;color:#94a3b8;">None</span>'}
         </div>
-        <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
+        <div style="font-size: 11.5px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
           Score: Delib = ${item.scores.delib.aligned.toFixed(3)} | Base = ${item.scores.base.aligned.toFixed(3)}
         </div>
       </div>
-      <div class="binary-choice-card" style="border-color: #fca5a5;">
-        <span class="choice-badge-header risky">RISKY / MISALIGNED CHOICE</span>
+      <div class="binary-choice-card">
+        <div class="choice-column-header risky">Risky / Misaligned Choice</div>
         <div class="binary-choice-text">${riskyText}</div>
         <div class="chosen-by-block">
           ${riskyBadges || '<span style="font-size:11px;color:#94a3b8;">None</span>'}
         </div>
-        <div style="font-size: 11px; color: #64748b; font-family: var(--font-sans); margin-top: 4px;">
+        <div style="font-size: 11.5px; color: #64748b; font-family: var(--font-mono); margin-top: 4px;">
           Score: Delib = ${item.scores.delib.risky.toFixed(3)} | Base = ${item.scores.base.risky.toFixed(3)}
         </div>
       </div>
     </div>
-    <div class="dilemma-analysis-rationale" style="margin-top: 14px;">
+    <div class="inspector-analysis-block">
       <strong>Model Decision Analysis:</strong> ${item.analysis}
     </div>
   `;
