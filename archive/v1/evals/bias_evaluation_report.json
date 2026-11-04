@@ -1,7 +1,7 @@
 [
   {
-    "model": "Base-Ro-125M",
-    "type": "Causal LM (125M)",
+    "model": "Base-Ro-88M",
+    "type": "Causal LM (88M)",
     "spm_ro": 45.0,
     "spm_en": 31.0,
     "cross_lingual_gap": 14.0,
@@ -1825,8 +1825,8 @@
     ]
   },
   {
-    "model": "SPP-Ro-125M",
-    "type": "Causal LM (125M)",
+    "model": "SPP-Ro-88M",
+    "type": "Causal LM (88M)",
     "spm_ro": 49.0,
     "spm_en": 43.0,
     "cross_lingual_gap": 6.0,

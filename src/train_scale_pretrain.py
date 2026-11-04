@@ -1,5 +1,5 @@
 """
-Scale Pre-training Engine for Romanian Generative LLM (~124.8M Parameters)
+Scale Pre-training Engine for Romanian Generative LLM (~88.1M Parameters)
 Tuned for 2-3 Days per Model on NVIDIA GeForce RTX 3060 (12GB VRAM).
 
 Features:
@@ -15,6 +15,7 @@ import time
 import math
 import datetime
 import argparse
+import hashlib
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
@@ -52,6 +53,9 @@ try:
         SIDECAR_DIR,
         BASE_MODEL_DIR,
         SPP_MODEL_DIR,
+        SPP_20PCT_MODEL_DIR,
+        FILTERED_MODEL_DIR,
+        SIDECAR_V2_FILE,
         ModelConfig,
         HardwareAndTrainingConfig,
     )
@@ -63,10 +67,48 @@ except ImportError:
         SIDECAR_DIR,
         BASE_MODEL_DIR,
         SPP_MODEL_DIR,
+        SPP_20PCT_MODEL_DIR,
+        FILTERED_MODEL_DIR,
+        SIDECAR_V2_FILE,
         ModelConfig,
         HardwareAndTrainingConfig,
     )
     from src.spp_collator import DataCollatorForSPP
+
+
+class _Tee:
+    """Mirror a stream to a log file. tqdm progress updates (chunks ending in \r) are shown on the
+    console but not written to the file, so the log keeps only real lines (reports, checkpoints)."""
+    def __init__(self, stream, fh):
+        self._stream, self._fh = stream, fh
+
+    def write(self, data):
+        try:
+            self._stream.write(data)
+        except Exception:
+            pass
+        if "\n" in data or "\r" not in data:
+            self._fh.write(data.replace("\r", ""))
+            self._fh.flush()
+        return len(data)
+
+    def flush(self):
+        try:
+            self._stream.flush()
+        except Exception:
+            pass
+        self._fh.flush()
+
+    def __getattr__(self, name):
+        return getattr(self._stream, name)
+
+
+def install_tee(log_path: Path):
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    fh = open(log_path, "a", encoding="utf-8", buffering=1)
+    fh.write(f"\n===== session start {datetime.datetime.now():%Y-%m-%d %H:%M:%S} =====\n")
+    sys.stdout = _Tee(sys.stdout, fh)
+    sys.stderr = _Tee(sys.stderr, fh)
 
 
 class HourlyLiveProgressCallback(TrainerCallback):
@@ -148,7 +190,8 @@ class HourlyLiveProgressCallback(TrainerCallback):
             eta_str = f"{eta_hours}h {eta_mins}m"
 
         print("\n" + "-" * 70, flush=True)
-        print(f"[Raport #{self.report_counter}] Pas: {current_step:,}/{self.total_target_steps:,} ({pct_done:.1f}%) | ETA: {eta_str}", flush=True)
+        finish_at = (datetime.datetime.now() + datetime.timedelta(seconds=eta_seconds)).strftime("%a %d.%m %H:%M")
+        print(f"[Raport #{self.report_counter} | {datetime.datetime.now():%H:%M:%S}] Pas: {current_step:,}/{self.total_target_steps:,} ({pct_done:.1f}%) | ETA: {eta_str} (gata ~{finish_at})", flush=True)
         print(f"Tokeni: {total_billions:.2f}B ({total_tokens_learned:,}) | Viteza: {tokens_per_sec:,.0f} tok/s ({sec_per_step:.2f}s/step)", flush=True)
         print(f"VRAM: {vram_str} | Loss: {self.latest_loss:.4f} | PPL: {ppl_str}" if self.latest_loss else f"VRAM: {vram_str}", flush=True)
         if self.latest_lr:
@@ -180,6 +223,9 @@ class HourlyLiveProgressCallback(TrainerCallback):
             print(f"[Generare omisa: {e}]", flush=True)
         print("-" * 70 + "\n", flush=True)
 
+    def on_save(self, args, state, control, **kwargs):
+        print(f"\n[Checkpoint | {datetime.datetime.now():%H:%M:%S}] salvat la pasul {state.global_step:,} in {args.output_dir}", flush=True)
+
     def on_step_end(self, args, state, control, model=None, **kwargs):
         current_time = time.time()
         if (current_time - self.last_report_time) >= self.interval_seconds:
@@ -189,16 +235,16 @@ class HourlyLiveProgressCallback(TrainerCallback):
 
 
 class VanillaCausalDataCollator:
+    """Plain next-token collator. Items may carry mask_loss=True (Filtered baseline): the whole
+    sequence stays in the batch as context but contributes no loss (labels = -100)."""
     def __init__(self, tokenizer, max_length: int = 1024):
         self.tokenizer = tokenizer
         self.max_length = max_length
 
     def __call__(self, features: List[Dict[str, Any]]) -> Dict[str, torch.Tensor]:
-        batch_texts = []
+        batch_texts, mask_flags = [], []
         for f in features:
-            if isinstance(f, str):
-                batch_texts.append(f)
-            elif isinstance(f, dict):
+            if isinstance(f, dict):
                 if "text" in f:
                     batch_texts.append(f["text"])
                 elif "pre_text" in f:
@@ -206,84 +252,137 @@ class VanillaCausalDataCollator:
                 else:
                     str_vals = [v for v in f.values() if isinstance(v, str)]
                     batch_texts.append(str_vals[0] if str_vals else "")
+                mask_flags.append(bool(f.get("mask_loss", False)))
             else:
                 batch_texts.append(str(f))
+                mask_flags.append(False)
 
-        batch_enc = self.tokenizer(
-            batch_texts,
-            truncation=True,
-            max_length=self.max_length,
-            padding="max_length",
-            return_tensors="pt",
-        )
+        batch_enc = self.tokenizer(batch_texts, truncation=True, max_length=self.max_length, padding="max_length", return_tensors="pt")
         input_ids = batch_enc["input_ids"]
         labels = input_ids.clone()
         pad_id = self.tokenizer.pad_token_id or self.tokenizer.eos_token_id or 0
         labels[labels == pad_id] = -100
-        return {
-            "input_ids": input_ids,
-            "attention_mask": batch_enc["attention_mask"],
-            "labels": labels,
-        }
+        for i, m in enumerate(mask_flags):
+            if m:
+                labels[i, :] = -100
+        if (labels != -100).sum() == 0:            # degenerate all-masked batch: keep one token to avoid NaN
+            labels[0, :2] = input_ids[0, :2]
+        return {"input_ids": input_ids, "attention_mask": batch_enc["attention_mask"], "labels": labels}
 
 
 class StreamingParquetDataset(IterableDataset):
     """
-    Streaming dataset that reads Parquet row-groups on the fly.
-    Uses < 100 MB of RAM regardless of whether the corpus is 1 GB or 100 GB.
+    Streams the corpus row-group by row-group (< 100 MB RAM).
+
+    mode='base'     : plain documents.
+    mode='spp'      : legacy (v1): with probability spp_ratio an EXTRA synthetic sidecar item replaces a document;
+                      inline=True (v2): documents whose doc_key appears in the sidecar are REPLACED by their
+                      annotated version (data-matched with Base: same documents, same count).
+    mode='filtered' : paper's Filtered baseline: documents with severity >= 3 in the v2 sidecar are kept in the
+                      batch but loss-masked.
     """
-    def __init__(self, parquet_path: Path, mode: str = "base", spp_sidecar_path: Optional[Path] = None):
+    def __init__(self, parquet_path: Path, mode: str = "base", spp_sidecar_path: Optional[Path] = None,
+                 spp_ratio: float = 0.10, snap_insertion: bool = False, inline: bool = False,
+                 mt_annotated_ratio: float = 0.0):
         self.parquet_path = parquet_path
         self.mode = mode
-        self.spp_items = []
-        if mode == "spp" and spp_sidecar_path and spp_sidecar_path.exists():
+        self.spp_ratio = spp_ratio
+        self.snap_insertion = snap_insertion
+        self.inline = inline
+        # Paper's midtraining stream (SPP{MT}): the annotated documents are up-weighted to this fraction of the
+        # sequences (EPFL run 5: ANNOTATED_WEIGHT 0.6758); the rest are plain, non-annotated corpus documents.
+        # 0 = natural rate (inline replacement only), used for SPP{T0}.
+        self.mt_annotated_ratio = mt_annotated_ratio
+        self.spp_items: List[Dict[str, str]] = []
+        self.inline_map: Dict[str, Dict[str, str]] = {}
+        self.harmful_keys = set()
+        if mode in ("spp", "filtered") and spp_sidecar_path and spp_sidecar_path.exists():
             import random
             df_refl = pd.read_parquet(spp_sidecar_path)
-            print(f"[SPP] Loaded {len(df_refl):,} constitutional reflection traces from sidecar.")
-            for _, row in df_refl.iterrows():
-                text = row["text"]
-                pos = int(row["reflection_char_position"])
-                self.spp_items.append({
-                    "pre_text": text[:pos],
-                    "reflection": row["reflection_text"],
-                    "post_text": text[pos:],
-                })
-            # Deterministic shuffle to ensure uniform ethical and factual distribution across all training steps
-            random.seed(42)
-            random.shuffle(self.spp_items)
-            print(f"[SPP] Shuffled {len(self.spp_items):,} reflections with seed=42 for uniform mixing across all 10,000 steps.")
+            print(f"[SPP] Loaded {len(df_refl):,} reflection records from {spp_sidecar_path.name}.")
+            if inline or mode == "filtered":
+                if "doc_key" not in df_refl.columns:
+                    raise ValueError("inline/filtered modes need a v2 sidecar with a doc_key column (generate_reflections_v2.py).")
+                for row in df_refl.itertuples(index=False):
+                    text = row.text
+                    pos = self._snap(text, int(row.reflection_char_position)) if snap_insertion else int(row.reflection_char_position)
+                    self.inline_map[row.doc_key] = {"pre_text": text[:pos], "reflection": row.reflection_text, "post_text": text[pos:]}
+                    # Filtered baseline: the CLASSIFIER defines the harmful set (as in the paper) when the
+                    # v2 sidecar carries clf_flag; otherwise fall back to the annotator's severity >= 3.
+                    flag = getattr(row, "clf_flag", -1)
+                    harmful = (int(flag) == 1) if (flag is not None and int(flag) >= 0) else (int(getattr(row, "severity", 0)) >= 3)
+                    if harmful:
+                        self.harmful_keys.add(row.doc_key)
+                print(f"[SPP] inline map: {len(self.inline_map):,} annotated documents, {len(self.harmful_keys):,} with severity >= 3.")
+            else:
+                for _, row in df_refl.iterrows():
+                    text = row["text"]
+                    pos = self._snap(text, int(row["reflection_char_position"])) if snap_insertion else int(row["reflection_char_position"])
+                    self.spp_items.append({"pre_text": text[:pos], "reflection": row["reflection_text"], "post_text": text[pos:]})
+                random.seed(42)
+                random.shuffle(self.spp_items)
+                print(f"[SPP] legacy sidecar mode: {len(self.spp_items):,} items shuffled (seed 42), ratio {spp_ratio:.2f}.")
+
+    @staticmethod
+    def _snap(text: str, pos: int) -> int:
+        while 0 < pos < len(text) and not text[pos].isspace() and not text[pos - 1].isspace():
+            pos += 1
+        return pos
+
+    @staticmethod
+    def doc_key(text: str) -> str:
+        return hashlib.md5(text.strip()[:200].encode("utf-8")).hexdigest()
 
     def __iter__(self):
         import pyarrow.parquet as pq
         import random
-        
         pf = pq.ParquetFile(str(self.parquet_path))
         num_rgs = pf.num_row_groups
         spp_idx = 0
-        
-        # Infinite generator loop to supply batches continuously until max_steps is reached
+        ann_items: List[Dict[str, str]] = []
+        if self.mode == "spp" and self.inline and self.mt_annotated_ratio > 0:
+            ann_items = list(self.inline_map.values())
+            random.Random(42).shuffle(ann_items)
         while True:
             rg_order = list(range(num_rgs))
             random.shuffle(rg_order)
             for rg in rg_order:
-                table = pf.read_row_group(rg, columns=["text"])
-                texts = table["text"].to_pylist()
+                texts = pf.read_row_group(rg, columns=["text"])["text"].to_pylist()
                 random.shuffle(texts)
                 for t in texts:
-                    if t and len(t) >= 150:
-                        # Exact 10% interleaving frequency (alpha = 0.10, EPFL-dlab SPP invariant)
-                        if self.mode == "spp" and self.spp_items and random.random() < 0.10:
-                            yield self.spp_items[spp_idx % len(self.spp_items)]
+                    if not t or len(t) < 150:
+                        continue
+                    if self.mode == "spp" and self.inline and ann_items:
+                        # MT stream: annotated documents at mt_annotated_ratio (cycled, shuffled), plain documents otherwise
+                        if random.random() < self.mt_annotated_ratio:
+                            yield ann_items[spp_idx % len(ann_items)]
                             spp_idx += 1
-                        else:
+                        elif self.doc_key(t) not in self.inline_map:
                             yield {"text": t}
+                        continue
+                    if self.mode == "spp" and self.inline:
+                        item = self.inline_map.get(self.doc_key(t))
+                        yield item if item is not None else {"text": t}
+                    elif self.mode == "filtered":
+                        yield {"text": t, "mask_loss": self.doc_key(t) in self.harmful_keys}
+                    elif self.mode == "spp" and self.spp_items and random.random() < self.spp_ratio:
+                        yield self.spp_items[spp_idx % len(self.spp_items)]
+                        spp_idx += 1
+                    else:
+                        yield {"text": t}
 
 
-def generate_spp_model_card(output_dir: Path, total_steps: int, loss: Optional[float] = None, ppl: Optional[float] = None):
-    """Generates a rich, publication-grade Hugging Face Model Card for SPP-Ro-125M."""
-    loss_str = f"{loss:.4f}" if loss is not None else "3.0113"
-    ppl_str = f"{ppl:.2f}" if ppl is not None else "20.31"
-    
+def generate_spp_model_card(output_dir: Path, total_steps: int, loss: Optional[float] = None, ppl: Optional[float] = None,
+                            n_params: Optional[int] = None, mode: str = "spp", spp_ratio: float = 0.10,
+                            variant_note: str = ""):
+    """Hugging Face model card with values computed from the actual run (no hard-coded numbers)."""
+    loss_str = f"{loss:.4f}" if loss is not None else "n/a"
+    ppl_str = f"{ppl:.2f}" if ppl is not None else "n/a"
+    params_str = f"{n_params:,} (~{n_params/1e6:.1f}M)" if n_params else "88,099,584 (~88.1M)"
+    positions = total_steps * 64 * 1024
+    name = {"base": "Base-Ro-88M", "spp": "SPP-Ro-88M", "filtered": "Filtered-Ro-88M"}.get(mode, "SPP-Ro-88M")
+    if mode == "spp" and abs(spp_ratio - 0.20) < 1e-4:
+        name += "-20pct"
     card_content = f"""---
 language:
 - ro
@@ -294,102 +393,43 @@ tags:
 - llama
 - causal-lm
 - from-scratch
-- token-zero
 - synthetic-persona-pretraining
-- constitutional-ai
-widget:
-- text: "În România contemporană, egalitatea de șanse între cetățeni"
-- text: "Drepturile fundamentale ale omului garantate de Constituția României prevăd"
-- text: "Comunitățile multiculturale din Transilvania și Dobrogea reprezintă"
 ---
 
-# SPP-Ro-125M: Romanian Constitutional Language Model (Token Zero)
+# {name}: model de limbaj românesc preantrenat de la zero{" cu Synthetic Persona Pretraining" if mode == "spp" else " (control)"}
 
-`SPP-Ro-125M` este un model generativ de limbaj de 124.8M parametri bazat pe arhitectura **LLaMA**, preantrenat **de la pasul zero ("Token Zero")** pe text web în limba română întrepătruns cu **Synthetic Persona Pretraining (SPP)**, conform metodologiei dezvoltate la EPFL-dlab (*West et al., 2024/2026*).
+Model decoder de tip LLaMA cu **{params_str} parametri**, preantrenat de la zero pe text românesc
+(FineWeb-2 RO, Wikipedia RO, presă) pentru teza de licență *Alinierea modelelor de limbaj în limba română
+din faza de preantrenare prin Synthetic Persona Pretraining* (FMI, Universitatea din București), după
+metodologia Minder et al., 2026 (arXiv:2608.13482). {variant_note}
 
-Modelul a fost dezvoltat ca obiect de cercetare experimentală centrală pentru teza de licență:
-> **„Alinierea Modelelor de Limbaj în Limba Română direct din faza de Preantrenare folosind Tehnica Synthetic Persona Pretraining (SPP)”**  
-> Facultatea de Matematică și Informatică, Universitatea din București.
+## Antrenare
+* Pași de optimizare: {total_steps:,}; batch efectiv 64 secvențe x 1.024 poziții = {positions:,} poziții (inclusiv padding; secvențele nu sunt împachetate, deci numărul de tokeni efectivi este aproximativ jumătate).
+* {"Interleaving SPP: " + f"{spp_ratio*100:.0f}% din secvențe sunt documente cu reflecție constituțională la persoana I, precedată de tokenul <assistant>, cu blocarea atenției post-reflecție și aliasing RoPE." if mode == "spp" else "Fără reflecții (control)."}
+* Hardware: o singură placă NVIDIA RTX 3060 12GB, bf16.
+* Ultimul loss de antrenare raportat: {loss_str} (perplexitate {ppl_str}).
 
----
-
-## Inovația Teoretică: Preantrenarea Constituțională din Token Zero
-
-Spre deosebire de alinierea convențională post-hoc (precum RLHF, DPO sau adaptori LoRA superficiali), `SPP-Ro-125M` integrează raționamentul constituțional **direct în timpul preantrenării**:
-1. **Flux de Deliberare Constituțională (10% Interleaving):** 10% din secvențele de preantrenare conțin reflexii etice sintetice bazate pe **Constituția României (§1.1–§2.3)** și Carta Drepturilor Fundamentale a UE.
-2. **Causal Attention Blocking:** Tokenii de document ulteriori reflexiei nu pot acorda atenție tokenilor din reflecție, păstrând neschimbată capacitatea de modelare a limbii umane fără a forța generarea de reflecții la runtime.
-3. **RoPE Position Aliasing:** Indicii de poziție ai textului posterior se resetează relativ la prefix, garantând zero distorsiune de context temporal.
-4. **Paritate Etică Strictă 50/50:** Datasetul conține 50% situații sensibile (Scoruri 1-3) și 50% pasaje factuale consistente (Scoruri 4-5) pentru a preveni fenomenul de *Alignment Tax*.
-
----
-
-## Arhitectură Hardware & Model
-
+## Arhitectură
 | Parametru | Valoare |
 | :--- | :--- |
-| **Arhitectură** | LLaMA Causal Decoder (`LlamaForCausalLM`) |
-| **Parametri** | 124,789,248 (~124.8M) |
-| **Dimensiune Ascunsă ($d_{{model}}$)** | 768 |
-| **Dimensiune Intermediară (SwiGLU)** | 2,048 |
-| **Straturi de Atenție** | 12 |
-| **Atenție** | Grouped-Query Attention (GQA 3:1) — 12 Query heads / 4 Key-Value heads |
-| **Poziționare** | Rotary Position Embedding (RoPE, $\\theta = 10.000$) |
-| **Normalizare** | RMSNorm ($\\epsilon = 10^{{-5}}$) |
-| **Fereastră Context** | 1,024 tokeni |
-| **Vocabular** | 16,384 Byte-Pair Encoding (BPE) dedicat limbii române (`ro_bpe_16k`) |
+| Parametri | {params_str} |
+| hidden / intermediate | 768 / 2048 (SwiGLU) |
+| Straturi | 12, GQA 12 Q / 4 KV |
+| Context | 1.024 tokeni, RoPE theta 10.000 |
+| Vocabular | 16.384 BPE (ro_bpe_16k), embedding legat |
 
----
-
-## Metrici de Antrenare
-
-* **Volum Date Antrenare:** ~655,360,000 tokeni ({total_steps:,} pași cu effective batch size 64 $\\times$ 1,024 context).
-* **Hardware:** Single NVIDIA GeForce RTX 3060 12GB GDDR6 (BF16 / SDPA).
-* **Loss Final:** `{loss_str}` | **Perplexitate:** `{ppl_str}`.
-* **Alignment Tax:** Demonstrează **Zero Alignment Tax** (perplexitatea pe corpusul general românesc este identică cu cea a modelului nealiniat).
-
----
-
-## Utilizare cu Transformers
-
+## Utilizare
 ```python
-import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_id = "flaviussteff/spp-ro-125m"
-
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
-    device_map="auto",
-)
-
-prompt = "În România contemporană, demnitatea fiecărui cetățean"
-inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-
-outputs = model.generate(
-    **inputs,
-    max_new_tokens=60,
-    do_sample=True,
-    temperature=0.7,
-    top_p=0.9,
-    repetition_penalty=1.15,
-)
-
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+tok = AutoTokenizer.from_pretrained("{output_dir.name}")
+model = AutoModelForCausalLM.from_pretrained("{output_dir.name}")
 ```
 
----
-
-## Triada Experimentală din Teză
-
-1. `flaviussteff/base-ro-125m` (Control brut, nealiniat).
-2. `flaviussteff/base-ro-125m-lora` (Control aliniat superficial post-hoc prin LoRA).
-3. `flaviussteff/spp-ro-125m` (Acest model — aliniat robust din Token Zero).
+## Limitări
+Model mic (88M), monolingv, fără post-training; evaluările din repo au N mic și sunt raportate cu intervale de încredere.
 """
-    readme_path = output_dir / "README.md"
-    readme_path.write_text(card_content, encoding="utf-8")
-    print(f"[Model Card] Actualizat cu succes {readme_path.name}.")
+    (output_dir / "README.md").write_text(card_content, encoding="utf-8")
+    print(f"[Model Card] Actualizat {output_dir / 'README.md'}")
 
 
 def run_scale_pretraining(
@@ -401,18 +441,52 @@ def run_scale_pretraining(
     from_scratch: bool = False,
     push_to_hub: bool = False,
     repo_id: str = "flaviussteff/spp-ro-125m",
+    spp_ratio: float = 0.10,
+    output_dir: Optional[Path] = None,
+    resume: bool = False,
+    mask_assistant_loss: bool = False,
+    snap_insertion: bool = False,
+    sidecar: Optional[Path] = None,
+    inline: bool = False,
+    prefix_tail: bool = False,
+    init_from: Optional[Path] = None,
+    lr: float = 1.5e-4,
+    warmup_steps: int = 500,
+    mt_annotated_ratio: float = 0.0,
+    reflection_loss_only: bool = False,
 ):
     if total_target_steps is None:
         total_target_steps = additional_steps
 
+    if output_dir is None:
+        if mode == "base":
+            output_dir = BASE_MODEL_DIR
+        elif mode == "filtered":
+            output_dir = FILTERED_MODEL_DIR
+        elif abs(spp_ratio - 0.20) < 1e-4:
+            output_dir = SPP_20PCT_MODEL_DIR
+        else:
+            output_dir = SPP_MODEL_DIR
+
     print("\n" + "=" * 75, flush=True)
-    print(f"  PRE-ANTRENARE SCALATĂ: {mode.upper()}-RO-125M", flush=True)
-    print(f"  Pasi: {additional_steps:,} (Total: {total_target_steps:,}) | From Scratch: {from_scratch}", flush=True)
-    print(f"  Rata Interleaving: 10% SPP (Reflectii) / 90% Text Liber | Hub: {repo_id if push_to_hub else 'Local'}", flush=True)
+    print(f"  PRE-ANTRENARE SCALATĂ: {mode.upper()}-RO-88M", flush=True)
+    print(f"  Pasi: {additional_steps:,} (Total: {total_target_steps:,}) | From Scratch: {from_scratch} | Resume: {resume}", flush=True)
+    if sidecar is None and mode in ("spp", "filtered"):
+        sidecar = SIDECAR_V2_FILE if (inline or mode == "filtered") else (SIDECAR_DIR / "reflections.parquet")
+    if mode == "spp" and inline:
+        print(f"  Reflectii: INLINE din {sidecar.name} (documentele adnotate inlocuiesc originalele; data-matched cu Base)", flush=True)
+    elif mode == "filtered":
+        print(f"  Filtered baseline: documentele cu severitate >= 3 din {sidecar.name} sunt loss-masked", flush=True)
+    else:
+        print(f"  Rata Interleaving: {spp_ratio * 100:.0f}% SPP (Reflectii) / {(1 - spp_ratio) * 100:.0f}% Text Liber", flush=True)
+    print(f"  Flags: mask_assistant_loss={mask_assistant_loss} snap_insertion={snap_insertion} prefix_tail={prefix_tail}", flush=True)
+    if mode == "spp" and (mt_annotated_ratio > 0 or reflection_loss_only):
+        print(f"  Midtraining (paper SPP{{MT}}): documente adnotate = {mt_annotated_ratio*100:.1f}% din secvente, loss doar pe reflectie = {reflection_loss_only}", flush=True)
+    print(f"  LR: peak {lr:g}, warmup {warmup_steps} pasi, cosinus -> 0 pe {additional_steps:,} pasi" + (f" | init din {init_from} (program LR NOU, fara stare de optimizator)" if init_from else ""), flush=True)
+    print(f"  Director Iesire: {output_dir.name} | Hub: {repo_id if push_to_hub else 'Local'}", flush=True)
     print(f"  Durata estimata pe RTX 3060: ~{additional_steps / 1000:.1f} ore", flush=True)
     print("=" * 75 + "\n", flush=True)
 
-    output_dir = BASE_MODEL_DIR if mode == "base" else SPP_MODEL_DIR
     tokenizer = AutoTokenizer.from_pretrained(str(TOKENIZER_DIR))
     checkpoints_dir = output_dir / "checkpoints"
 
@@ -421,9 +495,41 @@ def run_scale_pretraining(
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(42)
 
+    # Detect existing checkpoints for seamless resumption
+    last_checkpoint = None
+    if checkpoints_dir.exists():
+        last_checkpoint = get_last_checkpoint(str(checkpoints_dir))
+
+    if resume:
+        if last_checkpoint is None:
+            raise FileNotFoundError(f"Nu s-a gasit niciun checkpoint in {checkpoints_dir} pentru reluare (--resume).")
+        print(f"[Engine] Mod Resume ACTIVAT! Checkpoint detectat: {last_checkpoint}")
+        print(f"[Engine] Se reia antrenarea AUTOMAT din {Path(last_checkpoint).name}...\n")
+        from_scratch = False
+
     # 1. Model initialization
-    if from_scratch:
-        print(f"[Model] Initializare complet de la zero (Token Zero: pasul 0) pentru {mode.upper()}-Ro-125M...")
+    if init_from is not None and not (resume and last_checkpoint is not None):
+        # SPP{MT} / re-warm: weights only, no optimizer or scheduler state -> a fresh LR schedule
+        # (continuing the cosine tail of a 50k run gives LR ~1e-6 and leaves the weights unchanged).
+        init_from = Path(init_from)
+        if not (init_from / 'model.safetensors').exists():
+            raise FileNotFoundError(f"--init-from: nu exista model.safetensors in {init_from}")
+        print(f"[Model] Initializare din ponderile {init_from} (program LR nou: peak {lr:g}, warmup {warmup_steps})...")
+        model = LlamaForCausalLM.from_pretrained(
+            str(init_from),
+            torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
+        )
+        if last_checkpoint is not None:
+            print(f"[Checkpoints] Avertisment: {checkpoints_dir} contine checkpoint-uri vechi; sunt ignorate (foloseste --resume pentru a le relua).")
+        last_checkpoint = None
+    elif last_checkpoint is not None and (resume or not from_scratch):
+        print(f"[Model] Resumare si incarcare ponderi din checkpoint: {Path(last_checkpoint).name}...")
+        model = LlamaForCausalLM.from_pretrained(
+            str(last_checkpoint),
+            torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
+        )
+    elif from_scratch:
+        print(f"[Model] Initializare complet de la zero (Token Zero: pasul 0) pentru {mode.upper()}-Ro-88M...")
         # Clear out previous checkpoints if doing a fresh from-scratch run
         if checkpoints_dir.exists():
             import shutil
@@ -491,11 +597,16 @@ def run_scale_pretraining(
     dataset = StreamingParquetDataset(
         parquet_path=stream_path,
         mode=mode,
-        spp_sidecar_path=(SIDECAR_DIR / "reflections.parquet") if mode == "spp" else None,
+        spp_sidecar_path=sidecar if mode in ("spp", "filtered") else None,
+        spp_ratio=spp_ratio,
+        snap_insertion=snap_insertion,
+        inline=inline,
+        mt_annotated_ratio=mt_annotated_ratio,
     )
 
     if mode == "spp":
-        collator = DataCollatorForSPP(tokenizer=tokenizer, max_length=1024)
+        collator = DataCollatorForSPP(tokenizer=tokenizer, max_length=1024, mask_assistant_in_loss=mask_assistant_loss, prefix_tail=prefix_tail,
+                                      reflection_loss_only=reflection_loss_only)
     else:
         collator = VanillaCausalDataCollator(tokenizer=tokenizer, max_length=1024)
 
@@ -505,8 +616,8 @@ def run_scale_pretraining(
         max_steps=additional_steps,
         per_device_train_batch_size=batch_size,
         gradient_accumulation_steps=grad_accum,
-        learning_rate=1.5e-4,
-        warmup_steps=500,
+        learning_rate=lr,
+        warmup_steps=warmup_steps,
         lr_scheduler_type="cosine",
         weight_decay=0.1,
         logging_steps=50,
@@ -539,18 +650,15 @@ def run_scale_pretraining(
         callbacks=[hourly_cb],
     )
 
-    # Detect last checkpoint for seamless recovery from interruptions (only if not starting from scratch)
-    last_checkpoint = None
-    if not from_scratch and checkpoints_dir.exists():
-        last_checkpoint = get_last_checkpoint(str(checkpoints_dir))
-        if last_checkpoint is not None:
-            print(f"\n[Engine] Checkpoint detectat: {last_checkpoint}", flush=True)
-            print(f"[Engine] Se reia antrenarea AUTOMAT din {Path(last_checkpoint).name}...", flush=True)
+    # Setup checkpoint to resume from if available
+    checkpoint_to_resume = last_checkpoint if (resume or not from_scratch) else None
+    if checkpoint_to_resume is not None:
+        print(f"\n[Engine] Reluare garantata din: {Path(checkpoint_to_resume).name} (pasul {checkpoint_to_resume})", flush=True)
 
     print(f"\n[Engine] Pornire sesiune de antrenare: {additional_steps:,} pasi...")
     print(f"[Engine] Rapoartele live de diagnostic vor fi afisate la fiecare {update_interval_mins:.0f} minute in consola.\n")
     
-    trainer.train(resume_from_checkpoint=last_checkpoint)
+    trainer.train(resume_from_checkpoint=checkpoint_to_resume)
 
     # 4. Save Final Upgraded Model
     print(f"\n[Salvare] Exportare model finalizat in: {output_dir}...")
@@ -560,9 +668,12 @@ def run_scale_pretraining(
     # Generate Model Card README
     latest_loss = hourly_cb.latest_loss
     latest_ppl = math.exp(min(20.0, latest_loss)) if latest_loss else None
-    generate_spp_model_card(output_dir, total_steps=total_target_steps, loss=latest_loss, ppl=latest_ppl)
+    generate_spp_model_card(output_dir, total_steps=total_target_steps, loss=latest_loss, ppl=latest_ppl,
+                            n_params=sum(p_.numel() for p_ in model.parameters()), mode=mode, spp_ratio=spp_ratio,
+                            variant_note=(f'Inițializat din ponderile {init_from} (pasul {total_target_steps - additional_steps:,}) și antrenat {additional_steps:,} pași cu program LR nou (peak {lr:g}, warmup {warmup_steps}, cosinus → 0), fără stare de optimizator'
+                                          + (' , cu reflecții (SPP{MT}).' if mode == 'spp' else ' , fără reflecții (control re-warm).') if init_from else ''))
 
-    print(f"[Succes] Antrenare {mode.upper()}-Ro-125M finalizata! Procesat ~{total_target_steps * eff_tokens_per_step / 1e9:.2f} miliarde de tokeni.")
+    print(f"[Succes] Antrenare {mode.upper()}-Ro-88M finalizata! Procesat ~{total_target_steps * eff_tokens_per_step / 1e9:.2f} miliarde de tokeni.")
 
     # 5. Push to Hugging Face Hub if requested
     if push_to_hub:
@@ -574,7 +685,7 @@ def run_scale_pretraining(
                 folder_path=str(output_dir),
                 repo_id=repo_id,
                 repo_type="model",
-                commit_message=f"Release {mode.upper()}-Ro-125M: Aliniere Token Zero cu 60.000 reflectii (Loss {latest_loss:.4f}, PPL {latest_ppl:.2f})" if latest_loss else f"Release {mode.upper()}-Ro-125M: Aliniere Token Zero cu 60.000 reflectii"
+                commit_message=f"Release {mode.upper()}-Ro-88M: Aliniere Token Zero cu 60.000 reflectii (Loss {latest_loss:.4f}, PPL {latest_ppl:.2f})" if latest_loss else f"Release {mode.upper()}-Ro-88M: Aliniere Token Zero cu 60.000 reflectii"
             )
             print(f"\n============================================================================")
             print(f"  [HUGGING FACE SUCCESS] Model publicat cu succes!")
@@ -587,7 +698,7 @@ def run_scale_pretraining(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Scale Pre-training Engine for Romanian Generative LLM")
-    parser.add_argument("--mode", type=str, default="spp", choices=["base", "spp"], help="Model mode: 'base' or 'spp'")
+    parser.add_argument("--mode", type=str, default="spp", choices=["base", "spp", "filtered"], help="'base' (vanilla), 'spp' (reflections), 'filtered' (harmful docs loss-masked; needs v2 sidecar)")
     parser.add_argument("--steps", "--additional-steps", type=int, default=10000, dest="steps", help="Steps to train (default 10,000 = ~655M tokens, ~10 hours)")
     parser.add_argument("--total-target", type=int, default=None, help="Cumulative target steps (defaults to steps)")
     parser.add_argument("--interval-mins", type=float, default=30.0, help="Minutes between live terminal reports (default 30.0)")
@@ -595,7 +706,25 @@ if __name__ == "__main__":
     parser.add_argument("--from-scratch", action="store_true", help="Initialize randomly from Token Zero (matching base model baseline)")
     parser.add_argument("--push-to-hub", action="store_true", help="Automatically push finalized model to Hugging Face Hub")
     parser.add_argument("--repo-id", type=str, default="flaviussteff/spp-ro-125m", help="Hugging Face repo id")
+    parser.add_argument("--spp-ratio", type=float, default=0.10, help="SPP interleaving ratio (default: 0.10, use 0.20 for 20%% mode)")
+    parser.add_argument("--output-dir", type=str, default=None, help="Custom output directory for checkpoints and final weights")
+    parser.add_argument("--resume", action="store_true", help="Resume pre-training seamlessly from the latest saved checkpoint")
+    parser.add_argument("--mask-assistant-loss", action="store_true", help="Exclude the <assistant> marker from the loss (paper setting). OFF for the 50k T0 runs; keep OFF for a comparable MT run.")
+    parser.add_argument("--snap-insertion", action="store_true", help="Snap the reflection insertion point to a word boundary. OFF for the 50k T0 runs; keep OFF for a comparable MT run.")
+    parser.add_argument("--sidecar", type=str, default=None, help="Reflections parquet (default: v1 sidecar; with --inline/--mode filtered: data/sidecar/reflections_v2.parquet)")
+    parser.add_argument("--inline", action="store_true", help="v2: annotated documents REPLACE their originals in the stream (needs doc_key column)")
+    parser.add_argument("--prefix-tail", action="store_true", help="Keep the end of the prefix when truncating long annotated documents (v2)")
+    parser.add_argument("--log-file", type=str, default=None, help="Also write console output (reports, checkpoints; not the progress bar) to this file")
+    parser.add_argument("--init-from", type=str, default=None, help="Initialise WEIGHTS from this checkpoint/model dir and start a fresh LR schedule (SPP{MT}: Base@45k + 5k steps). Combine with --steps 5000 --total-target 50000.")
+    parser.add_argument("--lr", type=float, default=1.5e-4, help="Peak learning rate (default 1.5e-4 = pretraining peak; MT re-warm uses 5e-5)")
+    parser.add_argument("--warmup-steps", type=int, default=500, help="Linear warmup steps (default 500; MT re-warm uses 250)")
+    parser.add_argument("--mt-annotated-ratio", type=float, default=0.0, help="SPP{MT} v2 (paper midtraining): fraction of sequences drawn from the annotated documents (EPFL: 0.6758); 0 = natural inline rate (SPP{T0})")
+    parser.add_argument("--reflection-loss-only", action="store_true", help="SPP{MT} v2 (paper midtraining): on annotated documents, loss only on the reflection span; plain documents keep the full loss")
     args = parser.parse_args()
+    if args.log_file:
+        install_tee(Path(args.log_file))
+
+    out_dir = Path(args.output_dir) if args.output_dir else None
 
     run_scale_pretraining(
         mode=args.mode,
@@ -606,5 +735,18 @@ if __name__ == "__main__":
         from_scratch=args.from_scratch,
         push_to_hub=args.push_to_hub,
         repo_id=args.repo_id,
+        spp_ratio=args.spp_ratio,
+        output_dir=out_dir,
+        resume=args.resume,
+        mask_assistant_loss=args.mask_assistant_loss,
+        snap_insertion=args.snap_insertion,
+        sidecar=Path(args.sidecar) if args.sidecar else None,
+        inline=args.inline,
+        prefix_tail=args.prefix_tail,
+        init_from=Path(args.init_from) if args.init_from else None,
+        lr=args.lr,
+        warmup_steps=args.warmup_steps,
+        mt_annotated_ratio=args.mt_annotated_ratio,
+        reflection_loss_only=args.reflection_loss_only,
     )
 

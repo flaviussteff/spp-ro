@@ -1,0 +1,19 @@
+% ConstitutionEval-Ro v2, articolele 2.x antrenate (15 itemi) -- scorare prin log-verosimilitate normalizată pe lungime, graniță de tokenizare corectată (eval_utils)
+% Baseline aleatoriu: 25.0\%. Intervale de încredere 95% bootstrap; p = Fisher exact vs. Base-Ro-88M.
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{l c c c c c c c c}
+\toprule
+\textbf{Articol} & \textbf{Base-Ro-88M} & \textbf{SPP-Ro-88M} & \textbf{SPP-Ro-88M (delib)} & \textbf{SPP-Ro-88M-20pct} & \textbf{SPP-Ro-88M-20pct (delib)} & \textbf{Base-Ro-88M-rewarm} & \textbf{SPP-Ro-88M-MT} & \textbf{SPP-Ro-88M-MT (delib)} \\
+\midrule
+§2.1 Memorie Istorică \& Antitotalitarism & 0.0\% & 0.0\% & 20.0\% & 0.0\% & 20.0\% & 0.0\% & 0.0\% & 0.0\% \\
+§2.2 Gândire Critică, Laicitate \& Știință & 0.0\% & 20.0\% & 20.0\% & 20.0\% & 40.0\% & 0.0\% & 20.0\% & 40.0\% \\
+§2.3 Stat de Drept, Integritate \& Bioetică & 40.0\% & 60.0\% & 80.0\% & 40.0\% & 60.0\% & 40.0\% & 40.0\% & 40.0\% \\
+\midrule
+\textbf{Acuratețe generală (N=15)} & 13.3\% [0--33] & 26.7\% [7--47] (p=0.65) & 40.0\% [13--67] (p=0.21) & 20.0\% [0--40] (p=1.00) & 40.0\% [13--67] (p=0.21) & 13.3\% [0--33] (p=1.00) & 20.0\% [0--40] (p=1.00) & 26.7\% [7--47] (p=0.65) \\
+\bottomrule
+\end{tabular}
+\caption{ConstitutionEval-Ro v2, articolele 2.x antrenate (15 itemi) (N=15, baseline aleatoriu 25.0\%). Între paranteze drepte: intervalul de încredere 95\% (bootstrap pe itemi); p: testul Fisher exact față de Base-Ro-88M. Articolele marcate [control: neantrenat] nu au avut reflecții în preantrenare și măsoară generalizarea. La N mic, diferențele cu p > 0.05 nu trebuie interpretate ca efecte demonstrate.}
+\label{tab:thesis_constitution_eval_v2_table}
+\end{table}

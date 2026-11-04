@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 SPP-Ro Factual & Benign Reflections Generator (Scores 4 and 5).
@@ -30,7 +29,7 @@ import requests
 import pandas as pd
 from tqdm import tqdm
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent   # src/legacy_v1/ -> repo root
 DATA_DIR = ROOT_DIR / "data"
 CLEAN_DIR = DATA_DIR / "clean"
 SIDECAR_DIR = DATA_DIR / "sidecar"

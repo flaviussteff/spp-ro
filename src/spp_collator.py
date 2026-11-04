@@ -19,11 +19,27 @@ class DataCollatorForSPP:
         max_length: int = 1024,
         assistant_token: str = "<assistant>",
         pad_token: str = "<pad>",
+        mask_assistant_in_loss: bool = False,
+        prefix_tail: bool = False,
+        reflection_loss_only: bool = False,
     ):
+        """
+        mask_assistant_in_loss: the EPFL paper excludes the <assistant> marker token from the
+        cross-entropy loss. The 50k-step T0 runs (Base/SPP10/SPP20) were trained with it INCLUDED,
+        so the default stays False for comparability (the SPP{MT} run must match). Use True for new runs.
+        """
         self.tokenizer = tokenizer
         self.max_length = max_length
         self.assistant_token_id = tokenizer.convert_tokens_to_ids(assistant_token)
         self.pad_token_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
+        self.mask_assistant_in_loss = mask_assistant_in_loss
+        # prefix_tail: when the document does not fit, keep the END of the prefix (the text the
+        # reflection was actually written about) instead of its beginning. v1 runs used False.
+        self.prefix_tail = prefix_tail
+        # reflection_loss_only (paper's midtraining setting, SPP_REFLECTION_LOSS_ONLY=1): on annotated documents the
+        # loss covers only the reflection span (<assistant> -> r1, ..., rN -> first post-context token); the pre/post
+        # document tokens are context only. Plain documents in the same batch keep the full next-token loss.
+        self.reflection_loss_only = reflection_loss_only
 
     def __call__(self, batch: List[Dict[str, Any]]) -> Dict[str, torch.Tensor]:
         """
@@ -46,8 +62,13 @@ class DataCollatorForSPP:
                 # Trim to fit max_length
                 budget = self.max_length - len(refl_tokens) - 1
                 if budget > 0:
-                    pre_tokens = pre_tokens[:budget // 2]
-                    post_tokens = post_tokens[:budget - len(pre_tokens)]
+                    if self.prefix_tail:
+                        post_keep = min(len(post_tokens), budget // 2)
+                        pre_tokens = pre_tokens[-(budget - post_keep):] if len(pre_tokens) > budget - post_keep else pre_tokens
+                        post_tokens = post_tokens[:budget - len(pre_tokens)]
+                    else:
+                        pre_tokens = pre_tokens[:budget // 2]
+                        post_tokens = post_tokens[:budget - len(pre_tokens)]
                     
                 len_pre = len(pre_tokens)
                 len_refl = len(refl_tokens) + 1  # Includes <assistant>
@@ -90,6 +111,14 @@ class DataCollatorForSPP:
                 
             # Labels for next-token prediction
             labels = list(input_ids)
+            if "reflection" in item and item["reflection"]:
+                if self.reflection_loss_only:
+                    # keep only the targets r1..rN and the first post-context token (predicted from rN), as in the paper's MT stage
+                    keep_lo, keep_hi = len_pre + 1, min(total_len, idx_post_start + 1)
+                    labels = [-100] * total_len
+                    labels[keep_lo:keep_hi] = input_ids[keep_lo:keep_hi]
+                if self.mask_assistant_in_loss or self.reflection_loss_only:
+                    labels[len_pre] = -100  # do not train the model to emit the <assistant> marker itself
             
             batch_input_ids.append(torch.tensor(input_ids, dtype=torch.long))
             batch_position_ids.append(torch.tensor(position_ids, dtype=torch.long))

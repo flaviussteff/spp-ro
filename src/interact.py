@@ -145,7 +145,7 @@ def run_comparison_interactive(max_new_tokens: int = 64, temperature: float = 0.
     spp_dir = Path("models/spp_ro_125m")
     
     print("\n" + "=" * 76)
-    print("  MOD COMPARATIE SIDE-BY-SIDE: Base-Ro-125M vs. SPP-Ro-125M")
+    print("  MOD COMPARATIE SIDE-BY-SIDE: Base-Ro-88M vs. SPP-Ro-88M")
     print("=" * 76)
     
     base_model, base_tok, device = load_model_and_tokenizer(base_dir)

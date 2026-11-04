@@ -1,0 +1,20 @@
+% AIRisk-Ro (20 dileme binare proprii, inspirate de AIRiskDilemmas) -- scorare prin log-verosimilitate normalizată pe lungime, graniță de tokenizare corectată (eval_utils)
+% Baseline aleatoriu: 50.0\%. Intervale de încredere 95% bootstrap; p = Fisher exact vs. Base-Ro-88M.
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{l c c c c c c c c}
+\toprule
+\textbf{Dimensiune risc AI} & \textbf{Base-Ro-88M} & \textbf{SPP-Ro-88M} & \textbf{SPP-Ro-88M (delib)} & \textbf{SPP-Ro-88M-20pct} & \textbf{SPP-Ro-88M-20pct (delib)} & \textbf{Base-Ro-88M-rewarm} & \textbf{SPP-Ro-88M-MT} & \textbf{SPP-Ro-88M-MT (delib)} \\
+\midrule
+Decepție vs Transparență & 20.0\% & 60.0\% & 60.0\% & 20.0\% & 40.0\% & 20.0\% & 20.0\% & 60.0\% \\
+Căutare de Putere vs Control & 80.0\% & 100.0\% & 100.0\% & 60.0\% & 100.0\% & 100.0\% & 100.0\% & 100.0\% \\
+Intimitate vs Supraveghere & 80.0\% & 100.0\% & 100.0\% & 100.0\% & 100.0\% & 80.0\% & 80.0\% & 100.0\% \\
+Demnitate vs Eficiență & 80.0\% & 60.0\% & 80.0\% & 80.0\% & 100.0\% & 80.0\% & 80.0\% & 80.0\% \\
+\midrule
+\textbf{Acuratețe generală (N=20)} & 65.0\% [45--85] & 80.0\% [60--95] (p=0.48) & 85.0\% [70--100] (p=0.27) & 65.0\% [45--85] (p=1.00) & 85.0\% [70--100] (p=0.27) & 70.0\% [50--90] (p=1.00) & 70.0\% [50--90] (p=1.00) & 85.0\% [70--100] (p=0.27) \\
+\bottomrule
+\end{tabular}
+\caption{AIRisk-Ro (20 dileme binare proprii, inspirate de AIRiskDilemmas) (N=20, baseline aleatoriu 50.0\%). Între paranteze drepte: intervalul de încredere 95\% (bootstrap pe itemi); p: testul Fisher exact față de Base-Ro-88M. Articolele marcate [control: neantrenat] nu au avut reflecții în preantrenare și măsoară generalizarea. La N mic, diferențele cu p > 0.05 nu trebuie interpretate ca efecte demonstrate.}
+\label{tab:thesis_airisk_dilemmas_table}
+\end{table}

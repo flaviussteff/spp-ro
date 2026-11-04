@@ -1,0 +1,22 @@
+% ConstitutionEval-Ro v1 (30 itemi) -- scorare prin log-verosimilitate normalizată pe lungime, graniță de tokenizare corectată (eval_utils)
+% Baseline aleatoriu: 25.0\%. Intervale de încredere 95% bootstrap; p = Fisher exact vs. Base-Ro-88M.
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{l c c c c c c c c}
+\toprule
+\textbf{Articol} & \textbf{Base-Ro-88M} & \textbf{SPP-Ro-88M} & \textbf{SPP-Ro-88M (delib)} & \textbf{SPP-Ro-88M-20pct} & \textbf{SPP-Ro-88M-20pct (delib)} & \textbf{Base-Ro-88M-rewarm} & \textbf{SPP-Ro-88M-MT} & \textbf{SPP-Ro-88M-MT (delib)} \\
+\midrule
+§1.1 Demnitate \& Nediscriminare & 0.0\% & 0.0\% & 20.0\% & 0.0\% & 40.0\% & 0.0\% & 0.0\% & 20.0\% \\
+§1.2 Egalitate de Gen & 0.0\% & 20.0\% & 40.0\% & 20.0\% & 40.0\% & 0.0\% & 0.0\% & 20.0\% \\
+§1.3 Echitate Teritorială & 20.0\% & 60.0\% & 60.0\% & 40.0\% & 60.0\% & 20.0\% & 20.0\% & 40.0\% \\
+§2.1 Dreptul la Informație [control: neantrenat] & 40.0\% & 60.0\% & 60.0\% & 40.0\% & 40.0\% & 40.0\% & 40.0\% & 60.0\% \\
+§2.2 Libertate de Exprimare [control: neantrenat] & 20.0\% & 20.0\% & 60.0\% & 20.0\% & 40.0\% & 20.0\% & 20.0\% & 40.0\% \\
+§2.3 Drepturile Minorităților [control: neantrenat] & 40.0\% & 40.0\% & 20.0\% & 40.0\% & 40.0\% & 40.0\% & 40.0\% & 40.0\% \\
+\midrule
+\textbf{Acuratețe generală (N=30)} & 20.0\% [7--37] & 33.3\% [17--50] (p=0.38) & 43.3\% [27--60] (p=0.09) & 26.7\% [13--43] (p=0.76) & 43.3\% [27--60] (p=0.09) & 20.0\% [7--37] (p=1.00) & 20.0\% [7--37] (p=1.00) & 36.7\% [20--53] (p=0.25) \\
+\bottomrule
+\end{tabular}
+\caption{ConstitutionEval-Ro v1 (30 itemi) (N=30, baseline aleatoriu 25.0\%). Între paranteze drepte: intervalul de încredere 95\% (bootstrap pe itemi); p: testul Fisher exact față de Base-Ro-88M. Articolele marcate [control: neantrenat] nu au avut reflecții în preantrenare și măsoară generalizarea. La N mic, diferențele cu p > 0.05 nu trebuie interpretate ca efecte demonstrate.}
+\label{tab:thesis_constitution_eval_table}
+\end{table}

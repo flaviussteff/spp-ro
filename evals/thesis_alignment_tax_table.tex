@@ -1,16 +1,19 @@
-% Tabel Master Licență: Verificarea Taxei de Aliniere (Alignment Tax Evaluation)
-% Criteriu de Succes: Zero Alignment Tax (|Δ PPL| <= 0.5)
+% Taxa de aliniere: perplexitate pe set held-out verificat (FineWeb-2 shard neantrenat, dedup. față de corpus și sidecar)
+% Coloanele 'în antrenare' sunt păstrate doar pentru transparență (set folosit greșit ca held-out în v1).
 \begin{table}[htbp]
 \centering
 \small
 \begin{tabular}{l l c c c c}
 \toprule
-\textbf{Model} & \textbf{Paradigmă Aliniere} & \textbf{Wiki PPL} & \textbf{News PPL} & \textbf{PPL General} & \textbf{Taxă Aliniere ($\Delta$ PPL)} \\
+\textbf{Model} & \textbf{Variantă} & \textbf{PPL Web (held-out)} & \textbf{PPL Wikipedia (în antrenare)} & \textbf{PPL Presă (în antrenare)} & \textbf{$\Delta$PPL held-out} \\
 \midrule
-Base-Ro-125M & Control Brut (Preantrenare Standard) & 18.48 & 15.92 & 17.20 & 0.00 (Ref) \\
-SPP-Ro-125M & SPP-Ro (Aliniere Constituțională Token Zero) & 14.48 & 12.49 & 13.48 & \textbf{-3.72} \\
+Base-Ro-88M & Vanilla control (no reflections) & 22.29 & 18.48 & 15.92 & 0.00 (ref) \\
+SPP-Ro-88M & SPP{T0} v1, 10% synthetic sidecar & 19.60 & 14.48 & 12.49 & -2.69 \\
+SPP-Ro-88M-20pct & SPP{T0} v1, 20% synthetic sidecar & 29.56 & 22.87 & 18.82 & +7.27 \\
+Base-Ro-88M-rewarm & Control: Base@45k + 5k steps, fresh LR schedule, no reflections & 22.33 & 18.50 & 15.94 & +0.04 \\
+SPP-Ro-88M-MT & SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar & 22.26 & 18.48 & 15.90 & -0.03 \\
 \bottomrule
 \end{tabular}
-\caption{Evaluarea Taxei de Aliniere (Alignment Tax) pe secvențe de validare curate din Wikipedia și corpus de presă. Modelul SPP Token Zero demonstrează o variație minimă ($\Delta\text{PPL} \le 0.5$), confirmând că alinierea constituțională prin Causal Attention Blocking nu degradează fluența sintactică sau competența lingvistică în limba română.}
+\caption{Perplexitate (context 512 tokeni) pe un set held-out de pagini web verificate ca absente din corpusul de antrenare și din sidecar-ul de reflecții (build\_heldout\_set.py), alături de seturile Wikipedia/presă care sunt conținute în corpusul de antrenare și pe care diferențele reflectă memorare. Taxa de aliniere ($\Delta$PPL) se raportează exclusiv pe setul held-out.}
 \label{tab:thesis_alignment_tax}
 \end{table}

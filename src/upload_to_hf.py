@@ -38,7 +38,7 @@ def upload_model(model_type: str, repo_id: str, private: bool = False, token: st
         active_token = entered_token
 
     print(f"\n==================================================")
-    print(f"  Uploading {model_type.upper()}-Ro-125M to Hugging Face Hub")
+    print(f"  Uploading {model_type.upper()}-Ro-88M to Hugging Face Hub")
     print(f"  Source: {model_dir.resolve()}")
     print(f"  Target: https://huggingface.co/{repo_id}")
     print(f"==================================================\n")

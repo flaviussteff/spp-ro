@@ -47,3 +47,22 @@ scratch/
 .env
 *.env*
 
+# archive/: only the small v1 scripts, evals and launchers stay tracked; big or secret parts are ignored
+archive/raw_corpus/
+archive/v1/models/
+archive/v1/data/
+archive/v1/logs/
+archive/v2/
+archive/v3_build/
+archive/env_backups/
+
+# Keep the explanatory READMEs inside the (otherwise ignored) data/ and models/ folders
+!data/
+data/*
+!data/README.md
+!models/
+models/*
+!models/README.md
+
+# Word/Excel lock files
+~$*

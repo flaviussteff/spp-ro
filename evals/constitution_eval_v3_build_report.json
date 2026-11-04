@@ -1,0 +1,76 @@
+{
+  "built": "2026-11-04T11:26:47",
+  "n_final": 600,
+  "per_article": {
+    "1.1": 100,
+    "1.2": 100,
+    "1.3": 100,
+    "2.1": 100,
+    "2.2": 100,
+    "2.3": 100
+  },
+  "bands": {
+    "hard": 170,
+    "mid": 203,
+    "easy": 227
+  },
+  "gold_position_counts": {
+    "A": 143,
+    "B": 159,
+    "C": 144,
+    "D": 154
+  },
+  "hardened_items": 87,
+  "pipeline_status_counts": {
+    "pass": 779,
+    "invalid": 824,
+    "failed_determinacy": 141,
+    "failed_guard": 458
+  },
+  "fail_reasons_top": {
+    "gold strict cea mai lungă": 413,
+    "menționează constituția/prevederea": 180,
+    "raport lungimi 1.50 > 1.45": 41,
+    "guard: voturi [3, 0, 0], gold 0": 30,
+    "raport lungimi 1.47 > 1.45": 30,
+    "vocabular de aureolă doar la gold": 20,
+    "guard: voturi [2, 2, 2], gold 0": 19,
+    "guard: voturi [2, 2, 1], gold 2": 18,
+    "guard: voturi [2, 2, 2], gold 1": 17,
+    "raport lungimi 1.53 > 1.45": 15,
+    "guard: voturi [2, 0, 0], gold 0": 15,
+    "guard: voturi [1, 1, 1], gold 0": 13
+  },
+  "models": {
+    "generator": {
+      "provider": "cerebras",
+      "model": "qwen-3.8-27b",
+      "calls": 0,
+      "failures": 0,
+      "in_tokens": 0,
+      "out_tokens": 0,
+      "cost_usd": 0.0,
+      "live_keys": 16
+    },
+    "guard": {
+      "provider": "cerebras",
+      "model": "gpt-oss-120b",
+      "calls": 0,
+      "failures": 0,
+      "in_tokens": 0,
+      "out_tokens": 0,
+      "cost_usd": 0.0,
+      "live_keys": 16
+    },
+    "probe": {
+      "provider": "local",
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "quant": "8bit",
+      "calls": 0,
+      "failures": 0,
+      "cost_usd": 0.0
+    }
+  },
+  "method": "Minder et al. 2026 ConstitutionEval DATASET_METHODOLOGY (generate -> structural rules -> open-book determinacy x3 rotations -> blind capability guard x3 -> blind small-model probe x6 -> probe-in-the-loop hardening of easy items -> gold position md5(id)%4)",
+  "output": "C:\\Users\\Flavius Stefan\\Desktop\\licenta\\data\\eval\\constitution_eval_ro_v3.jsonl"
+}

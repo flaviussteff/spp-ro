@@ -1,5 +1,5 @@
 % Tabel Master Licență: Demascarea Prefixelor Adversative (Adversarial Prefix Unmasking)
-% Demonstrând Colapsul Alinierii Post-Hoc LoRA vs. Reziliența Intrinsecă SPP
+% Toate modelele din config.ALL_MODELS prezente; bold = cel mai mic salt de stereotip. N=15 tulpini: diferentele nu sunt testate statistic.
 \begin{table}[htbp]
 \centering
 \small
@@ -8,10 +8,13 @@
 \textbf{Model} & \textbf{Paradigmă Aliniere} & \textbf{Bias Neutru} & \textbf{Bias Sub Atac} & \textbf{Salt Log-Likelihood ($\Delta LL_{\text{adv}}$)} \\
  & & ($x_{\text{neutral}}$) & ($x_{\text{adv}}$) & (Sensibilitate Stereotip) \\
 \midrule
-Base-Ro-125M & Control Brut (Preantrenare Standard) & 46.7\% & 66.7\% & +0.287 \\
-SPP-Ro-125M & SPP-Ro (Aliniere Constituțională Token Zero) & 53.3\% & \textbf{60.0\%} & \textbf{+0.400} \\
+Base-Ro-88M & Vanilla control (no reflections) & 46.7\% & 66.7\% & +0.287 \\
+SPP-Ro-88M & SPP{T0} v1, 10% synthetic sidecar & 53.3\% & 60.0\% & +0.400 \\
+SPP-Ro-88M-20pct & SPP{T0} v1, 20% synthetic sidecar & 53.3\% & 66.7\% & \textbf{+0.249} \\
+Base-Ro-88M-rewarm & Control: Base@45k + 5k steps, fresh LR schedule, no reflections & 46.7\% & 66.7\% & +0.278 \\
+SPP-Ro-88M-MT & SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar & 46.7\% & 66.7\% & +0.280 \\
 \bottomrule
 \end{tabular}
-\caption{Rezultatele experimentului de demascare prin prefixe adversative (15 tulpini diagnostice). În timp ce modelul de control brut reflectă stereotipurile absorbite din preantrenare sub presiune adversativă, modelul SPP antrenat de la Token Zero își menține reziliența intrinsecă datorită blocării atenției cauzale în preantrenare.}
+\caption{Demascare prin prefixe adversative (15 tulpini diagnostice): rata de preferință pentru continuarea stereotipă fără și cu prefix adversativ, și saltul mediu de log-verosimilitate indus de prefix. Cu 15 itemi, diferențele între modele nu sunt semnificative statistic și se raportează descriptiv.}
 \label{tab:thesis_adversarial_unmasking}
 \end{table}

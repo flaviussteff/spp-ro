@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 SPP-Ro Dedicated Sensitive Reflections Generator (Scores 1, 2, 3).
@@ -29,7 +28,7 @@ import requests
 import pandas as pd
 from tqdm import tqdm
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent   # src/legacy_v1/ -> repo root
 DATA_DIR = ROOT_DIR / "data"
 SIDECAR_DIR = DATA_DIR / "sidecar"
 SIDECAR_DIR.mkdir(parents=True, exist_ok=True)

@@ -32,7 +32,7 @@ from transformers import (
 )
 
 # Ensure src and root directories are on sys.path
-_SRC_DIR = Path(__file__).resolve().parent
+_SRC_DIR = Path(__file__).resolve().parent.parent      # src/ (legacy_v1 lives one level below)
 _ROOT_DIR = _SRC_DIR.parent
 for _p in [str(_SRC_DIR), str(_ROOT_DIR)]:
     if _p not in sys.path:
@@ -961,7 +961,7 @@ def evaluate_custom_causal_model(
 
     return {
         "model": label,
-        "type": "Causal LM (125M)",
+        "type": "Causal LM (88M)",
         "spm_ro": res_ro["spm"] if res_ro else None,
         "spm_en": res_en["spm"] if res_en else None,
         "cross_lingual_gap": gap,
@@ -1102,12 +1102,12 @@ def export_thesis_tables(all_results: List[Dict[str, Any]]):
 
 
 def export_triad_latex_table(all_results: List[Dict[str, Any]]):
-    """Exports the definitive Thesis Alignment Table comparing Base-Ro-125M vs SPP-Ro-125M."""
+    """Exports the definitive Thesis Alignment Table comparing Base-Ro-88M vs SPP-Ro-88M."""
     # Find matching models
     models_dict = {r["model"]: r for r in all_results}
     
-    base_res = models_dict.get("Base-Ro-125M")
-    spp_res = models_dict.get("SPP-Ro-125M")
+    base_res = models_dict.get("Base-Ro-88M")
+    spp_res = models_dict.get("SPP-Ro-88M")
     
     triad_tex = EVALS_DIR / "thesis_alignment_comparison.tex"
     with open(triad_tex, "w", encoding="utf-8") as f:
@@ -1118,7 +1118,7 @@ def export_triad_latex_table(all_results: List[Dict[str, Any]]):
         f.write("\\small\n")
         f.write("\\begin{tabular}{l c c}\n")
         f.write("\\toprule\n")
-        f.write("\\textbf{Axa Socio-Culturală (România)} & \\textbf{Base-Ro-125M} & \\textbf{SPP-Ro-125M} \\\\\n")
+        f.write("\\textbf{Axa Socio-Culturală (România)} & \\textbf{Base-Ro-88M} & \\textbf{SPP-Ro-88M} \\\\\n")
         f.write(" & (Control Brut) & (Token Zero SPP) \\\\\n")
         f.write("\\midrule\n")
         
@@ -1161,7 +1161,7 @@ if __name__ == "__main__":
     parser.add_argument("--unmask", action="store_true", help="Run bilingual unmasking adversarial experiment on custom model")
     parser.add_argument("--model-dir", type=str, default=str(SPP_MODEL_DIR), help="Custom model directory to evaluate")
     parser.add_argument("--tokenizer-dir", type=str, default=str(TOKENIZER_DIR), help="Custom tokenizer directory")
-    parser.add_argument("--model-label", type=str, default="SPP-Ro-125M", help="Display label for the model")
+    parser.add_argument("--model-label", type=str, default="SPP-Ro-88M", help="Display label for the model")
     args = parser.parse_args()
 
     all_evaluated_models = []
@@ -1172,8 +1172,8 @@ if __name__ == "__main__":
         print(" Evaluating Constitutional Alignment (Base vs SPP)")
         print("==================================================")
         triad_models = [
-            (BASE_MODEL_DIR, "Base-Ro-125M"),
-            (SPP_MODEL_DIR, "SPP-Ro-125M"),
+            (BASE_MODEL_DIR, "Base-Ro-88M"),
+            (SPP_MODEL_DIR, "SPP-Ro-88M"),
         ]
         for m_dir, m_label in triad_models:
             if m_dir.exists():

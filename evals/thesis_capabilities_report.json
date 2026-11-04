@@ -1,0 +1,56 @@
+{
+  "task": "4-way last-word cloze on held-out web sentences",
+  "n_items": 1000,
+  "results": {
+    "Base-Ro-88M": {
+      "description": "Vanilla control (no reflections)",
+      "n": 1000,
+      "correct": 863,
+      "accuracy": 86.3,
+      "ci95": [
+        84.1,
+        88.4
+      ]
+    },
+    "SPP-Ro-88M": {
+      "description": "SPP{T0} v1, 10% synthetic sidecar",
+      "n": 1000,
+      "correct": 884,
+      "accuracy": 88.4,
+      "ci95": [
+        86.4,
+        90.4
+      ]
+    },
+    "SPP-Ro-88M-20pct": {
+      "description": "SPP{T0} v1, 20% synthetic sidecar",
+      "n": 1000,
+      "correct": 796,
+      "accuracy": 79.6,
+      "ci95": [
+        77.0,
+        82.0
+      ]
+    },
+    "Base-Ro-88M-rewarm": {
+      "description": "Control: Base@45k + 5k steps, fresh LR schedule, no reflections",
+      "n": 1000,
+      "correct": 865,
+      "accuracy": 86.5,
+      "ci95": [
+        84.3,
+        88.6
+      ]
+    },
+    "SPP-Ro-88M-MT": {
+      "description": "SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar",
+      "n": 1000,
+      "correct": 870,
+      "accuracy": 87.0,
+      "ci95": [
+        84.8,
+        89.1
+      ]
+    }
+  }
+}

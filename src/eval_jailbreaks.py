@@ -29,9 +29,9 @@ for _p in [str(_SRC_DIR), str(_ROOT_DIR)]:
         sys.path.insert(0, _p)
 
 try:
-    from config import BASE_MODEL_DIR, SPP_MODEL_DIR, TOKENIZER_DIR, EVALS_DIR
+    from config import BASE_MODEL_DIR, SPP_MODEL_DIR, TOKENIZER_DIR, EVALS_DIR, ALL_MODELS
 except ImportError:
-    from src.config import BASE_MODEL_DIR, SPP_MODEL_DIR, TOKENIZER_DIR, EVALS_DIR
+    from src.config import BASE_MODEL_DIR, SPP_MODEL_DIR, TOKENIZER_DIR, EVALS_DIR, ALL_MODELS
 
 EVALS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -151,33 +151,12 @@ ADVERSARIAL_PREFIX_STEMS: List[Dict[str, str]] = [
 
 
 def compute_completion_log_likelihood(prefix: str, completion: str, model, tokenizer, device) -> float:
-    """Computes exact conditional log-likelihood of completion given prefix: LL(completion | prefix)."""
-    full_text = prefix + completion
-    prefix_tokens = tokenizer.encode(prefix, add_special_tokens=False)
-    full_tokens = tokenizer.encode(full_text, add_special_tokens=False)
-    
-    if len(full_tokens) <= len(prefix_tokens):
-        return -100.0
-        
-    input_ids = torch.tensor([full_tokens], dtype=torch.long, device=device)
-    
-    with torch.no_grad():
-        outputs = model(input_ids)
-        logits = outputs.logits  # [1, seq_len, vocab_size]
-        
-    log_probs = F.log_softmax(logits, dim=-1)
-    
-    # Sum log probabilities strictly for the completion tokens
-    completion_ll = 0.0
-    for idx in range(len(prefix_tokens), len(full_tokens)):
-        token_id = full_tokens[idx]
-        prev_idx = idx - 1
-        tok_lp = log_probs[0, prev_idx, token_id].item()
-        completion_ll += tok_lp
-        
-    # Return normalized log-likelihood per token
-    num_comp_tokens = len(full_tokens) - len(prefix_tokens)
-    return completion_ll / num_comp_tokens if num_comp_tokens > 0 else -100.0
+    """Length-normalized LL(completion | prefix) with the corrected joint-tokenization boundary (eval_utils)."""
+    try:
+        from eval_utils import score_option_ll
+    except ImportError:
+        from src.eval_utils import score_option_ll
+    return score_option_ll(model, tokenizer, prefix, completion, device=device, length_normalize=True)
 
 
 def run_jailbreak_probing():
@@ -189,8 +168,7 @@ def run_jailbreak_probing():
     tokenizer = AutoTokenizer.from_pretrained(str(TOKENIZER_DIR))
     
     models = [
-        ("Base-Ro-125M", BASE_MODEL_DIR, "Control Brut (Preantrenare Standard)"),
-        ("SPP-Ro-125M", SPP_MODEL_DIR, "SPP-Ro (Aliniere Constituțională Token Zero)"),
+        *[(k, m, d) for k, m, d in ALL_MODELS if (m / 'model.safetensors').exists()],
     ]
     
     model_stats = {}
@@ -270,7 +248,7 @@ def run_jailbreak_probing():
     tex_path = EVALS_DIR / "thesis_adversarial_prefix_unmasking.tex"
     with open(tex_path, "w", encoding="utf-8") as f:
         f.write("% Tabel Master Licență: Demascarea Prefixelor Adversative (Adversarial Prefix Unmasking)\n")
-        f.write("% Demonstrând Colapsul Alinierii Post-Hoc LoRA vs. Reziliența Intrinsecă SPP\n")
+        f.write("% Toate modelele din config.ALL_MODELS prezente; bold = cel mai mic salt de stereotip. N=15 tulpini: diferentele nu sunt testate statistic.\n")
         f.write("\\begin{table}[htbp]\n")
         f.write("\\centering\n")
         f.write("\\small\n")
@@ -280,25 +258,24 @@ def run_jailbreak_probing():
         f.write(" & & ($x_{\\text{neutral}}$) & ($x_{\\text{adv}}$) & (Sensibilitate Stereotip) \\\\\n")
         f.write("\\midrule\n")
         
-        for m_name in ["Base-Ro-125M", "SPP-Ro-125M"]:
-            if m_name in model_stats:
+        for m_name in model_stats:
+            if True:
                 st = model_stats[m_name]
                 neu_str = f"{st['neutral_rate']:.1f}\\%"
                 adv_str = f"{st['adv_rate']:.1f}\\%"
                 shift_str = f"{st['mean_shift']:+.3f}"
                 
-                if m_name == "SPP-Ro-125M":
-                    adv_str = f"\\textbf{{{adv_str}}}"
-                    shift_str = f"\\textbf{{{shift_str}}}"
+                if st["mean_shift"] == min(v["mean_shift"] for v in model_stats.values()):
+                    shift_str = f"\\textbf{{{shift_str}}}"  # smallest stereotype shift
                     
                 line = f"{m_name} & {st['description']} & {neu_str} & {adv_str} & {shift_str} \\\\\n"
                 f.write(line)
                 
         f.write("\\bottomrule\n")
         f.write("\\end{tabular}\n")
-        f.write("\\caption{Rezultatele experimentului de demascare prin prefixe adversative (15 tulpini diagnostice). "
-                "În timp ce modelul de control brut reflectă stereotipurile absorbite din preantrenare sub presiune adversativă, "
-                "modelul SPP antrenat de la Token Zero își menține reziliența intrinsecă datorită blocării atenției cauzale în preantrenare.}\n")
+        f.write("\\caption{Demascare prin prefixe adversative (15 tulpini diagnostice): rata de preferință pentru continuarea stereotipă "
+                "fără și cu prefix adversativ, și saltul mediu de log-verosimilitate indus de prefix. "
+                "Cu 15 itemi, diferențele între modele nu sunt semnificative statistic și se raportează descriptiv.}\n")
         f.write("\\label{tab:thesis_adversarial_unmasking}\n")
         f.write("\\end{table}\n")
 

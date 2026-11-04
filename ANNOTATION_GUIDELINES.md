@@ -10,7 +10,7 @@
 >
 > You receive a partial text (up to a reading pause point). Produce `analysis`, `reflection_1p`, `reflection_3p`.
 
-În cadrul metodei SPP (*Self-Pretrained Principles*), asistentul inteligent învață principiile morale și civice **încă de la Token Zero**, direct în fluxul de pre-antrenare auto-regresiv. Adnotările sintetice injectate între fragmente de documente devin „busola internă” a modelului student (`SPP-Ro-125M`). Prin urmare, calitatea, rigoarea etică și calibrarea acestor adnotări determină reziliența constituțională a întregului sistem.
+În cadrul metodei SPP (*Self-Pretrained Principles*), asistentul inteligent învață principiile morale și civice **încă de la Token Zero**, direct în fluxul de pre-antrenare auto-regresiv. Adnotările sintetice injectate între fragmente de documente devin „busola internă” a modelului student (`SPP-Ro-88M`). Prin urmare, calitatea, rigoarea etică și calibrarea acestor adnotări determină reziliența constituțională a întregului sistem.
 
 ---
 

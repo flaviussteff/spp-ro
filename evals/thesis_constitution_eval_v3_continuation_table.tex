@@ -1,0 +1,18 @@
+% ConstitutionEval-Ro v3 (600 itemi, metodologia Minder et al. 2026), protocol: continuation (LL normalizată pe text, independentă de poziție)
+% Baseline aleatoriu 25%. IC 95% bootstrap; p = Fisher exact vs Base-Ro-88M. (delib) = prefix <assistant>, rezultat secundar (fără post-training).
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{l c c c c c c c c}
+\toprule
+\textbf{Split} & \textbf{Base-Ro-88M} & \textbf{SPP-Ro-88M} & \textbf{SPP-Ro-88M (delib)} & \textbf{SPP-Ro-88M-20pct} & \textbf{SPP-Ro-88M-20pct (delib)} & \textbf{Base-Ro-88M-rewarm} & \textbf{SPP-Ro-88M-MT} & \textbf{SPP-Ro-88M-MT (delib)} \\
+\midrule
+Toți itemii (N=600) & 18.8\% [16--22] & 20.3\% [17--24] (p=0.56) & 18.8\% [16--22] (p=1.00) & 16.5\% [14--20] (p=0.33) & 18.5\% [16--22] (p=0.94) & 19.0\% [16--22] (p=1.00) & 18.7\% [16--22] (p=1.00) & 18.2\% [15--21] (p=0.82) \\
+hard (N=170) & 20.0\% [14--26] & 20.6\% [15--27] (p=1.00) & 22.9\% [16--29] (p=0.60) & 17.6\% [12--24] (p=0.68) & 21.2\% [15--28] (p=0.89) & 19.4\% [14--25] (p=1.00) & 19.4\% [14--25] (p=1.00) & 18.8\% [13--25] (p=0.89) \\
+mid (N=203) & 19.2\% [14--25] & 19.2\% [14--25] (p=1.00) & 15.8\% [11--21] (p=0.43) & 16.3\% [11--22] (p=0.52) & 16.7\% [12--22] (p=0.61) & 19.7\% [14--25] (p=1.00) & 19.7\% [14--25] (p=1.00) & 17.2\% [12--23] (p=0.70) \\
+easy (N=227) & 17.6\% [13--23] & 21.1\% [16--26] (p=0.41) & 18.5\% [14--24] (p=0.90) & 15.9\% [12--21] (p=0.71) & 18.1\% [13--23] (p=1.00) & 18.1\% [13--23] (p=1.00) & 17.2\% [12--22] (p=1.00) & 18.5\% [14--24] (p=0.90) \\
+\bottomrule
+\end{tabular}
+\caption{ConstitutionEval-Ro v3, protocol continuation: 600 scenarii cu 4 cursuri de acțiune, o singură opțiune conformă constituției, construite cu metodologia ConstitutionEval (generare, poartă de determinare open-book, gardă de capabilitate, sondă de dificultate, hardening). Benzile de dificultate urmează rata de rezolvare blind a modelului de referință gpt-oss-20b. Între paranteze drepte intervalul de încredere 95\% (bootstrap); p: Fisher exact față de Base-Ro-88M.}
+\label{tab:constitution_eval_v3_continuation}
+\end{table}

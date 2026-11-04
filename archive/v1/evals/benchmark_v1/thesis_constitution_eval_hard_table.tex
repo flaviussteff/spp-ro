@@ -1,0 +1,25 @@
+% ConstitutionEval-Ro HARD, distractori în același registru (45 itemi) -- scorare prin log-verosimilitate normalizată pe lungime, graniță de tokenizare corectată (eval_utils)
+% Baseline aleatoriu: 25.0\%. Intervale de încredere 95% bootstrap; p = Fisher exact vs. Base-Ro-88M.
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{l c c c c c c c c}
+\toprule
+\textbf{Articol} & \textbf{Base-Ro-88M} & \textbf{SPP-Ro-88M} & \textbf{SPP-Ro-88M (delib)} & \textbf{SPP-Ro-88M-20pct} & \textbf{SPP-Ro-88M-20pct (delib)} & \textbf{Base-Ro-88M-rewarm} & \textbf{SPP-Ro-88M-MT} & \textbf{SPP-Ro-88M-MT (delib)} \\
+\midrule
+§1.1 Demnitate \& Nediscriminare & 40.0\% & 60.0\% & 60.0\% & 20.0\% & 60.0\% & 40.0\% & 40.0\% & 60.0\% \\
+§1.2 Egalitate de Gen & 40.0\% & 40.0\% & 80.0\% & 60.0\% & 80.0\% & 40.0\% & 40.0\% & 40.0\% \\
+§1.3 Echitate Teritorială & 40.0\% & 80.0\% & 60.0\% & 60.0\% & 60.0\% & 40.0\% & 40.0\% & 60.0\% \\
+§2.1 Dreptul la Informație [control: neantrenat] & 40.0\% & 60.0\% & 40.0\% & 60.0\% & 60.0\% & 40.0\% & 40.0\% & 40.0\% \\
+§2.2 Libertate de Exprimare [control: neantrenat] & 80.0\% & 80.0\% & 80.0\% & 60.0\% & 40.0\% & 80.0\% & 80.0\% & 60.0\% \\
+§2.3 Drepturile Minorităților [control: neantrenat] & 40.0\% & 40.0\% & 40.0\% & 20.0\% & 40.0\% & 40.0\% & 40.0\% & 40.0\% \\
+§2.1 Memorie Istorică \& Antitotalitarism & 0.0\% & 0.0\% & 20.0\% & 0.0\% & 20.0\% & 0.0\% & 0.0\% & 0.0\% \\
+§2.2 Gândire Critică, Laicitate \& Știință & 0.0\% & 20.0\% & 20.0\% & 20.0\% & 40.0\% & 0.0\% & 20.0\% & 40.0\% \\
+§2.3 Stat de Drept, Integritate \& Bioetică & 40.0\% & 60.0\% & 80.0\% & 40.0\% & 60.0\% & 40.0\% & 40.0\% & 40.0\% \\
+\midrule
+\textbf{Acuratețe generală (N=45)} & 35.6\% [22--49] & 48.9\% [36--64] (p=0.29) & 53.3\% [40--67] (p=0.14) & 37.8\% [24--53] (p=1.00) & 51.1\% [36--67] (p=0.20) & 35.6\% [22--49] (p=1.00) & 37.8\% [24--53] (p=1.00) & 42.2\% [29--58] (p=0.67) \\
+\bottomrule
+\end{tabular}
+\caption{ConstitutionEval-Ro HARD, distractori în același registru (45 itemi) (N=45, baseline aleatoriu 25.0\%). Între paranteze drepte: intervalul de încredere 95\% (bootstrap pe itemi); p: testul Fisher exact față de Base-Ro-88M. Articolele marcate [control: neantrenat] nu au avut reflecții în preantrenare și măsoară generalizarea. La N mic, diferențele cu p > 0.05 nu trebuie interpretate ca efecte demonstrate.}
+\label{tab:thesis_constitution_eval_hard_table}
+\end{table}
