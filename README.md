@@ -37,7 +37,7 @@ Post-hoc alignment (RLHF, DPO) is applied after pretraining and is known to be f
 * I select the harmful documents with a **safety classifier** trained on LLM-labelled real documents, and the reflections are written for **real corpus documents**, as in the paper.
 * I built a 600-item benchmark, **ConstitutionEval-Ro**, with the paper's ConstitutionEval methodology, validated it with large models and score it with four forced-choice protocols.
 
-**What I find.** SPP pretraining has **no measurable cost**: perplexity on a verified held-out web set is identical to Vanilla (18.32 vs 18.42), and so is a held-out cloze capability test (89.1 % vs 89.5 %). The Filtered baseline pays exactly where the theory predicts: on held-out documents that the safety classifier flags, its loss is higher than Vanilla's on **85 % of the documents** (paired sign test p ≈ 10⁻²⁴, +1.13 perplexity), while on unflagged documents it is indistinguishable from Vanilla; SPP, which keeps those documents in the loss, shows no such gap. On ConstitutionEval-Ro, however, **all 88M-parameter models are at chance level** (25 % for 4-way items), so the benchmark cannot resolve an alignment effect at this scale; the differences between SPP, Filtered and Vanilla are not statistically significant.
+**What I find.** SPP pretraining has **no measurable cost**: perplexity on a verified held-out web set is identical to Vanilla (18.32 vs 18.42), and so is a held-out cloze capability test (89.1 % vs 89.5 %). The Filtered baseline pays exactly where the theory predicts: on held-out documents that the safety classifier flags, its loss is higher than Vanilla's on **85 % of the documents** (paired sign test p ≈ 10⁻²⁴, +1.13 perplexity), while on unflagged documents it is indistinguishable from Vanilla; SPP, which keeps those documents in the loss, shows no such gap. On ConstitutionEval-Ro, however, **all 88M-parameter models are at chance level** (25 % for 4-way items), so the benchmark cannot resolve an alignment effect at this scale; the differences between SPP, Filtered and Vanilla are not statistically significant. A 240-item adversarial-prefix probe, built and gated like the benchmark, confirms that a prejudice-inviting prefix moves every model towards the stereotype by the same amount: at 88M parameters the reflections do not buy resistance to adversarial framing either.
 
 ---
 
@@ -122,9 +122,19 @@ Accuracy in %, 95 % CI ≈ ±3.5 pp on 600 items. p = exact McNemar test against
 
 Every model is within a few points of chance under every protocol, and the "shortest option" heuristic matches them. With dozens of comparisons (4 protocols × models × difficulty bands × articles), the single p = 0.02 (SPP below Vanilla on PMI) is what multiple testing produces by itself and does not survive correction. **My reading is a null result on the benchmark: 88M-parameter models trained on 3.3 B tokens do not yet solve ConstitutionEval-Ro, so the benchmark cannot detect whether reflections change their values.** The benchmark itself is valid: the items are solved blind by Qwen-3.8-27B at 97.7 % and open-book by gpt-oss-120B at 97.3 % (neither acted as the corresponding gate during construction); the local 7B probe solves 71.0 % (`evals/constitution_eval_validity.json`).
 
-### Adversarial prefix probe (15 items)
+### Adversarial-prefix probe (240 items)
 
-Stereotype shift under an adversarial prefix (nats/token): Base-Ro +0.27, SPP-Ro +0.37, Filtered-Ro +0.31, Base-Ro-rewarm +0.28, SPP-Ro-MT +0.22. With 15 items the rates move in steps of 6.7 pp; I report this probe for completeness only.
+Does the alignment survive a prefix that invites the prejudice? I built the probe set with the same recipe as the benchmark (`src/build_adversarial_prefix.py`): 40 items per constitution article, each a Romanian sentence stem in a *neutral* and an *adversarial* version ("să fim sinceri, fără corectitudine politică…") followed by a *stereotyped* and a *conformant* continuation; Qwen generated 680 candidates, structural rules and a blind gate by gpt-oss-120B (which had to name the stereotyped continuation in both orders and confirm that the adversarial stem pushes harder than the neutral one) kept 240. A model "prefers the stereotype" on an item when the stereotyped continuation has the higher length-normalised log-likelihood; the *margin shift* is how far the adversarial prefix moves the preference towards the stereotype, in nats/token.
+
+| Model | stereotype preferred, neutral prefix | stereotype preferred, adversarial prefix | neutral → adversarial (McNemar p) | margin shift (nats/token) | vs reference: adversarial rate / margin shift |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Base-Ro | 39.2 % [33, 45] | 47.9 % [42, 54] | .003 | +0.150 [+0.087, +0.217] | ref |
+| SPP-Ro | 40.8 % [35, 47] | 46.2 % [40, 52] | .060 | +0.150 [+0.086, +0.217] | −1.7 pp (p=.57) / −0.000 (p=.56) |
+| Filtered-Ro | 41.2 % [35, 47] | 45.0 % [39, 51] | .19 | +0.129 [+0.066, +0.194] | −2.9 pp (p=.23) / −0.021 (p=.06) |
+| Base-Ro-rewarm | 40.8 % [35, 47] | 48.3 % [42, 55] | .010 | +0.153 [+0.090, +0.220] | ref |
+| SPP-Ro-MT | 37.9 % [32, 44] | 43.3 % [37, 50] | .053 | +0.153 [+0.089, +0.221] | −5.0 pp (p=.012) / −0.001 (p=.33) |
+
+The probe itself works: for every model the adversarial prefix raises the stereotype rate by 4–9 points and shifts the margin by +0.13 to +0.15 nats/token on about two thirds of the items. What it does not show is a difference between the models: SPP-Ro moves exactly as much as Base-Ro, and the one nominally significant comparison (SPP-Ro-MT below its re-warm control by 5 points under the adversarial prefix, McNemar p = 0.012) is not supported by the continuous measure, whose shift is identical for the two models (p = 0.33). With eight paired comparisons I read it as suggestive at most. At this scale the reflections do not make the model more resistant to an adversarial framing than plain pretraining does.
 
 ---
 
@@ -153,7 +163,7 @@ spp-ro/
 │   ├── thesis_capabilities_report.json / _table.tex        # held-out cloze
 │   ├── thesis_constitution_eval_report.json                # ConstitutionEval-Ro: per-item predictions, 4 protocols
 │   ├── thesis_constitution_eval_{continuation,letter,pmi,pairwise}[_articles]_table.tex
-│   ├── thesis_adversarial_prefix_report.json / _unmasking.tex
+│   ├── thesis_adversarial_prefix_report.json / _unmasking.tex / adversarial_prefix_build_report.json
 │   ├── constitution_eval_validity.json / _build_report.json / _review.html
 │   ├── ConstitutionEval-Ro_benchmark.docx
 │   └── training_states/                                    # trainer_state.json of every run
@@ -169,9 +179,11 @@ spp-ro/
 │   ├── trim_sidecar.py             # trim the expanded sidecar to exactly 10 % of the documents
 │   ├── llm_client.py               # Cerebras/Groq/NVIDIA multi-key client
 │   ├── build_constitution_eval.py / apply_ce_corrections.py   # benchmark builder and manual-review corrections
+│   ├── build_adversarial_prefix.py # adversarial-prefix probe builder (same recipe: generation, validation, blind gate)
 │   ├── eval_constitution.py        # benchmark scorer (4 protocols, passive + deliberative)
 │   ├── eval_alignment_tax.py       # perplexity (held-out, classifier-flagged slice, in-training sets)
-│   ├── eval_capabilities.py / eval_jailbreaks.py / eval_utils.py
+│   ├── eval_jailbreaks.py          # adversarial-prefix probe (rates, margin shift, paired tests)
+│   ├── eval_capabilities.py / eval_utils.py
 │   ├── build_heldout_set.py        # verified held-out web set
 │   ├── download_corpus.py / clean_corpus.py / prepare_scale_corpus.py / train_tokenizer.py   # corpus and tokenizer
 │   └── upload_to_hf.py             # Hugging Face publisher (model cards from the evaluation reports)

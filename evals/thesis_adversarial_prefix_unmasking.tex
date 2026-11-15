@@ -1,20 +1,18 @@
-% Tabel Master Licență: Demascarea Prefixelor Adversative (Adversarial Prefix Unmasking)
-% Toate modelele din config.ALL_MODELS prezente; bold = cel mai mic salt de stereotip. N=15 tulpini: diferentele nu sunt testate statistic.
+% Adversarial-prefix probe: stereotype rate under a neutral and an adversarial prefix, margin shift, paired tests against the reference
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{l l c c c}
+\begin{tabular}{l c c c c}
 \toprule
-\textbf{Model} & \textbf{Paradigmă Aliniere} & \textbf{Bias Neutru} & \textbf{Bias Sub Atac} & \textbf{Salt Log-Likelihood ($\Delta LL_{\text{adv}}$)} \\
- & & ($x_{\text{neutral}}$) & ($x_{\text{adv}}$) & (Sensibilitate Stereotip) \\
+\textbf{Model} & \textbf{Stereotip, prefix neutru} & \textbf{Stereotip, prefix adversarial} & \textbf{Deplasarea marjei (nats/token)} & \textbf{p vs. referință} \\
 \midrule
-Base-Ro & Vanilla control: plain documents, no reflections & 66.7\% & 73.3\% & +0.272 \\
-SPP-Ro & SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule) & 53.3\% & 73.3\% & +0.372 \\
-Filtered-Ro & Filtered baseline: classifier-flagged documents kept in context, loss-masked & 53.3\% & 66.7\% & +0.310 \\
-Base-Ro-rewarm & Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections & 66.7\% & 73.3\% & +0.283 \\
-SPP-Ro-MT & SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences) & 66.7\% & 66.7\% & \textbf{+0.217} \\
+Base-Ro & 39.2\% [33--45] & 47.9\% [42--54] (p=0.0025) & +0.150 [+0.087, +0.217] & ref \\
+SPP-Ro & 40.8\% [35--47] & 46.2\% [40--52] (p=0.06) & +0.150 [+0.086, +0.217] & 0.57 / 0.56 \\
+Filtered-Ro & 41.2\% [35--48] & 45.0\% [39--51] (p=0.19) & +0.129 [+0.066, +0.194] & 0.23 / 0.06 \\
+Base-Ro-rewarm & 40.8\% [35--47] & 48.3\% [42--55] (p=0.0096) & +0.153 [+0.090, +0.220] & 1.00 / 0.85 \\
+SPP-Ro-MT & 37.9\% [32--44] & 43.3\% [37--50] (p=0.053) & +0.152 [+0.089, +0.221] & 0.01 / 0.33 \\
 \bottomrule
 \end{tabular}
-\caption{Demascare prin prefixe adversative (15 tulpini diagnostice): rata de preferință pentru continuarea stereotipă fără și cu prefix adversativ, și saltul mediu de log-verosimilitate indus de prefix. Cu 15 itemi, diferențele între modele nu sunt semnificative statistic și se raportează descriptiv.}
+\caption{Sonda cu prefixe adversariale (240 itemi, șase articole ale constituției): procentul itemilor în care continuarea stereotipă este mai probabilă decât cea conformă, sub prefixul neutru și sub cel adversarial (intervale de încredere bootstrap 95\%; p = McNemar exact între cele două condiții), deplasarea medie a marjei log-verosimilității spre stereotip indusă de prefixul adversarial, și testele pe perechi față de modelul de referință (McNemar pe rata sub prefix adversarial / test de semn pe deplasarea marjei).}
 \label{tab:thesis_adversarial_unmasking}
 \end{table}

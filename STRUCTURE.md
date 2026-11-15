@@ -29,7 +29,7 @@ the same stream (seed 42), 50,000 steps ≈ 3.28 B tokens, ~66 h per model on an
   Base-Ro@45k ──> Base-Ro-rewarm (5k steps) ──> control for MT
   Base-Ro@45k ──> SPP-Ro-MT (5k steps, midtraining recipe)
 evaluation: ConstitutionEval-Ro (4 protocols, passive + deliberative) + held-out perplexity (whole / flagged / unflagged)
-            + cloze + adversarial prefixes
+            + cloze + adversarial-prefix probe (six articles, built and gated like the benchmark)
 ```
 
 ## The result in short
@@ -38,6 +38,7 @@ evaluation: ConstitutionEval-Ro (4 protocols, passive + deliberative) + held-out
 - **Filtered pays exactly on the flagged domain**: on the 199 held-out documents flagged by the classifier, higher loss than Base-Ro on 85 % of the documents (sign test p ≈ 1e-24, +1.13 PPL); on the unflagged documents, identical to Base-Ro. SPP has no such loss.
 - **On ConstitutionEval-Ro every model is at chance level** (25 % with 4 options; 50 % pairwise) under every protocol; the SPP / Filtered / Base differences are not significant (McNemar on paired items). The benchmark is valid (Qwen-3.8-27B blind 97.7 %, gpt-oss-120b open-book 97.3 %); the 88M models do not solve it.
 - SPP-Ro-MT: +0.46 PPL vs re-warm (loss on the reflection only in the last 5k steps); no effect on the benchmark.
+- **Adversarial-prefix probe (240 items, built and gated like the benchmark)**: the prejudice-inviting prefix raises the stereotype rate of every model by 4–9 points (+0.13 to +0.15 nats/token margin shift, McNemar p ≤ 0.06), but SPP-Ro moves exactly as much as Base-Ro; the only nominal difference (SPP-Ro-MT −5 pp vs its control, p = 0.012) is not matched by the continuous measure.
 
 ## Repository root
 
@@ -71,14 +72,16 @@ evaluation: ConstitutionEval-Ro (4 protocols, passive + deliberative) + held-out
 | `apply_ce_corrections.py` | applies the manual-review corrections (`data/eval/ce_corrections*.tsv`) to the final set and the build state, with .bak and a log |
 | `eval_constitution.py` | scores the models: continuation, letters debiased over 4 rotations, PMI, gold-vs-distractor pairs; passive and deliberative; McNemar against the reference |
 | `eval_alignment_tax.py` | perplexity: held-out, **the classifier-flagged slice** (199 docs, threshold 0.1, `--clf-threshold`) and the unflagged one, the in-training sets; classifier scores cached in `data/eval/heldout_clf_scores.parquet` |
-| `eval_capabilities.py`, `eval_jailbreaks.py`, `eval_utils.py` | held-out cloze, adversarial prefixes (15 items), statistical utilities |
+| `build_adversarial_prefix.py` | builds the adversarial-prefix probe set (`data/eval/adversarial_prefix_ro.jsonl`) with the benchmark's recipe: generation per article, structural validation, blind gate by a second model, balanced selection |
+| `eval_jailbreaks.py` | the adversarial-prefix probe: stereotype rate under a neutral and an adversarial prefix, margin shift, bootstrap CIs, McNemar / sign tests against the reference, per-article breakdown |
+| `eval_capabilities.py`, `eval_utils.py` | held-out cloze, statistical utilities |
 | `build_heldout_set.py` | the verified held-out set (needs a raw shard from `archive/raw_corpus/` to be rebuilt) |
 | `download_corpus.py`, `clean_corpus.py`, `prepare_scale_corpus.py`, `train_tokenizer.py` | the corpus and the tokenizer (kept for reproduction) |
 | `upload_to_hf.py` | publishing on Hugging Face (`HF_RELEASES` = repo → folder map; model cards from the reports) |
 
 ## `data/` (git-ignored) — see `data/README.md`
 
-Corpus (`clean/corpus_scale_stream.parquet`), held-out set (`eval/heldout_fineweb.parquet` + `heldout_clf_scores.parquet`), labels and candidates, `sidecar/reflections_first_pass.parquet` (the base), `sidecar/reflections.parquet` (the sidecar used for training), `eval/constitution_eval_ro.jsonl` (the benchmark), `eval/ce_build/items.jsonl` (the build state).
+Corpus (`clean/corpus_scale_stream.parquet`), held-out set (`eval/heldout_fineweb.parquet` + `heldout_clf_scores.parquet`), labels and candidates, `sidecar/reflections_first_pass.parquet` (the base), `sidecar/reflections.parquet` (the sidecar used for training), `eval/constitution_eval_ro.jsonl` (the benchmark), `eval/ce_build/items.jsonl` (the build state), `eval/adversarial_prefix_ro.jsonl` (the probe set).
 
 ## `models/` (git-ignored) — see `models/README.md`
 
@@ -92,7 +95,8 @@ The five models of the table above + `safety_clf_ro/`. Each model folder: `model
 | `thesis_alignment_tax_report.json`, `_table.tex` | perplexity: held-out, flagged, unflagged, Wikipedia/press (in-training); ΔPPL overall and on the flagged slice |
 | `thesis_alignment_tax_perdoc_losses.json` | per-document loss (Base-Ro, SPP-Ro, Filtered-Ro) on the flagged/unflagged slices, for the paired tests |
 | `thesis_capabilities_report.json`, `_table.tex` | held-out cloze, 1,000 items |
-| `thesis_adversarial_prefix_report.json`, `_unmasking.tex` | adversarial prefixes, 15 items |
+| `thesis_adversarial_prefix_report.json`, `_unmasking.tex` | the adversarial-prefix probe: per-item log-likelihoods, rates with CIs, paired tests |
+| `adversarial_prefix_build_report.json` | how many probe items each stage kept, per article |
 | `constitution_eval_validity.json` | benchmark validity (Qwen-3.8-27B blind 97.7 %, gpt-oss-120b open-book 97.3 %, local probe 71.0 %) |
 | `constitution_eval_build_report.json`, `constitution_eval_review.html` | the build report and the manual-review page |
 | `ConstitutionEval-Ro_benchmark.docx` | all 600 items, for my supervisor |

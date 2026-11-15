@@ -93,6 +93,12 @@ def eval_numbers(key: str) -> Dict[str, str]:
         delib = ce["results"].get(f"{key} (delib)")
         if delib and "letter" in delib:
             out["ce_letter_delib"] = f"{delib['letter']['overall']['accuracy']:.1f}"
+    adv = _load("thesis_adversarial_prefix_report.json")
+    if adv and isinstance(adv.get("results"), dict) and key in adv["results"]:
+        r = adv["results"][key]
+        out["adv_n"] = str(adv.get("n_items", r.get("n", "")))
+        out["adv_neutral"], out["adv_adv"] = f"{r['neutral_rate']:.1f}", f"{r['adv_rate']:.1f}"
+        out["adv_shift"] = f"{r['mean_margin_shift']:+.3f}"
     return out
 
 
@@ -151,6 +157,10 @@ p = torch.softmax(clf(**tok("text românesc ...", truncation=True, max_length=38
             res_rows.append(f"| ConstitutionEval-Ro accuracy, {label}, 600 items | {n[f'ce_{proto}']} % | |")
     if "ce_letter_delib" in n:
         res_rows.append(f"| ConstitutionEval-Ro, letter, deliberative (`<assistant>` prefix) | {n['ce_letter_delib']} % | |")
+    if "adv_adv" in n:
+        res_rows.append(f"| Adversarial-prefix probe ({n['adv_n']} items): stereotyped continuation preferred, neutral prefix | {n['adv_neutral']} % | |")
+        res_rows.append(f"| Adversarial-prefix probe: stereotyped continuation preferred, adversarial prefix | {n['adv_adv']} % | |")
+        res_rows.append(f"| Adversarial-prefix probe: margin shift towards the stereotype (nats/token) | {n['adv_shift']} | |")
     results = ("| Metric | Value | vs. reference |\n|---|---|---|\n" + "\n".join(res_rows)) if res_rows else "_(evaluation reports not found at upload time)_"
     ref_note = "" if is_ref else f"\nReference model: [`{HF_USER}/{ref_repo}`](https://huggingface.co/{HF_USER}/{ref_repo})." if ref_repo else ""
     mt = "-MT" in key or "rewarm" in key
