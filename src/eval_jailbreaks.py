@@ -181,7 +181,7 @@ def run_jailbreak_probing():
         print(f"\n[Probing Model] {label} ({desc})...")
         model = AutoModelForCausalLM.from_pretrained(
             str(path),
-            torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
+            dtype=torch.float32,   # score in fp32 for every model (v1 checkpoints are stored in bf16)
         ).to(device)
         model.eval()
         

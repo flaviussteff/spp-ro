@@ -44,6 +44,14 @@ SIDECAR_V2_FILE = SIDECAR_DIR / "reflections_v2.parquet"
 SPP_V2_MODEL_DIR = MODELS_DIR / "spp_ro_88m_v2"            # SPP{T0} v2, from scratch, inline annotated docs
 SPP_MT_V2_MODEL_DIR = MODELS_DIR / "spp_ro_88m_mt_v2"      # SPP{MT} v2: Base@45k + 5k steps on the v2 stream
 FILTERED_MODEL_DIR = MODELS_DIR / "filtered_ro_88m"        # paper's Filtered baseline: harmful docs loss-masked
+# ---- v3 (packing generation): the v2 recipe + sequence packing (EOS-terminated documents fill every 1,024-position
+# window, block-diagonal attention; ~2x the real tokens per step at the same compute) + the expanded sidecar (~10% of docs).
+SPP_CANDIDATES_V3_FILE = CLEAN_DATA_DIR / "spp_candidates_v3.parquet"   # classifier threshold lowered; only documents not yet in the sidecar
+BASE_PACK_MODEL_DIR = MODELS_DIR / "base_ro_88m_pack"              # Base-Ro-88M-pack: vanilla control, packed
+SPP_PACK_MODEL_DIR = MODELS_DIR / "spp_ro_88m_pack"                # SPP{T0} v3: inline annotated docs, packed
+BASE_PACK_REWARM_MODEL_DIR = MODELS_DIR / "base_ro_88m_pack_rewarm"  # control for MT: Base-pack@45k + 5k steps, no reflections
+SPP_MT_PACK_MODEL_DIR = MODELS_DIR / "spp_ro_88m_mt_pack"          # SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream
+FILTERED_PACK_MODEL_DIR = MODELS_DIR / "filtered_ro_88m_pack"      # Filtered baseline, packed
 EVALS_DIR = WORKSPACE_DIR / "evals"
 EVAL_DATA_DIR = DATA_DIR / "eval"
 HELDOUT_FILE = EVAL_DATA_DIR / "heldout_fineweb.parquet"  # verified disjoint from training (build_heldout_set.py)
@@ -55,10 +63,26 @@ ALL_MODELS = [
     ("SPP-Ro-88M-20pct", SPP_20PCT_MODEL_DIR, "SPP{T0} v1, 20% synthetic sidecar"),
     ("Base-Ro-88M-rewarm", BASE_REWARM_MODEL_DIR, "Control: Base@45k + 5k steps, fresh LR schedule, no reflections"),
     ("SPP-Ro-88M-MT", SPP_MT_MODEL_DIR, "SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar"),
-    ("SPP-Ro-88M-v2", SPP_V2_MODEL_DIR, "SPP{T0} v2: real documents, measured severity, prefix-only reflections"),
-    ("SPP-Ro-88M-MT-v2", SPP_MT_V2_MODEL_DIR, "SPP{MT} v2: Base@45k + 5k steps on the v2 stream"),
-    ("Filtered-Ro-88M", FILTERED_MODEL_DIR, "Filtered baseline: harmful documents loss-masked"),
+    # generation 2 (un-packed, real documents) was stopped at step 12,500 in favour of generation 3 (packing); the
+    # partial run is in archive/v2/models/ and no v2 model is evaluated. The *_V2_MODEL_DIR / FILTERED_MODEL_DIR
+    # constants stay for the un-packed training paths of train_scale_pretrain.py.
+    # generation 3 (packed): compared with Base-Ro-88M-pack, not with Base-Ro-88M
+    ("Base-Ro-88M-pack", BASE_PACK_MODEL_DIR, "Vanilla control, packed sequences (v3)"),
+    ("SPP-Ro-88M-pack", SPP_PACK_MODEL_DIR, "SPP{T0} v3: real documents, expanded sidecar, packed sequences"),
+    ("Base-Ro-88M-pack-rewarm", BASE_PACK_REWARM_MODEL_DIR, "Control: Base-pack@45k + 5k steps, fresh LR schedule, no reflections"),
+    ("SPP-Ro-88M-MT-pack", SPP_MT_PACK_MODEL_DIR, "SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream"),
+    ("Filtered-Ro-88M-pack", FILTERED_PACK_MODEL_DIR, "Filtered baseline, packed sequences (v3)"),
 ]
+
+
+def base_ref_key(key: str) -> str:
+    """Vanilla reference for a model key: generation-3 (packed) models are compared with Base-Ro-88M-pack,
+    everything else with Base-Ro-88M. Works for the '(delib)' variants too."""
+    # midtraining (MT) models are compared with their matched re-warm control (same start, same schedule, no reflections)
+    pack = "pack" in key
+    if "-MT" in key:
+        return "Base-Ro-88M-pack-rewarm" if pack else "Base-Ro-88M-rewarm"
+    return "Base-Ro-88M-pack" if pack else "Base-Ro-88M"
 
 # Special Tokens for Tokenizer and SPP Mechanism
 SPECIAL_TOKENS = [
@@ -103,11 +127,11 @@ class HardwareAndTrainingConfig:
     gradient_accumulation_steps: int = 16  # Simulates effective batch of 64 seqs (65,536 tokens/update)
     
     # Optimization
-    learning_rate: float = 5e-4
+    learning_rate: float = 1.5e-4          # informative only: train_scale_pretrain.py takes --lr (default 1.5e-4)
     min_lr_ratio: float = 0.1
     weight_decay: float = 0.1
     warmup_steps: int = 1000
-    max_steps: int = 35000                 # ~2.3 Billion tokens total
+    max_steps: int = 50000                 # informative only: the runs use --steps 50000 (3.27B positions)
     save_steps: int = 2500
     logging_steps: int = 25
     

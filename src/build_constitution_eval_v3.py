@@ -22,6 +22,7 @@ Pipeline (every stage is resumable; state lives in data/eval/ce_v3_build/items.j
   6. harden      easy items are revised by the generator (probe-in-the-loop), kept only if harder AND
                  still passing 3+4 (paper: "four-gate acceptance").
   7. finalize    quota per article, gold position = md5(id) % 4 (position-balanced), write
+  review      rewrite only the manual-review HTML (votes remapped to the displayed option order + validity votes); no API/GPU
                  data/eval/constitution_eval_ro_v3.jsonl + build report + an HTML page for manual review.
 
 Usage:
@@ -574,39 +575,147 @@ def finalize(items: List[Dict[str, Any]], per_article: int, llms: Dict[str, LLM]
     }
     EVALS_DIR.mkdir(parents=True, exist_ok=True)
     REPORT_FILE.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    write_review_html(rows)
+    write_review_html(rows, {it["id"]: gold_index(it) for it in final})
     print(json.dumps({k: v for k, v in report.items() if k not in ("models", "method")}, ensure_ascii=False, indent=2))
     print(f"\nScris {len(rows)} itemi -> {OUT_FILE}\nRaport -> {REPORT_FILE}\nPagina de verificare manuală -> {HTML_FILE}")
 
 
-def write_review_html(rows: List[Dict[str, Any]]):
+def build_to_final_map(build_gold: int, final_gold: int, n: int = 4) -> List[int]:
+    """Index map build-order -> final-order, mirroring finalize(): the non-gold options keep their relative order and
+    the gold is inserted at position final_gold."""
+    out = []
+    for i in range(n):
+        if i == build_gold:
+            out.append(final_gold)
+        else:
+            k = i if i < build_gold else i - 1
+            out.append(k if k < final_gold else k + 1)
+    return out
+
+
+def annotate_rows_for_review(rows: List[Dict[str, Any]], build_gold: Optional[Dict[str, int]] = None):
+    """Adds to each final row: votes_final (construction gates remapped to the displayed option order), verify_final
+    (validity-table votes, already in the displayed order) and disagree (a large model wrong, split or unanswered in either table)."""
+    verify = {}
+    if VERIFY_FILE.exists():
+        try:
+            for name, m in json.loads(VERIFY_FILE.read_text(encoding="utf-8")).get("models", {}).items():
+                verify[name] = m.get("per_item", {})
+        except Exception:
+            pass
+    for r in rows:
+        g_final = r["gold_index"]
+        votes = r.get("votes") or {}
+        if build_gold and r["id"] in build_gold:
+            mp = build_to_final_map(build_gold[r["id"]], g_final, len(r["options"]))
+            r["votes_final"] = {k: [None if x is None else mp[x] for x in v] for k, v in votes.items()}
+        else:
+            r["votes_final"] = None   # construction state unavailable: votes shown only as agreement counts
+        r["verify_final"] = {name: per.get(r["id"], {}).get("votes") for name, per in verify.items()} if verify else None
+        disagree = False   # only the large models count: the small probe is wrong by design on the hard band
+        for name, v in list((r["votes_final"] or {}).items()) + list((r["verify_final"] or {}).items()):
+            if name.startswith("probe"):
+                continue
+            valid = [x for x in (v or []) if x is not None]
+            if not valid or max(set(valid), key=valid.count) != g_final or len(set(valid)) > 1:
+                disagree = True
+        r["disagree"] = disagree
+
+
+def write_review_html(rows: List[Dict[str, Any]], build_gold: Optional[Dict[str, int]] = None):
+    annotate_rows_for_review(rows, build_gold)
     data = json.dumps(rows, ensure_ascii=False).replace("</", "<\\/")
-    html = """<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>ConstitutionEval-Ro v3 – verificare manuală</title>
+    html = r"""<!doctype html><html lang="ro"><head><meta charset="utf-8"><title>Pagină de verificare manuală pentru ConstitutionEval-Ro</title>
 <style>body{font-family:Georgia,serif;max-width:1100px;margin:20px auto;padding:0 16px;color:#222}h1{font-size:22px}
-.ctl{position:sticky;top:0;background:#fff;padding:8px 0;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:14px}
-.item{border:1px solid #ddd;border-radius:6px;padding:12px 16px;margin:14px 0}.meta{font-family:sans-serif;font-size:12px;color:#666}
-.opt{margin:6px 0;padding:6px 8px;border-left:3px solid #ddd}.gold{border-left-color:#2a7;background:#f3fbf6}.viol{font-family:sans-serif;font-size:12px;color:#a33}
-.hard{color:#a00}.mid{color:#b60}.easy{color:#282}.hide .gold{border-left-color:#ddd;background:none}.hide .viol{display:none}
-textarea{width:100%;height:40px;font-family:sans-serif;font-size:12px}</style></head><body>
-<h1>ConstitutionEval-Ro v3 – pagină de verificare manuală</h1>
-<div class="ctl"><label><input type="checkbox" id="show" checked> arată răspunsul corect și încălcările</label> &nbsp; filtru articol:
-<select id="art"><option value="">toate</option></select> &nbsp; bandă: <select id="band"><option value="">toate</option><option>hard</option><option>mid</option><option>easy</option></select>
-&nbsp; <button id="export">exportă notele (JSON)</button> <span id="count"></span></div>
+.ctl{position:sticky;top:0;background:#fff;padding:8px 0;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:13px;z-index:2}
+.ctl select,.ctl button{font-size:13px}.item{border:1px solid #ddd;border-radius:6px;padding:12px 16px;margin:14px 0}
+.item.ok{border-color:#2a7}.item.rm{border-color:#c33;background:#fff7f7}
+.item.rm p,.item.rm .opt{text-decoration:line-through;color:#888}.item.ed{border-style:dashed}
+.meta{font-family:sans-serif;font-size:12px;color:#666}.bar{font-family:sans-serif;font-size:12px;margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.bar label{cursor:pointer}.bar button{font-size:12px}
+.opt{margin:6px 0;padding:6px 8px;border-radius:4px}.gold{background:#f3fbf6}.viol{font-family:sans-serif;font-size:12px;color:#a33}
+.hard{color:#a00}.mid{color:#b60}.easy{color:#282}.hide .gold{background:none}.hide .viol{display:none}
+textarea{width:100%;font-family:sans-serif;font-size:12px;box-sizing:border-box;resize:vertical}
+.note{height:34px}.edits{display:none;margin-top:6px;font-family:sans-serif;font-size:12px}.item.editing .edits{display:block}
+.edits label{display:block;margin-top:4px;color:#555}.edits textarea{min-height:30px}.edits textarea.changed{background:#fff8dc;border-color:#d9a400}
+.chg{color:#b60;font-weight:bold}ins.ii{background:#ffec80;text-decoration:none;border-radius:2px}del.dd{color:#c00;background:#fde6e6;text-decoration:line-through}</style></head><body>
+<h1>Pagină de verificare manuală pentru ConstitutionEval-Ro</h1>
+<p><a href="https://github.com/flaviussteff/spp-ro" style="color:inherit">https://github.com/flaviussteff/spp-ro</a></p>
+<div class="ctl"><label><input type="checkbox" id="show"> arată răspunsul corect și încălcările</label>
+&nbsp; articol: <select id="art"><option value="">toate</option></select>
+&nbsp; bandă: <select id="band"><option value="">toate</option><option>hard</option><option>mid</option><option>easy</option></select>
+&nbsp; stare: <select id="st"><option value="">toate</option><option value="new">neverificate încă</option><option value="ok">verificate OK</option><option value="rm">marcate eliminat</option><option value="ed">modificate</option><option value="dis">cu dezacord la modelele mari</option></select>
+&nbsp; <button id="exportTsv" title="fișierul pe care îl aplică src\apply_ce_v3_corrections.py">exportă corecturile (TSV)</button>
+<button id="exportJson" title="toată starea paginii, pentru backup sau alt browser">backup stare (JSON)</button>
+<label style="cursor:pointer"><input type="file" id="importJson" accept=".json" style="display:none"><u>încarcă backup</u></label>
+<span id="count"></span></div>
 <div id="list"></div>
-<script>const ROWS=__DATA__;const L="ABCD";const notes={};
-function render(){const show=document.getElementById('show').checked,art=document.getElementById('art').value,band=document.getElementById('band').value;
-const list=document.getElementById('list');list.className=show?'':'hide';let n=0;list.innerHTML='';
-for(const r of ROWS){if(art&&r.target_section!==art)continue;if(band&&r.band!==band)continue;n++;
-const v=r.votes||{};const vt=Object.entries(v).map(([k,a])=>k+': '+a.map(x=>x==null?'-':L[x]).join('')).join(' | ');
-let h=`<div class="item"><div class="meta"><b>${r.id}</b> · §${r.target_section} · bandă <b class="${r.band}">${r.band}</b> (model mic blind: ${Math.round((r.probe_solve_rate||0)*100)}%) ${r.hardened?'· hardened':''}<br>prevedere: ${r.provision}<br>voturi (indici originali înainte de rebalansare): ${vt}</div><p>${r.scenario}</p>`;
-r.options.forEach((o,i)=>{h+=`<div class="opt ${o.is_gold?'gold':''}"><b>${L[i]})</b> ${o.text}<div class="viol">${o.is_gold?'✔ corect – '+o.stance:'✘ '+o.violates+' – '+o.stance}</div></div>`});
-h+=`<textarea placeholder="nota ta (ex. OK / ambiguu / gold greșit / distractor corect)" data-id="${r.id}">${notes[r.id]||''}</textarea></div>`;list.insertAdjacentHTML('beforeend',h);}
-document.getElementById('count').textContent=n+' itemi';
-document.querySelectorAll('textarea').forEach(t=>t.addEventListener('input',e=>{notes[e.target.dataset.id]=e.target.value;try{localStorage.setItem('ce3notes',JSON.stringify(notes))}catch(x){}}));}
-try{Object.assign(notes,JSON.parse(localStorage.getItem('ce3notes')||'{}'))}catch(x){}
+<script>const ROWS=__DATA__;const L="ABCD";const BY={};for(const r of ROWS)BY[r.id]=r;let S={};
+function load(){try{S=JSON.parse(localStorage.getItem('ce3state')||'{}')}catch(x){S={}}
+try{const old=JSON.parse(localStorage.getItem('ce3notes')||'{}');for(const k in old){if(!k)continue;S[k]=S[k]||{};if(!S[k].note)S[k].note=old[k]}}catch(x){}delete S[''];}
+function save(){try{localStorage.setItem('ce3state',JSON.stringify(S))}catch(x){}}
+function st(id){return S[id]||(S[id]={})}
+function orig(r,f){return f==='scenario'?r.scenario:f==='provision'?r.provision:r.options[L.indexOf(f)].text}
+function edited(r){const e=(S[r.id]||{}).edits||{};return Object.keys(e).some(f=>e[f]!=null&&e[f]!==orig(r,f))}
+function status(r){const s=S[r.id]||{};if(s.rm)return 'rm';if(s.ok)return 'ok';return 'new'}
+function fmt(v,g){if(!v)return '-';const s=v.map(x=>x==null?'-':L[x]).join('');const ok=v.filter(x=>x===g).length;return `${s} <span class="${ok===v.length?'easy':(ok*2>v.length?'mid':'hard')}">${ok}/${v.length}✔</span>`;}
+function votes(r){const g=r.gold_index;if(r.verify_final)return 'voturi validare: '+Object.entries(r.verify_final).map(([k,a])=>k+' '+fmt(a,g)).join(', ');if(r.votes_final)return 'voturi construcție: '+Object.entries(r.votes_final).map(([k,a])=>k+' '+fmt(a,g)).join(', ');return '';}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function diff(a,b){const A=(a||'').split(/(\s+)/).filter(x=>x!==''),B=(b||'').split(/(\s+)/).filter(x=>x!=='');const n=A.length,m=B.length;
+const dp=Array.from({length:n+1},()=>new Uint16Array(m+1));for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=A[i]===B[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+let i=0,j=0,out='',del='',ins='';const flush=()=>{if(del){out+='<del class="dd">'+esc(del)+'</del>';del=''}if(ins){out+='<ins class="ii">'+esc(ins)+'</ins>';ins=''}};
+while(i<n&&j<m){if(A[i]===B[j]){flush();out+=esc(A[i]);i++;j++}else if(dp[i+1][j]>=dp[i][j+1]){del+=A[i++]}else{ins+=B[j++]}}
+while(i<n)del+=A[i++];while(j<m)ins+=B[j++];flush();return out}
+function shown(o,e){return e!=null&&e!==o?diff(o,e):esc(o)}
+function counts(){let c={new:0,ok:0,rm:0,ed:0};for(const r of ROWS){c[status(r)]++;if(edited(r))c.ed++}return `${ROWS.length} itemi | neverificate ${c.new} | OK ${c.ok} | eliminate ${c.rm} | modificate ${c.ed}`}
+function matches(r){const art=document.getElementById('art').value,band=document.getElementById('band').value,f=document.getElementById('st').value;
+if(art&&r.target_section!==art)return false;if(band&&r.band!==band)return false;if(f==='dis')return !!r.disagree;if(f==='ed')return edited(r);if(f)return status(r)===f;return true}
+function metaHtml(r){const s=S[r.id]||{};return `<b>${r.id}</b> | §${r.target_section} | bandă <b class="${r.band}">${r.band}</b> (model mic blind: ${Math.round((r.probe_solve_rate||0)*100)}%) ${r.hardened?'| hardened':''} ${r.disagree?'| <b class="hard">dezacord modele mari</b>':''} ${edited(r)?'| <span class="chg">modificat</span>':''} ${s.rm?'| <b class="hard">ELIMINAT</b>':''}<br>prevedere: ${esc(r.provision)}<br>${votes(r)}`}
+function optHtml(r,i){const o=r.options[i],e=(S[r.id]||{}).edits||{};return `<b>${L[i]})</b> ${shown(o.text,e[L[i]])}<div class="viol">${o.is_gold?'✔ corect – '+esc(o.stance):'✘ '+esc(o.violates)+' – '+esc(o.stance)}</div>`}
+function itemClass(r){const s=S[r.id]||{},t=status(r);return ['item',t==='ok'?'ok':'',t==='rm'?'rm':'',edited(r)?'ed':'',s.editing?'editing':''].join(' ')}
+function itemHtml(r){const s=S[r.id]||{},e=s.edits||{};
+let h=`<div class="${itemClass(r)}" data-id="${r.id}"><div class="meta">${metaHtml(r)}</div><p>${shown(r.scenario,e.scenario)}</p>`;
+r.options.forEach((o,i)=>{h+=`<div class="opt ${o.is_gold?'gold':''}">${optHtml(r,i)}</div>`});
+h+=`<div class="bar"><label><input type="checkbox" class="ok" ${s.ok?'checked':''}> <b>OK</b>, verificat</label><label><input type="checkbox" class="rm" ${s.rm?'checked':''}> <b>eliminat</b></label><button class="edtoggle">${s.editing?'ascunde editarea':'editează'}</button><button class="reset" ${edited(r)?'':'style="display:none"'}>anulează modificările</button></div>`;
+h+=`<textarea class="note" placeholder="notă">${esc(s.note)}</textarea>`;
+h+=`<div class="edits"><label>scenariu</label><textarea data-f="scenario" class="${e.scenario!=null&&e.scenario!==r.scenario?'changed':''}">${esc(e.scenario!=null?e.scenario:r.scenario)}</textarea>`;
+r.options.forEach((o,i)=>{h+=`<label>${L[i]}) ${o.is_gold?'(corect)':''}</label><textarea data-f="${L[i]}" class="${e[L[i]]!=null&&e[L[i]]!==o.text?'changed':''}">${esc(e[L[i]]!=null?e[L[i]]:o.text)}</textarea>`});
+return h+`</div></div>`}
+function fit(t){t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'}
+function fitEdits(el){if(el.classList.contains('editing'))el.querySelectorAll('.edits textarea').forEach(fit)}
+function setCount(){const n=document.querySelectorAll('#list .item').length;document.getElementById('count').textContent=n+' afișați | '+counts()}
+function render(){const show=document.getElementById('show').checked;const list=document.getElementById('list');list.className=show?'':'hide';
+list.innerHTML=ROWS.filter(matches).map(itemHtml).join('');list.querySelectorAll('.item').forEach(fitEdits);setCount()}
+function rerender(el){const r=BY[el.dataset.id];if(!matches(r)){el.remove();setCount();return}
+const tmp=document.createElement('div');tmp.innerHTML=itemHtml(r);const nu=tmp.firstChild;el.replaceWith(nu);fitEdits(nu);setCount()}
+function update(el){const r=BY[el.dataset.id],s=S[r.id]||{};el.className=itemClass(r);el.querySelector('.meta').innerHTML=metaHtml(r);
+el.querySelector('input.ok').checked=!!s.ok;el.querySelector('input.rm').checked=!!s.rm;el.querySelector('button.reset').style.display=edited(r)?'':'none';
+if(!matches(r))el.remove();setCount()}
+const list=document.getElementById('list');
+list.addEventListener('change',e=>{const t=e.target,el=t.closest('.item');if(!el)return;const s=st(el.dataset.id);
+if(t.classList.contains('ok')){s.ok=t.checked;if(t.checked)s.rm=false;save();update(el)}
+else if(t.classList.contains('rm')){s.rm=t.checked;if(t.checked)s.ok=false;save();update(el)}});
+list.addEventListener('click',e=>{const t=e.target,el=t.closest('.item');if(!el||t.tagName!=='BUTTON')return;const s=st(el.dataset.id);
+if(t.classList.contains('edtoggle')){s.editing=!s.editing;save();el.classList.toggle('editing',s.editing);t.textContent=s.editing?'ascunde editarea':'editează';fitEdits(el)}
+else if(t.classList.contains('reset')){delete s.edits;save();rerender(el)}});
+list.addEventListener('input',e=>{const t=e.target;if(t.tagName!=='TEXTAREA')return;const el=t.closest('.item'),r=BY[el.dataset.id],s=st(r.id);fit(t);
+if(t.classList.contains('note')){s.note=t.value;save();return}
+const f=t.dataset.f,o=orig(r,f);s.edits=s.edits||{};if(t.value===o){delete s.edits[f];if(!Object.keys(s.edits).length)delete s.edits}else s.edits[f]=t.value;
+t.classList.toggle('changed',t.value!==o);save();
+if(f==='scenario')el.querySelector('p').innerHTML=shown(o,t.value);else el.querySelectorAll('.opt')[L.indexOf(f)].innerHTML=optHtml(r,L.indexOf(f));
+el.className=itemClass(r);el.querySelector('.meta').innerHTML=metaHtml(r);el.querySelector('button.reset').style.display=edited(r)?'':'none';setCount()});
+function download(name,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click()}
+function tsv(){const lines=['# generat din pagina de verificare, '+new Date().toISOString().slice(0,16)+' ; câmpuri: id, scenario|provision|A-D|elimina, text (TAB)'];
+for(const r of ROWS){const s=S[r.id]||{};if(s.rm){lines.push([r.id,'elimina',(s.note||'marcat în pagina de verificare').replace(/\s+/g,' ')].join('\t'));continue}
+const e=s.edits||{};for(const f of ['scenario','provision','A','B','C','D']){if(e[f]==null||e[f]===orig(r,f))continue;lines.push([r.id,f,e[f].replace(/\s+/g,' ').trim()].join('\t'))}}
+return lines.join('\n')+'\n'}
+load();
 const sel=document.getElementById('art');[...new Set(ROWS.map(r=>r.target_section))].sort().forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent='§'+a;sel.appendChild(o)});
-['show','art','band'].forEach(id=>document.getElementById(id).addEventListener('change',render));
-document.getElementById('export').onclick=()=>{const b=new Blob([JSON.stringify(notes,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ce3_note_manuale.json';a.click()};
+document.getElementById('show').addEventListener('change',()=>{list.className=document.getElementById('show').checked?'':'hide'});
+['art','band','st'].forEach(id=>document.getElementById(id).addEventListener('change',render));
+document.getElementById('exportTsv').onclick=()=>download('ce_v3_corrections.tsv',tsv());
+document.getElementById('exportJson').onclick=()=>download('ce3_stare_verificare.json',JSON.stringify(S,null,1));
+document.getElementById('importJson').addEventListener('change',ev=>{const f=ev.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);for(const k in j)if(k)S[k]=Object.assign(S[k]||{},j[k]);save();render()}catch(x){alert('fișier invalid')}};rd.readAsText(f)});
 render();</script></body></html>"""
     HTML_FILE.write_text(html.replace("__DATA__", data), encoding="utf-8")
 
@@ -678,6 +787,23 @@ def stage_verify(workers: int, workers_guard: int):
     print(f"[verify] -> {VERIFY_FILE}")
 
 
+def stage_review():
+    """Rewrites only the manual-review HTML page from the final set, the construction state and (if present) the
+    validity table. No API or GPU use; the benchmark file is not touched."""
+    if not OUT_FILE.exists():
+        print("[review] lipsește setul final; rulează finalize")
+        return
+    rows = [json.loads(l) for l in OUT_FILE.read_text(encoding="utf-8").splitlines() if l.strip()]
+    build_gold = {}
+    if STATE_FILE.exists():
+        for it in load_state():
+            if it.get("options") and any(o.get("is_gold") for o in it["options"]):
+                build_gold[it["id"]] = gold_index(it)
+    write_review_html(rows, build_gold)
+    n_dis = sum(1 for r in rows if r.get("disagree"))
+    print(f"[review] {len(rows)} itemi, {len(build_gold)} cu voturi remapate, {n_dis} cu dezacord -> {HTML_FILE}")
+
+
 # --------------------------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
@@ -685,7 +811,7 @@ def main():
     ap.add_argument("--gen-per-article", type=int, default=160, help="itemi generați per articol (înainte de porți)")
     ap.add_argument("--k", type=int, default=4, help="itemi per apel de generare")
     ap.add_argument("--harden-rounds", type=int, default=1)
-    ap.add_argument("--stage", type=str, default="all", choices=["all", "generate", "validate", "determinacy", "guard", "probe", "harden", "finalize", "verify"])
+    ap.add_argument("--stage", type=str, default="all", choices=["all", "generate", "validate", "determinacy", "guard", "probe", "harden", "finalize", "verify", "review"])
     ap.add_argument("--gen-model", default="qwen-3.8-27b")
     ap.add_argument("--judge-model", default="qwen-3.8-27b")
     ap.add_argument("--guard-model", default="gpt-oss-120b")
@@ -696,6 +822,9 @@ def main():
     ap.add_argument("--workers-guard", type=int, default=4, help="gpt-oss-120b has a lower requests/min limit on Cerebras")
     ap.add_argument("--workers-probe", type=int, default=1)
     args = ap.parse_args()
+    if args.stage == "review":   # no API clients, no local probe model: safe to run while a training job holds the GPU
+        stage_review()
+        return
 
     gen = LLM("cerebras", args.gen_model)
     judge = gen if args.judge_model == args.gen_model else LLM("cerebras", args.judge_model)

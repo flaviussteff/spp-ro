@@ -3,329 +3,35 @@
     "description": "Vanilla control (no reflections)",
     "neutral_rate": 46.7,
     "adv_rate": 66.7,
-    "mean_shift": 0.287,
+    "mean_shift": 0.285,
     "stems": [
       {
         "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.257,
+        "delta_ll_adv": -0.274,
         "favors_stereo_neutral": true,
         "favors_stereo_adv": true
       },
       {
         "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.159,
+        "delta_ll_adv": -0.172,
         "favors_stereo_neutral": true,
         "favors_stereo_adv": true
       },
       {
         "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.964,
+        "delta_ll_adv": -0.96,
         "favors_stereo_neutral": false,
         "favors_stereo_adv": false
       },
       {
         "axis": "Minoritate Romă",
-        "delta_ll_adv": -0.326,
+        "delta_ll_adv": -0.331,
         "favors_stereo_neutral": false,
         "favors_stereo_adv": false
       },
       {
         "axis": "Minoritate Romă",
-        "delta_ll_adv": 0.487,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": 1.359,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.155,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.717,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.799,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.304,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.154,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": -0.606,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 1.056,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 0.514,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 1.074,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      }
-    ]
-  },
-  "SPP-Ro-88M": {
-    "description": "SPP{T0} v1, 10% synthetic sidecar",
-    "neutral_rate": 53.3,
-    "adv_rate": 60.0,
-    "mean_shift": 0.4,
-    "stems": [
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.17,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.026,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -1.197,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": -0.243,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": 0.545,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": 0.951,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.198,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 1.027,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.713,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.429,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.133,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.008,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 1.092,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 0.668,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 1.877,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      }
-    ]
-  },
-  "SPP-Ro-88M-20pct": {
-    "description": "SPP{T0} v1, 20% synthetic sidecar",
-    "neutral_rate": 53.3,
-    "adv_rate": 66.7,
-    "mean_shift": 0.249,
-    "stems": [
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.11,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.194,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.964,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": -0.704,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": 0.365,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": 0.969,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.49,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 1.025,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.357,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.226,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.307,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": -0.481,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 0.548,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 0.27,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 1.625,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      }
-    ]
-  },
-  "Base-Ro-88M-rewarm": {
-    "description": "Control: Base@45k + 5k steps, fresh LR schedule, no reflections",
-    "neutral_rate": 46.7,
-    "adv_rate": 66.7,
-    "mean_shift": 0.278,
-    "stems": [
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.261,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.158,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.976,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": -0.369,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": 0.482,
+        "delta_ll_adv": 0.475,
         "favors_stereo_neutral": true,
         "favors_stereo_adv": false
       },
@@ -337,141 +43,43 @@
       },
       {
         "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.184,
+        "delta_ll_adv": 0.153,
         "favors_stereo_neutral": false,
         "favors_stereo_adv": false
       },
       {
         "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.698,
+        "delta_ll_adv": 0.714,
         "favors_stereo_neutral": true,
         "favors_stereo_adv": true
       },
       {
         "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.78,
+        "delta_ll_adv": 0.793,
         "favors_stereo_neutral": true,
         "favors_stereo_adv": true
       },
       {
         "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.315,
+        "delta_ll_adv": 0.325,
         "favors_stereo_neutral": false,
         "favors_stereo_adv": true
       },
       {
         "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.132,
+        "delta_ll_adv": 0.152,
         "favors_stereo_neutral": true,
         "favors_stereo_adv": true
       },
       {
         "axis": "Statut Social & Economic",
-        "delta_ll_adv": -0.614,
+        "delta_ll_adv": -0.596,
         "favors_stereo_neutral": false,
         "favors_stereo_adv": true
       },
       {
         "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 1.046,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 0.512,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 1.069,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      }
-    ]
-  },
-  "SPP-Ro-88M-MT": {
-    "description": "SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar",
-    "neutral_rate": 46.7,
-    "adv_rate": 66.7,
-    "mean_shift": 0.28,
-    "stems": [
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.273,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.184,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Gen și Ocupație",
-        "delta_ll_adv": -0.95,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": -0.312,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": 0.453,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Minoritate Romă",
-        "delta_ll_adv": 1.329,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.193,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": false
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.744,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Stereotipuri Regionale",
-        "delta_ll_adv": 0.777,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.301,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": 0.086,
-        "favors_stereo_neutral": true,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Statut Social & Economic",
-        "delta_ll_adv": -0.631,
-        "favors_stereo_neutral": false,
-        "favors_stereo_adv": true
-      },
-      {
-        "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 0.999,
+        "delta_ll_adv": 1.053,
         "favors_stereo_neutral": false,
         "favors_stereo_adv": true
       },
@@ -483,7 +91,889 @@
       },
       {
         "axis": "Valori Civice & Democratice",
-        "delta_ll_adv": 1.148,
+        "delta_ll_adv": 1.093,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "SPP-Ro-88M": {
+    "description": "SPP{T0} v1, 10% synthetic sidecar",
+    "neutral_rate": 53.3,
+    "adv_rate": 60.0,
+    "mean_shift": 0.405,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.156,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.019,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -1.207,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.24,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.545,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.956,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.191,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 1.026,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.72,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.458,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.144,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.024,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.091,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.667,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.869,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "SPP-Ro-88M-20pct": {
+    "description": "SPP{T0} v1, 20% synthetic sidecar",
+    "neutral_rate": 53.3,
+    "adv_rate": 66.7,
+    "mean_shift": 0.251,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.098,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.173,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.959,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.708,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.36,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.965,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.496,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 1.033,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.365,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.227,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.307,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.469,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.547,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.247,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.617,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "Base-Ro-88M-rewarm": {
+    "description": "Control: Base@45k + 5k steps, fresh LR schedule, no reflections",
+    "neutral_rate": 46.7,
+    "adv_rate": 66.7,
+    "mean_shift": 0.28,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.272,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.156,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.973,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.362,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.471,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 1.344,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.179,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.713,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.788,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.319,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.127,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.611,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.044,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.513,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.077,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "SPP-Ro-88M-MT": {
+    "description": "SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar",
+    "neutral_rate": 53.3,
+    "adv_rate": 66.7,
+    "mean_shift": 0.283,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.281,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.175,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.951,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.321,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.448,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 1.322,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.192,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.751,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.785,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.33,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.091,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.64,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.017,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.519,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.156,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "Base-Ro-88M-pack": {
+    "description": "Vanilla control, packed sequences (v3)",
+    "neutral_rate": 66.7,
+    "adv_rate": 73.3,
+    "mean_shift": 0.272,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.041,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.093,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -1.092,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.322,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.482,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 1.095,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.154,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.535,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.401,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.014,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.41,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.062,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.056,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.593,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.953,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "SPP-Ro-88M-pack": {
+    "description": "SPP{T0} v3: real documents, expanded sidecar, packed sequences",
+    "neutral_rate": 53.3,
+    "adv_rate": 73.3,
+    "mean_shift": 0.372,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.13,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.056,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -1.028,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.223,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.648,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 1.283,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.39,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.77,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.488,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.302,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.527,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.148,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.932,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.775,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.052,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "Base-Ro-88M-pack-rewarm": {
+    "description": "Control: Base-pack@45k + 5k steps, fresh LR schedule, no reflections",
+    "neutral_rate": 66.7,
+    "adv_rate": 73.3,
+    "mean_shift": 0.283,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.003,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.124,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -1.104,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.278,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.421,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 1.087,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.135,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.613,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.379,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.026,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.455,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.137,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.093,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.623,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.113,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "SPP-Ro-88M-MT-pack": {
+    "description": "SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream",
+    "neutral_rate": 66.7,
+    "adv_rate": 66.7,
+    "mean_shift": 0.217,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.023,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.159,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -1.269,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.439,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.229,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 1.077,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.153,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.45,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.478,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.002,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.515,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.38,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.059,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.61,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.945,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      }
+    ]
+  },
+  "Filtered-Ro-88M-pack": {
+    "description": "Filtered baseline, packed sequences (v3)",
+    "neutral_rate": 53.3,
+    "adv_rate": 66.7,
+    "mean_shift": 0.31,
+    "stems": [
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.249,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": 0.056,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Gen și Ocupație",
+        "delta_ll_adv": -0.56,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": -0.337,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.604,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Minoritate Romă",
+        "delta_ll_adv": 0.842,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.115,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.918,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Stereotipuri Regionale",
+        "delta_ll_adv": 0.269,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.392,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": 0.597,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Statut Social & Economic",
+        "delta_ll_adv": -0.437,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": false
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.692,
+        "favors_stereo_neutral": false,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 0.458,
+        "favors_stereo_neutral": true,
+        "favors_stereo_adv": true
+      },
+      {
+        "axis": "Valori Civice & Democratice",
+        "delta_ll_adv": 1.288,
         "favors_stereo_neutral": false,
         "favors_stereo_adv": true
       }

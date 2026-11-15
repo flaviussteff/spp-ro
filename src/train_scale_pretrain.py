@@ -10,6 +10,7 @@ Features:
 5. Checkpointing: Saves every 5,000 steps with automatic checkpoint rotation
 """
 import os
+import json
 import sys
 import time
 import math
@@ -60,6 +61,7 @@ try:
         HardwareAndTrainingConfig,
     )
     from spp_collator import DataCollatorForSPP
+    from packing import PackedWindowDataset, PackedCollator, keep_loss_finite
 except ImportError:
     from src.config import (
         TOKENIZER_DIR,
@@ -74,6 +76,7 @@ except ImportError:
         HardwareAndTrainingConfig,
     )
     from src.spp_collator import DataCollatorForSPP
+    from src.packing import PackedWindowDataset, PackedCollator, keep_loss_finite
 
 
 class _Tee:
@@ -234,6 +237,63 @@ class HourlyLiveProgressCallback(TrainerCallback):
                 self._print_report(state, model)
 
 
+class KeepCheckpointCallback(TrainerCallback):
+    """Copies checkpoint-<keep_step> to <output_dir>/checkpoints_keep/ when it is saved, so the Trainer's
+    save_total_limit rotation cannot delete it (the MT / re-warm runs start from Base@45k)."""
+    def __init__(self, checkpoints_dir: Path, keep_dir: Path, keep_step: int):
+        self.checkpoints_dir, self.keep_dir, self.keep_step = checkpoints_dir, keep_dir, keep_step
+
+    def on_save(self, args, state, control, **kwargs):
+        if self.keep_step and state.global_step == self.keep_step:
+            import shutil
+            src = self.checkpoints_dir / f"checkpoint-{self.keep_step}"
+            dst = self.keep_dir / f"checkpoint-{self.keep_step}"
+            if src.exists():
+                shutil.copytree(src, dst, dirs_exist_ok=True)
+                print(f"[Checkpoint] copie pastrata pentru MT/re-warm: {dst}", flush=True)
+
+
+STREAM_STATE_FILE = "stream_state.json"
+
+
+class StreamStateCallback(TrainerCallback):
+    """Writes the data-stream position into every checkpoint (stream_state.json), so that --resume continues the
+    fixed-seed stream where the crashed run stopped instead of replaying it from document 0 (the Trainer runs with
+    ignore_data_skip=True and the dataset is an IterableDataset, so HF itself keeps no data position).
+    Position = every item the stream has yielded so far (trained on, or still waiting in the packer's look-ahead
+    buffer). The buffered items are not the most recent ones of the stream (first-fit places items out of order), so
+    they are saved verbatim and re-encoded into the buffer on resume, after which the stream continues from the saved
+    position: the windows after the resume are identical to the uninterrupted run. The dataloader runs in-process
+    (num_workers=0), so these counters are the live ones."""
+    def __init__(self, stream_ds, packed_ds=None):
+        self.stream_ds, self.packed_ds = stream_ds, packed_ds
+
+    def on_save(self, args, state, control, **kwargs):
+        pending = list(self.packed_ds.pending_items) if self.packed_ds is not None else []
+        pos = self.stream_ds.n_yielded
+        ckpt = Path(args.output_dir) / f"checkpoint-{state.global_step}"
+        if not ckpt.is_dir():
+            return
+        payload = {"global_step": state.global_step, "stream_items_consumed": pos, "pending_items": pending}
+        (ckpt / STREAM_STATE_FILE).write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        print(f"[Checkpoint] pozitie flux salvata: {pos:,} documente consumate, {len(pending)} in buffer", flush=True)
+
+
+def restore_stream_state(checkpoint: Path, stream_ds, packed_ds=None) -> None:
+    """Fast-forwards the stream (and refills the packer buffer) from a checkpoint's stream_state.json."""
+    f = Path(checkpoint) / STREAM_STATE_FILE
+    if not f.exists():
+        print(f"[Dataset] AVERTISMENT: {f.name} lipseste din {Path(checkpoint).name} (checkpoint salvat de o versiune veche): "
+              f"fluxul reporneste de la documentul 0, deci documentele de la inceput vor fi vazute a doua oara.", flush=True)
+        return
+    st = json.loads(f.read_text(encoding="utf-8"))
+    stream_ds.skip_items = int(st["stream_items_consumed"])
+    if packed_ds is not None:
+        packed_ds.preload_items = list(st.get("pending_items", []))
+    print(f"[Dataset] Pozitie flux restaurata din {Path(checkpoint).name}: {stream_ds.skip_items:,} documente consumate, "
+          f"{len(st.get('pending_items', []))} reincarcate in buffer-ul de impachetare.", flush=True)
+
+
 class VanillaCausalDataCollator:
     """Plain next-token collator. Items may carry mask_loss=True (Filtered baseline): the whole
     sequence stays in the batch as context but contributes no loss (labels = -100)."""
@@ -265,8 +325,7 @@ class VanillaCausalDataCollator:
         for i, m in enumerate(mask_flags):
             if m:
                 labels[i, :] = -100
-        if (labels != -100).sum() == 0:            # degenerate all-masked batch: keep one token to avoid NaN
-            labels[0, :2] = input_ids[0, :2]
+        keep_loss_finite(labels, input_ids, pad_id)   # all-masked batch (Filtered): target on padding, not on a document
         return {"input_ids": input_ids, "attention_mask": batch_enc["attention_mask"], "labels": labels}
 
 
@@ -293,12 +352,23 @@ class StreamingParquetDataset(IterableDataset):
         # sequences (EPFL run 5: ANNOTATED_WEIGHT 0.6758); the rest are plain, non-annotated corpus documents.
         # 0 = natural rate (inline replacement only), used for SPP{T0}.
         self.mt_annotated_ratio = mt_annotated_ratio
+        # Resume support: the stream is deterministic (seed 42), so its position is fully described by the number of
+        # items yielded so far. `skip_items` (set from a checkpoint's stream_state.json) fast-forwards the stream
+        # without tokenising; `n_yielded` counts the absolute position (skipped + yielded) for the next checkpoint.
+        self.skip_items = 0
+        self.n_yielded = 0
         self.spp_items: List[Dict[str, str]] = []
         self.inline_map: Dict[str, Dict[str, str]] = {}
         self.harmful_keys = set()
-        if mode in ("spp", "filtered") and spp_sidecar_path and spp_sidecar_path.exists():
+        if mode in ("spp", "filtered") and not (spp_sidecar_path and spp_sidecar_path.exists()):
+            raise FileNotFoundError(f"mode={mode} are nevoie de sidecar-ul cu reflectii, dar lipseste: {spp_sidecar_path}")
+        if mode in ("spp", "filtered"):
             import random
-            df_refl = pd.read_parquet(spp_sidecar_path)
+            cols = ["doc_key", "text", "reflection_char_position", "reflection_text", "clf_flag", "severity"] if (inline or mode == "filtered") else None
+            try:
+                df_refl = pd.read_parquet(spp_sidecar_path, columns=cols)
+            except Exception:
+                df_refl = pd.read_parquet(spp_sidecar_path)   # older sidecar without some of the columns
             print(f"[SPP] Loaded {len(df_refl):,} reflection records from {spp_sidecar_path.name}.")
             if inline or mode == "filtered":
                 if "doc_key" not in df_refl.columns:
@@ -306,14 +376,16 @@ class StreamingParquetDataset(IterableDataset):
                 for row in df_refl.itertuples(index=False):
                     text = row.text
                     pos = self._snap(text, int(row.reflection_char_position)) if snap_insertion else int(row.reflection_char_position)
-                    self.inline_map[row.doc_key] = {"pre_text": text[:pos], "reflection": row.reflection_text, "post_text": text[pos:]}
+                    k = self.full_key(text)   # full-text key: no collisions on shared 200-char headers (sidecar doc_key is md5 of text[:200])
+                    self.inline_map[k] = {"pre_text": text[:pos], "reflection": row.reflection_text, "post_text": text[pos:]}
                     # Filtered baseline: the CLASSIFIER defines the harmful set (as in the paper) when the
                     # v2 sidecar carries clf_flag; otherwise fall back to the annotator's severity >= 3.
                     flag = getattr(row, "clf_flag", -1)
                     harmful = (int(flag) == 1) if (flag is not None and int(flag) >= 0) else (int(getattr(row, "severity", 0)) >= 3)
                     if harmful:
-                        self.harmful_keys.add(row.doc_key)
-                print(f"[SPP] inline map: {len(self.inline_map):,} annotated documents, {len(self.harmful_keys):,} with severity >= 3.")
+                        self.harmful_keys.add(k)
+                print(f"[SPP] inline map: {len(self.inline_map):,} annotated documents, {len(self.harmful_keys):,} in the harmful set (classifier flag, or severity >= 3 for old sidecars).")
+                del df_refl
             else:
                 for _, row in df_refl.iterrows():
                     text = row["text"]
@@ -333,39 +405,82 @@ class StreamingParquetDataset(IterableDataset):
     def doc_key(text: str) -> str:
         return hashlib.md5(text.strip()[:200].encode("utf-8")).hexdigest()
 
+    @staticmethod
+    def full_key(text: str) -> str:
+        return hashlib.md5(text.strip().encode("utf-8")).hexdigest()
+
+    def _check_matching(self, n_docs: int, n_hits: int):
+        """After the first 20k stream documents, the annotated / harmful set must have matched some of them
+        (expected ~7-11% / ~5%); zero matches means the sidecar texts are not the corpus texts -> stop, do not
+        silently train a Base model under the SPP name."""
+        if n_docs == 20000:
+            expect = len(self.inline_map) if self.mode == "spp" else len(self.harmful_keys)
+            print(f"[SPP] verificare potrivire sidecar/corpus: {n_hits:,} din primele {n_docs:,} documente ({100*n_hits/n_docs:.2f}%) | set {expect:,}", flush=True)
+            if expect and n_hits == 0:
+                raise RuntimeError("Niciun document din sidecar nu a fost gasit in fluxul corpusului dupa 20.000 de documente: textele din sidecar nu coincid cu textele din corpus.")
+
     def __iter__(self):
+        """Yields the items of `_items()` after fast-forwarding past the first `skip_items` of them (resume: the
+        same rng draws and the same order are replayed, only the tokenisation is skipped)."""
+        it = self._items()
+        if self.skip_items > 0:
+            print(f"[Dataset] Reluare: derulez fluxul peste {self.skip_items:,} documente deja consumate (fara tokenizare)...", flush=True)
+            t0 = time.time()
+            for i, _ in enumerate(it, 1):
+                if i >= self.skip_items:
+                    break
+            self.n_yielded = self.skip_items
+            print(f"[Dataset] Flux pozitionat dupa {time.time() - t0:.0f} s; continui de la documentul {self.skip_items:,}.", flush=True)
+        for item in it:
+            self.n_yielded += 1
+            yield item
+
+    def _items(self):
         import pyarrow.parquet as pq
         import random
         pf = pq.ParquetFile(str(self.parquet_path))
         num_rgs = pf.num_row_groups
         spp_idx = 0
+        # Fixed-seed stream order (paper: streams are pre-shuffled once, so Vanilla/Filtered/SPP{T0} read the same
+        # document order and differ only in window content). Seeded here so Filtered and SPP{T0} v2 share the order.
+        rng = random.Random(42)
+        n_docs, n_hits = 0, 0   # sanity: the inline/harmful map must actually match corpus documents
         ann_items: List[Dict[str, str]] = []
         if self.mode == "spp" and self.inline and self.mt_annotated_ratio > 0:
             ann_items = list(self.inline_map.values())
             random.Random(42).shuffle(ann_items)
         while True:
             rg_order = list(range(num_rgs))
-            random.shuffle(rg_order)
+            rng.shuffle(rg_order)
             for rg in rg_order:
                 texts = pf.read_row_group(rg, columns=["text"])["text"].to_pylist()
-                random.shuffle(texts)
+                rng.shuffle(texts)
                 for t in texts:
                     if not t or len(t) < 150:
                         continue
                     if self.mode == "spp" and self.inline and ann_items:
                         # MT stream: annotated documents at mt_annotated_ratio (cycled, shuffled), plain documents otherwise
-                        if random.random() < self.mt_annotated_ratio:
+                        if rng.random() < self.mt_annotated_ratio:
                             yield ann_items[spp_idx % len(ann_items)]
                             spp_idx += 1
-                        elif self.doc_key(t) not in self.inline_map:
+                        elif self.full_key(t) not in self.inline_map:
                             yield {"text": t}
                         continue
                     if self.mode == "spp" and self.inline:
-                        item = self.inline_map.get(self.doc_key(t))
+                        item = self.inline_map.get(self.full_key(t))
+                        n_docs += 1
+                        if item is not None:
+                            n_hits += 1
+                        self._check_matching(n_docs, n_hits)
                         yield item if item is not None else {"text": t}
                     elif self.mode == "filtered":
-                        yield {"text": t, "mask_loss": self.doc_key(t) in self.harmful_keys}
-                    elif self.mode == "spp" and self.spp_items and random.random() < self.spp_ratio:
+                        masked = self.full_key(t) in self.harmful_keys
+                        n_docs += 1
+                        if masked:
+                            n_hits += 1
+                        self._check_matching(n_docs, n_hits)
+                        yield {"text": t, "mask_loss": masked}
+                    elif self.mode == "spp" and self.spp_items and rng.random() < self.spp_ratio:
                         yield self.spp_items[spp_idx % len(self.spp_items)]
                         spp_idx += 1
                     else:
@@ -374,7 +489,7 @@ class StreamingParquetDataset(IterableDataset):
 
 def generate_spp_model_card(output_dir: Path, total_steps: int, loss: Optional[float] = None, ppl: Optional[float] = None,
                             n_params: Optional[int] = None, mode: str = "spp", spp_ratio: float = 0.10,
-                            variant_note: str = ""):
+                            variant_note: str = "", packed: bool = False):
     """Hugging Face model card with values computed from the actual run (no hard-coded numbers)."""
     loss_str = f"{loss:.4f}" if loss is not None else "n/a"
     ppl_str = f"{ppl:.2f}" if ppl is not None else "n/a"
@@ -404,7 +519,7 @@ din faza de preantrenare prin Synthetic Persona Pretraining* (FMI, Universitatea
 metodologia Minder et al., 2026 (arXiv:2608.13482). {variant_note}
 
 ## Antrenare
-* Pași de optimizare: {total_steps:,}; batch efectiv 64 secvențe x 1.024 poziții = {positions:,} poziții (inclusiv padding; secvențele nu sunt împachetate, deci numărul de tokeni efectivi este aproximativ jumătate).
+* Pași de optimizare: {total_steps:,}; batch efectiv 64 secvențe x 1.024 poziții = {positions:,} poziții ({"documente împachetate, terminate cu </s>, atenție bloc-diagonală pe document; padding sub 2%, deci aproape toate pozițiile sunt tokeni reali" if packed else "inclusiv padding; secvențele nu sunt împachetate, deci numărul de tokeni efectivi este aproximativ jumătate"}).
 * {"Interleaving SPP: " + f"{spp_ratio*100:.0f}% din secvențe sunt documente cu reflecție constituțională la persoana I, precedată de tokenul <assistant>, cu blocarea atenției post-reflecție și aliasing RoPE." if mode == "spp" else "Fără reflecții (control)."}
 * Hardware: o singură placă NVIDIA RTX 3060 12GB, bf16.
 * Ultimul loss de antrenare raportat: {loss_str} (perplexitate {ppl_str}).
@@ -454,9 +569,15 @@ def run_scale_pretraining(
     warmup_steps: int = 500,
     mt_annotated_ratio: float = 0.0,
     reflection_loss_only: bool = False,
+    pack: bool = False,
+    pack_eos: bool = True,
+    keep_step: int = 0,
+    head_cap: bool = False,
 ):
     if total_target_steps is None:
         total_target_steps = additional_steps
+    if keep_step and keep_step % save_steps != 0:
+        raise ValueError(f"--keep-step {keep_step} trebuie sa fie multiplu de --save-steps {save_steps}, altfel checkpoint-ul nu este salvat niciodata")
 
     if output_dir is None:
         if mode == "base":
@@ -480,6 +601,10 @@ def run_scale_pretraining(
     else:
         print(f"  Rata Interleaving: {spp_ratio * 100:.0f}% SPP (Reflectii) / {(1 - spp_ratio) * 100:.0f}% Text Liber", flush=True)
     print(f"  Flags: mask_assistant_loss={mask_assistant_loss} snap_insertion={snap_insertion} prefix_tail={prefix_tail}", flush=True)
+    if pack:
+        print(f"  Packing (v3): documente terminate cu </s>={pack_eos}, impachetate first-fit in ferestre de 1.024, atentie bloc-diagonala pe document; ~2x tokeni reali/pas fata de v1/v2", flush=True)
+    if head_cap:
+        print(f"  Head-cap (EPFL, implicit sub --pack): documentele adnotate sunt taiate la inceput ca cele simple; reflectia se insereaza doar daca pozitia ei cade in fereastra, altfel documentul ramane simplu (--prefix-tail ignorat)", flush=True)
     if mode == "spp" and (mt_annotated_ratio > 0 or reflection_loss_only):
         print(f"  Midtraining (paper SPP{{MT}}): documente adnotate = {mt_annotated_ratio*100:.1f}% din secvente, loss doar pe reflectie = {reflection_loss_only}", flush=True)
     print(f"  LR: peak {lr:g}, warmup {warmup_steps} pasi, cosinus -> 0 pe {additional_steps:,} pasi" + (f" | init din {init_from} (program LR NOU, fara stare de optimizator)" if init_from else ""), flush=True)
@@ -517,7 +642,7 @@ def run_scale_pretraining(
         print(f"[Model] Initializare din ponderile {init_from} (program LR nou: peak {lr:g}, warmup {warmup_steps})...")
         model = LlamaForCausalLM.from_pretrained(
             str(init_from),
-            torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
+            dtype=torch.float32,   # fp32 master weights + fp32 Adam; bf16 compute comes from the Trainer's autocast (loading in bf16 made every resumed / --init-from run train in pure bf16: updates below the bf16 ulp were lost; v1 Base/MT/re-warm were affected, see Analiza 5 nov)
         )
         if last_checkpoint is not None:
             print(f"[Checkpoints] Avertisment: {checkpoints_dir} contine checkpoint-uri vechi; sunt ignorate (foloseste --resume pentru a le relua).")
@@ -526,7 +651,7 @@ def run_scale_pretraining(
         print(f"[Model] Resumare si incarcare ponderi din checkpoint: {Path(last_checkpoint).name}...")
         model = LlamaForCausalLM.from_pretrained(
             str(last_checkpoint),
-            torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
+            dtype=torch.float32,   # fp32 master weights + fp32 Adam; bf16 compute comes from the Trainer's autocast (loading in bf16 made every resumed / --init-from run train in pure bf16: updates below the bf16 ulp were lost; v1 Base/MT/re-warm were affected, see Analiza 5 nov)
         )
     elif from_scratch:
         print(f"[Model] Initializare complet de la zero (Token Zero: pasul 0) pentru {mode.upper()}-Ro-88M...")
@@ -559,7 +684,7 @@ def run_scale_pretraining(
         print(f"[Model] Resumare din ponderile existente in: {output_dir.name}...")
         model = LlamaForCausalLM.from_pretrained(
             str(output_dir),
-            torch_dtype=torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16,
+            dtype=torch.float32,   # fp32 master weights + fp32 Adam; bf16 compute comes from the Trainer's autocast (loading in bf16 made every resumed / --init-from run train in pure bf16: updates below the bf16 ulp were lost; v1 Base/MT/re-warm were affected, see Analiza 5 nov)
         )
     else:
         print(f"[Model] Nicio pondere anterioara gasita in {output_dir.name}. Initializare from scratch...")
@@ -603,10 +728,19 @@ def run_scale_pretraining(
         inline=inline,
         mt_annotated_ratio=mt_annotated_ratio,
     )
+    stream_ds, packed_ds = dataset, None   # kept for the stream-position checkpointing (StreamStateCallback)
 
-    if mode == "spp":
+    if pack:
+        # v3: every item (plain / annotated / loss-masked) is encoded exactly as in the one-document-per-sequence runs,
+        # then several items fill one 1,024-position window (see packing.py). Base/Filtered use the same encoder.
+        encoder = DataCollatorForSPP(tokenizer=tokenizer, max_length=1024 - (1 if pack_eos else 0), mask_assistant_in_loss=mask_assistant_loss,
+                                     prefix_tail=prefix_tail, reflection_loss_only=reflection_loss_only, add_eos=pack_eos, head_cap=head_cap)
+        dataset = PackedWindowDataset(dataset, encoder, max_length=1024)
+        packed_ds = dataset
+        collator = PackedCollator(pad_token_id=encoder.pad_token_id, max_length=1024)
+    elif mode == "spp":
         collator = DataCollatorForSPP(tokenizer=tokenizer, max_length=1024, mask_assistant_in_loss=mask_assistant_loss, prefix_tail=prefix_tail,
-                                      reflection_loss_only=reflection_loss_only)
+                                      reflection_loss_only=reflection_loss_only, head_cap=head_cap)
     else:
         collator = VanillaCausalDataCollator(tokenizer=tokenizer, max_length=1024)
 
@@ -647,13 +781,15 @@ def run_scale_pretraining(
         args=training_args,
         train_dataset=dataset,
         data_collator=collator,
-        callbacks=[hourly_cb],
+        callbacks=[hourly_cb, StreamStateCallback(stream_ds, packed_ds)]
+                  + ([KeepCheckpointCallback(checkpoints_dir, output_dir / "checkpoints_keep", keep_step)] if keep_step else []),
     )
 
     # Setup checkpoint to resume from if available
     checkpoint_to_resume = last_checkpoint if (resume or not from_scratch) else None
     if checkpoint_to_resume is not None:
         print(f"\n[Engine] Reluare garantata din: {Path(checkpoint_to_resume).name} (pasul {checkpoint_to_resume})", flush=True)
+        restore_stream_state(Path(checkpoint_to_resume), stream_ds, packed_ds)   # continue the stream, do not replay it
 
     print(f"\n[Engine] Pornire sesiune de antrenare: {additional_steps:,} pasi...")
     print(f"[Engine] Rapoartele live de diagnostic vor fi afisate la fiecare {update_interval_mins:.0f} minute in consola.\n")
@@ -669,7 +805,7 @@ def run_scale_pretraining(
     latest_loss = hourly_cb.latest_loss
     latest_ppl = math.exp(min(20.0, latest_loss)) if latest_loss else None
     generate_spp_model_card(output_dir, total_steps=total_target_steps, loss=latest_loss, ppl=latest_ppl,
-                            n_params=sum(p_.numel() for p_ in model.parameters()), mode=mode, spp_ratio=spp_ratio,
+                            n_params=sum(p_.numel() for p_ in model.parameters()), mode=mode, spp_ratio=spp_ratio, packed=pack,
                             variant_note=(f'Inițializat din ponderile {init_from} (pasul {total_target_steps - additional_steps:,}) și antrenat {additional_steps:,} pași cu program LR nou (peak {lr:g}, warmup {warmup_steps}, cosinus → 0), fără stare de optimizator'
                                           + (' , cu reflecții (SPP{MT}).' if mode == 'spp' else ' , fără reflecții (control re-warm).') if init_from else ''))
 
@@ -720,6 +856,11 @@ if __name__ == "__main__":
     parser.add_argument("--warmup-steps", type=int, default=500, help="Linear warmup steps (default 500; MT re-warm uses 250)")
     parser.add_argument("--mt-annotated-ratio", type=float, default=0.0, help="SPP{MT} v2 (paper midtraining): fraction of sequences drawn from the annotated documents (EPFL: 0.6758); 0 = natural inline rate (SPP{T0})")
     parser.add_argument("--reflection-loss-only", action="store_true", help="SPP{MT} v2 (paper midtraining): on annotated documents, loss only on the reflection span; plain documents keep the full loss")
+    parser.add_argument("--pack", action="store_true", help="v3: pack several EOS-terminated documents per 1,024-position window (block-diagonal attention; ~2x real tokens per step). Use for ALL models of the packed generation.")
+    parser.add_argument("--no-pack-eos", action="store_true", help="with --pack: do not append </s> after each document")
+    parser.add_argument("--head-cap", action="store_true", help="EPFL semantics: annotated documents are cut at the start like plain ones; the reflection is inserted only if its position falls inside the window, otherwise the document is trained plain. Overrides --prefix-tail. DEFAULT under --pack (v3); --no-head-cap disables it.")
+    parser.add_argument("--no-head-cap", action="store_true", help="with --pack: keep the v1/v2 truncation rule (--prefix-tail) instead of head-cap")
+    parser.add_argument("--keep-step", type=int, default=0, help="copy checkpoint-<N> to <output>/checkpoints_keep/ when saved (survives save_total_limit); Base runs use 45000 for the MT / re-warm starts")
     args = parser.parse_args()
     if args.log_file:
         install_tee(Path(args.log_file))
@@ -748,5 +889,9 @@ if __name__ == "__main__":
         warmup_steps=args.warmup_steps,
         mt_annotated_ratio=args.mt_annotated_ratio,
         reflection_loss_only=args.reflection_loss_only,
+        pack=args.pack,
+        pack_eos=not args.no_pack_eos,
+        keep_step=args.keep_step,
+        head_cap=args.head_cap or (args.pack and not args.no_head_cap),
     )
 

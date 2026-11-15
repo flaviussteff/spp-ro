@@ -98,7 +98,7 @@ def main():
     for key, mdir, desc in ALL_MODELS:
         if not (mdir / "model.safetensors").exists():
             continue
-        model = AutoModelForCausalLM.from_pretrained(str(mdir)).to(device).eval()
+        model = AutoModelForCausalLM.from_pretrained(str(mdir), dtype=torch.float32).to(device).eval()   # v1 checkpoints are stored in bf16: score everything in fp32
         res = evaluate_model(model, tokenizer, items, device)
         results[key] = {"description": desc, **res}
         print(f"  {key:22s} cloze-4 acc = {res['accuracy']:5.1f}%  CI95={res['ci95']}")

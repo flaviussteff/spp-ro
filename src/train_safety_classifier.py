@@ -211,6 +211,13 @@ def roc_auc(y: np.ndarray, p: np.ndarray) -> float:
 def score_corpus(model, tok, thr: float, args, device):
     pf = pq.ParquetFile(str(CORPUS_FILE))
     heldout = set(doc_key(t) for t in pq.read_table(str(HELDOUT_FILE), columns=["text"])["text"].to_pylist()) if HELDOUT_FILE.exists() else set()
+    if getattr(args, "exclude_parquet", None):
+        # expansion run (v3): documents already in the sidecar are neither flagged again nor used as benign fill
+        heldout |= set(pq.read_table(args.exclude_parquet, columns=["doc_key"])["doc_key"].to_pylist())
+        skip_file = SIDECAR_DIR / "reflections_v2_skip_keys.json"   # adult/escort pages removed in v2: never candidates again
+        if skip_file.exists():
+            heldout |= set(json.load(open(skip_file, encoding="utf-8")))
+        print(f"[score] excluding {len(heldout):,} documents (held-out + already annotated in {Path(args.exclude_parquet).name})")
     rng = random.Random(0)
     flagged, benign_pool = [], []
     n_scanned = 0
@@ -284,6 +291,8 @@ def main():
     ap.add_argument("--clf-dir", type=str, default=None, help="where to save/load the classifier (default models/safety_clf_ro)")
     ap.add_argument("--device", type=str, default=None, help="cuda|cpu (default: auto)")
     ap.add_argument("--score-only", action="store_true")
+    ap.add_argument("--threshold", type=float, default=None, help="override the saved decision threshold when scoring (v3 expansion: 0.1 -> higher recall, as the paper favours coverage)")
+    ap.add_argument("--exclude-parquet", type=str, default=None, help="parquet with a doc_key column (the current sidecar): those documents are skipped, so the candidates file holds only NEW documents")
     ap.add_argument("--train-only", action="store_true")
     args = ap.parse_args()
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -300,6 +309,9 @@ def main():
         tok = AutoTokenizer.from_pretrained(str(CLF_DIR))
         model = AutoModelForSequenceClassification.from_pretrained(str(CLF_DIR)).to(device).eval()
         thr = json.load(open(CLF_DIR / "threshold.json", encoding="utf-8"))["threshold"]
+        if args.threshold is not None:
+            print(f"[score] threshold override: {thr:.2f} -> {args.threshold:.2f}")
+            thr = args.threshold
     else:
         if not LABELS_FILE.exists():
             raise SystemExit(f"{LABELS_FILE} missing: run `py src/generate_reflections_v2.py --label-only` first")

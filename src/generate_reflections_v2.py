@@ -574,6 +574,8 @@ def main():
         return
 
     out = Path(args.out)
+    global PROGRESS_FILE
+    PROGRESS_FILE = out.with_name(out.stem + "_progress.json")   # per output file (v3 expansion must not overwrite the v2 progress)
     SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
     keys = load_keys()
     if not keys and not args.mock:
@@ -774,9 +776,10 @@ def main():
         print("severity:", df["severity"].value_counts().sort_index().to_dict())
         print("articles (top):", df["articles"].value_counts().head(8).to_dict())
         print("prefix fraction mean %.2f; reflection words mean %.1f" % ((df["reflection_char_position"] / df["text"].str.len()).mean(), df["reflection_1p"].str.split().str.len().mean()))
+    print(json.dumps(stats, indent=2))
     if not pool.live() and not done():
         print("\n[STOP] Toate cheile sunt epuizate. Adaugă chei noi în .env și rulează din nou: progresul este salvat.")
-    print(json.dumps(stats, indent=2))
+        sys.exit(2)
 
 
 if __name__ == "__main__":

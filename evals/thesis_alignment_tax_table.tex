@@ -1,19 +1,25 @@
 % Taxa de aliniere: perplexitate pe set held-out verificat (FineWeb-2 shard neantrenat, dedup. față de corpus și sidecar)
+% 'semnalat' / 'nesemnalat' = felii ale setului held-out dupa clasificatorul de siguranta (acelasi care defineste setul mascat al Filtered).
 % Coloanele 'în antrenare' sunt păstrate doar pentru transparență (set folosit greșit ca held-out în v1).
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{l l c c c c}
+\begin{tabular}{l l c c c c c c c }
 \toprule
-\textbf{Model} & \textbf{Variantă} & \textbf{PPL Web (held-out)} & \textbf{PPL Wikipedia (în antrenare)} & \textbf{PPL Presă (în antrenare)} & \textbf{$\Delta$PPL held-out} \\
+\textbf{Model} & \textbf{Variantă} & \textbf{PPL held-out} & \textbf{PPL held-out semnalat} & \textbf{PPL held-out nesemnalat} & \textbf{PPL Wikipedia (antr.)} & \textbf{PPL Presă (antr.)} & \textbf{$\Delta$PPL held-out} & \textbf{$\Delta$PPL semnalat} \\
 \midrule
-Base-Ro-88M & Vanilla control (no reflections) & 22.29 & 18.48 & 15.92 & 0.00 (ref) \\
-SPP-Ro-88M & SPP{T0} v1, 10% synthetic sidecar & 19.60 & 14.48 & 12.49 & -2.69 \\
-SPP-Ro-88M-20pct & SPP{T0} v1, 20% synthetic sidecar & 29.56 & 22.87 & 18.82 & +7.27 \\
-Base-Ro-88M-rewarm & Control: Base@45k + 5k steps, fresh LR schedule, no reflections & 22.33 & 18.50 & 15.94 & +0.04 \\
-SPP-Ro-88M-MT & SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar & 22.26 & 18.48 & 15.90 & -0.03 \\
+Base-Ro-88M & Vanilla control (no reflections) & 22.29 & 31.61 & 21.57 & 18.48 & 15.92 & 0.00 (ref) & 0.00 (ref) \\
+SPP-Ro-88M & SPP{T0} v1, 10% synthetic sidecar & 19.60 & 27.91 & 18.96 & 14.48 & 12.48 & -2.69 & -3.70 \\
+SPP-Ro-88M-20pct & SPP{T0} v1, 20% synthetic sidecar & 29.56 & 41.00 & 28.65 & 22.86 & 18.82 & +7.27 & +9.39 \\
+Base-Ro-88M-rewarm & Control: Base@45k + 5k steps, fresh LR schedule, no reflections & 22.32 & 31.66 & 21.61 & 18.50 & 15.94 & +0.03 & +0.05 \\
+SPP-Ro-88M-MT & SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar & 22.26 & 31.55 & 21.55 & 18.48 & 15.89 & -0.06 & -0.11 \\
+Base-Ro-88M-pack & Vanilla control, packed sequences (v3) & 18.42 & 26.16 & 17.82 & 13.99 & 12.36 & 0.00 (ref) & 0.00 (ref) \\
+SPP-Ro-88M-pack & SPP{T0} v3: real documents, expanded sidecar, packed sequences & 18.32 & 25.99 & 17.73 & 14.02 & 12.38 & -0.10 & -0.17 \\
+Base-Ro-88M-pack-rewarm & Control: Base-pack@45k + 5k steps, fresh LR schedule, no reflections & 18.42 & 26.13 & 17.82 & 14.23 & 12.49 & +0.00 & -0.03 \\
+SPP-Ro-88M-MT-pack & SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream & 18.88 & 26.91 & 18.26 & 14.69 & 12.87 & +0.46 & +0.78 \\
+Filtered-Ro-88M-pack & Filtered baseline, packed sequences (v3) & 18.48 & 27.29 & 17.81 & 13.92 & 12.66 & +0.06 & +1.13 \\
 \bottomrule
 \end{tabular}
-\caption{Perplexitate (context 512 tokeni) pe un set held-out de pagini web verificate ca absente din corpusul de antrenare și din sidecar-ul de reflecții (build\_heldout\_set.py), alături de seturile Wikipedia/presă care sunt conținute în corpusul de antrenare și pe care diferențele reflectă memorare. Taxa de aliniere ($\Delta$PPL) se raportează exclusiv pe setul held-out.}
+\caption{Perplexitate (context 512 tokeni) pe un set held-out de pagini web verificate ca absente din corpusul de antrenare și din sidecar-ul de reflecții (build\_heldout\_set.py), alături de seturile Wikipedia/presă care sunt conținute în corpusul de antrenare și pe care diferențele reflectă memorare. Taxa de aliniere ($\Delta$PPL) se raportează exclusiv pe setul held-out. Feliile `semnalat' (199 documente, scor clasificator $\geq$ 0.1) și `nesemnalat' (1000 documente) împart setul held-out cu clasificatorul de siguranță care definește setul mascat al liniei de bază Filtered; pe felia semnalată Filtered nu a primit loss la antrenare, SPP da.}
 \label{tab:thesis_alignment_tax}
 \end{table}

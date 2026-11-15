@@ -40,6 +40,7 @@ dist/
 Thumbs.db
 desktop.ini
 *.log
+logs/
 
 # Scratch / Temp Dumps
 clipboard_dump.txt
@@ -52,7 +53,9 @@ archive/raw_corpus/
 archive/v1/models/
 archive/v1/data/
 archive/v1/logs/
-archive/v2/
+archive/v2/sidecar/
+archive/v2/models/
+archive/v2/*.tmp
 archive/v3_build/
 archive/env_backups/
 

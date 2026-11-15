@@ -5,11 +5,11 @@
     "Base-Ro-88M": {
       "description": "Vanilla control (no reflections)",
       "n": 1000,
-      "correct": 863,
-      "accuracy": 86.3,
+      "correct": 865,
+      "accuracy": 86.5,
       "ci95": [
-        84.1,
-        88.4
+        84.3,
+        88.6
       ]
     },
     "SPP-Ro-88M": {
@@ -29,17 +29,17 @@
       "accuracy": 79.6,
       "ci95": [
         77.0,
-        82.0
+        82.1
       ]
     },
     "Base-Ro-88M-rewarm": {
       "description": "Control: Base@45k + 5k steps, fresh LR schedule, no reflections",
       "n": 1000,
-      "correct": 865,
-      "accuracy": 86.5,
+      "correct": 866,
+      "accuracy": 86.6,
       "ci95": [
-        84.3,
-        88.6
+        84.4,
+        88.7
       ]
     },
     "SPP-Ro-88M-MT": {
@@ -49,7 +49,57 @@
       "accuracy": 87.0,
       "ci95": [
         84.8,
-        89.1
+        89.0
+      ]
+    },
+    "Base-Ro-88M-pack": {
+      "description": "Vanilla control, packed sequences (v3)",
+      "n": 1000,
+      "correct": 895,
+      "accuracy": 89.5,
+      "ci95": [
+        87.5,
+        91.4
+      ]
+    },
+    "SPP-Ro-88M-pack": {
+      "description": "SPP{T0} v3: real documents, expanded sidecar, packed sequences",
+      "n": 1000,
+      "correct": 891,
+      "accuracy": 89.1,
+      "ci95": [
+        87.1,
+        91.0
+      ]
+    },
+    "Base-Ro-88M-pack-rewarm": {
+      "description": "Control: Base-pack@45k + 5k steps, fresh LR schedule, no reflections",
+      "n": 1000,
+      "correct": 893,
+      "accuracy": 89.3,
+      "ci95": [
+        87.3,
+        91.2
+      ]
+    },
+    "SPP-Ro-88M-MT-pack": {
+      "description": "SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream",
+      "n": 1000,
+      "correct": 894,
+      "accuracy": 89.4,
+      "ci95": [
+        87.4,
+        91.3
+      ]
+    },
+    "Filtered-Ro-88M-pack": {
+      "description": "Filtered baseline, packed sequences (v3)",
+      "n": 1000,
+      "correct": 885,
+      "accuracy": 88.5,
+      "ci95": [
+        86.4,
+        90.4
       ]
     }
   }

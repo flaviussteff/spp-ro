@@ -45,7 +45,7 @@ if not exist data\eval\heldout_fineweb.parquet (
     if errorlevel 1 goto :err
 )
 if not exist data\sidecar\reflections_v2.parquet (
-    echo        Datele v2 lipsesc: rulez calea B (etichete Qwen -^> clasificator BERT -^> adnotare Qwen) ...
+    echo        Datele v2 lipsesc: rulez calea B ^(etichete Qwen -^> clasificator BERT -^> adnotare Qwen^) ...
     call run_generate_v2_data.bat all
     if errorlevel 1 goto :err
 ) else (
