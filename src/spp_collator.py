@@ -5,8 +5,8 @@ Preserves the exact EPFL-dlab SPP invariant in native PyTorch for Hugging Face L
 2. RoPE Aliasing: Position IDs of post-reflection tokens alias back to the insertion index.
 
 `encode_item` turns one stream item (plain / SPP / loss-masked) into token ids, aliased position ids,
-labels and the reflection span; `__call__` pads one item per sequence (v1/v2 runs). `packing.py`
-reuses `encode_item` to pack several items into one 1,024-position window (v3 runs).
+labels and the reflection span; `__call__` pads one item per sequence (un-packed runs). `packing.py`
+reuses `encode_item` to pack several items into one 1,024-position window (packed runs).
 """
 import torch
 from typing import Dict, List, Any, Optional, Tuple
@@ -43,8 +43,8 @@ class DataCollatorForSPP:
         mask_assistant_in_loss: the EPFL paper excludes the <assistant> marker token from the
         cross-entropy loss. The 50k-step T0 runs (Base/SPP10/SPP20) were trained with it INCLUDED,
         so the default stays False for comparability (the SPP{MT} run must match). Use True for new runs.
-        add_eos: append </s> after every item (packed v3 runs: documents inside a window are EOS-terminated;
-        the v1/v2 one-document-per-sequence runs had no EOS). The EOS belongs to the post-reflection block.
+        add_eos: append </s> after every item (packed runs: documents inside a window are EOS-terminated;
+        the un-packed one-document-per-sequence runs had no EOS). The EOS belongs to the post-reflection block.
         """
         self.tokenizer = tokenizer
         self.max_length = max_length
@@ -62,11 +62,11 @@ class DataCollatorForSPP:
         # paper: reflections are cut at a 128-token budget (mean 53); ours average 39 tokens, 1.7% exceed 128
         self.reflection_budget = reflection_budget
         self.add_eos = add_eos
-        # head_cap (v3, EPFL semantics): the annotated document is cut at the START exactly like the plain document
+        # head_cap (EPFL semantics): the annotated document is cut at the START exactly like the plain document
         # (tokens[:max_length]) and the reflection is inserted only if it falls inside that window; the post part is
         # shortened by the reflection length so the sequence fits. An annotated document whose insertion point lies
         # beyond the window is trained as a plain document. => Base and SPP see the same document tokens (SPP minus
-        # the last ~refl tokens). Without head_cap (v1/v2), prefix_tail keeps the end of the prefix instead.
+        # the last ~refl tokens). Without head_cap, prefix_tail keeps the end of the prefix instead.
         self.head_cap = head_cap
         self.n_refl_kept = 0
         self.n_refl_dropped = 0
@@ -108,7 +108,7 @@ class DataCollatorForSPP:
                 refl_tokens = self.tokenizer.encode(item["reflection"], add_special_tokens=False)[:self.reflection_budget]
                 post_tokens = self.tokenizer.encode(item["post_text"], add_special_tokens=False)
 
-            # Trim to fit max_length (v1/v2 rule, and the MT tail case; under head_cap the slices are already final)
+            # Trim to fit max_length (un-packed rule, and the MT tail case; under head_cap the slices are already final)
             budget = self.max_length - len(refl_tokens) - 1
             if budget > 0 and (not self.head_cap or use_tail):
                 if self.prefix_tail or use_tail:

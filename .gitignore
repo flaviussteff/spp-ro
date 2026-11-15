@@ -56,16 +56,16 @@ archive/v1/logs/
 archive/v2/sidecar/
 archive/v2/models/
 archive/v2/*.tmp
-archive/v3_build/
+archive/benchmark_build/
 archive/env_backups/
 
 # Keep the explanatory READMEs inside the (otherwise ignored) data/ and models/ folders
-!data/
-data/*
-!data/README.md
-!models/
-models/*
-!models/README.md
+!/data/
+/data/*
+!/data/README.md
+!/models/
+/models/*
+!/models/README.md
 
 # Word/Excel lock files
 ~$*

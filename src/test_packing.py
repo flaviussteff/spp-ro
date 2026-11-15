@@ -1,5 +1,5 @@
 """
-Self-test for the v3 packing path (CPU, ~20 s, no data files needed beyond the tokenizer).
+Self-test for the packing path (CPU, ~20 s, no data files needed beyond the tokenizer).
 Run before launching a packed training:  py src\\test_packing.py   (exit code 0 = OK)
 
 Checks, with a tiny random Llama in fp32:
@@ -27,14 +27,14 @@ from spp_collator import DataCollatorForSPP, block_mask
 from packing import PackedWindowDataset, PackedCollator
 from transformers import AutoTokenizer, LlamaConfig, LlamaForCausalLM
 
-# syntax / import check of everything the v3 pipeline touches (the training script is not imported: it is heavy)
+# syntax / import check of everything the pipeline touches (the training script is not imported: it is heavy)
 import py_compile
 for f in ["config.py", "spp_collator.py", "packing.py", "train_scale_pretrain.py", "train_safety_classifier.py",
-          "eval_constitution_v3.py", "eval_alignment_tax.py", "generate_reflections_v2.py"]:
+          "eval_constitution.py", "eval_alignment_tax.py", "generate_reflections.py"]:
     py_compile.compile(str(_SRC / f), doraise=True)
 print("[0] module compilate:", "ok")
 import config as _cfg
-assert _cfg.base_ref_key("SPP-Ro-88M-pack (delib)") == "Base-Ro-88M-pack" and _cfg.base_ref_key("SPP-Ro-88M-v2") == "Base-Ro-88M"
+assert _cfg.base_ref_key("SPP-Ro (delib)") == "Base-Ro" and _cfg.base_ref_key("SPP-Ro-MT (delib)") == "Base-Ro-rewarm"
 
 torch.manual_seed(0)
 tok = AutoTokenizer.from_pretrained(str(TOKENIZER_DIR))

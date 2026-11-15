@@ -1,15 +1,15 @@
 """
-Trim the expanded v3 sidecar to exactly the paper's annotated fraction (10% of the corpus documents) and report
+Trim the expanded sidecar to exactly the paper's annotated fraction (10% of the corpus documents) and report
 the reflection-token fraction (paper: 0.55% of tokens).
 
 Default (balanced, like the paper's "all flagged + equal benign"): keep the N/2 highest-scoring classifier-flagged
 documents and N/2 random benign ones (seed 0). `--mode benign-only` keeps every flagged document and cuts only benign.
-The full file is kept as reflections_v3_full.parquet; the pipeline reads reflections_v3.parquet.
+The full file is kept as reflections_full.parquet; the pipeline reads reflections.parquet.
 
-Usage (CPU, ~1 min; run BEFORE the pipeline reaches SPP-pack):
-  py src\trim_sidecar_v3.py                 # 150,000 documents = 10% of the 1.5M-document stream
-  py src\trim_sidecar_v3.py --dry-run       # only the numbers
-  py src\trim_sidecar_v3.py --mode benign-only
+Usage (CPU, ~1 min; run BEFORE the pipeline reaches the SPP training):
+  py src\trim_sidecar.py                 # 150,000 documents = 10% of the 1.5M-document stream
+  py src\trim_sidecar.py --dry-run       # only the numbers
+  py src\trim_sidecar.py --mode benign-only
 """
 import argparse
 import sys
@@ -25,8 +25,8 @@ for _p in [str(_SRC), str(_SRC.parent)]:
         sys.path.insert(0, _p)
 from config import SIDECAR_DIR, CLEAN_DATA_DIR, TOKENIZER_DIR
 
-SIDECAR = SIDECAR_DIR / "reflections_v3.parquet"
-FULL = SIDECAR_DIR / "reflections_v3_full.parquet"
+SIDECAR = SIDECAR_DIR / "reflections.parquet"
+FULL = SIDECAR_DIR / "reflections_full.parquet"
 CORPUS = CLEAN_DATA_DIR / "corpus_scale_stream.parquet"
 
 
@@ -91,7 +91,7 @@ def main():
     tmp = SIDECAR.with_suffix(".tmp.parquet")
     out.to_parquet(tmp, index=False)
     tmp.replace(SIDECAR)
-    print(f"scris {SIDECAR.name}: {len(out):,} documente. Pipeline-ul îl va folosi pentru SPP-pack, MT-pack și Filtered-pack.")
+    print(f"scris {SIDECAR.name}: {len(out):,} documente. The pipeline uses it for SPP, SPP-MT and Filtered.")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ConstitutionEval-Ro v3: a behavioural multiple-choice benchmark built with the methodology of the SPP
+ConstitutionEval-Ro: a behavioural multiple-choice benchmark built with the methodology of the SPP
 paper's ConstitutionEval (Minder et al. 2026, HF dataset dlab-spp/constitution-eval, DATASET_METHODOLOGY.md),
 adapted to the six articles of constitution_spp_ro.md.
 
@@ -8,7 +8,7 @@ Each item = a concrete Romanian scenario (2-5 sentences) ending at a decision po
 Exactly one option (gold) complies with the tested provision; each distractor enacts one named violation,
 dressed in a principled-sounding justification. The constitution is NOT shown to the model under test (blind).
 
-Pipeline (every stage is resumable; state lives in data/eval/ce_v3_build/items.jsonl):
+Pipeline (every stage is resumable; state lives in data/eval/ce_build/items.jsonl):
   1. generate    Qwen-3.8-27B (Cerebras) writes items per article, schema-forced JSON, seeded loosely with
                  real corpus documents labelled for that article (severity_labels.parquet).
   2. validate    structural rules: 4 options, 1 gold, length ratio <= 1.45, gold not strictly longest,
@@ -23,12 +23,12 @@ Pipeline (every stage is resumable; state lives in data/eval/ce_v3_build/items.j
                  still passing 3+4 (paper: "four-gate acceptance").
   7. finalize    quota per article, gold position = md5(id) % 4 (position-balanced), write
   review      rewrite only the manual-review HTML (votes remapped to the displayed option order + validity votes); no API/GPU
-                 data/eval/constitution_eval_ro_v3.jsonl + build report + an HTML page for manual review.
+                 data/eval/constitution_eval_ro.jsonl + build report + an HTML page for manual review.
 
 Usage:
-  py src/build_constitution_eval_v3.py --per-article 100 --gen-per-article 160 --harden-rounds 1
-  py src/build_constitution_eval_v3.py --per-article 8 --gen-per-article 12 --harden-rounds 0   (smoke test)
-  py src/build_constitution_eval_v3.py --stage finalize                                          (re-export only)
+  py src/build_constitution_eval.py --per-article 100 --gen-per-article 160 --harden-rounds 1
+  py src/build_constitution_eval.py --per-article 8 --gen-per-article 12 --harden-rounds 0   (smoke test)
+  py src/build_constitution_eval.py --stage finalize                                          (re-export only)
 """
 import re
 import sys
@@ -56,12 +56,12 @@ sys.path.insert(0, str(_SRC))
 from config import EVAL_DATA_DIR, EVALS_DIR, SIDECAR_DIR, CONSTITUTION_PATH
 from llm_client import LLM, parse_letter, run_parallel
 
-# CE_V3_BUILD_DIR lets a second process build a separate state (e.g. a top-up for deficit articles) while the main build runs
-BUILD_DIR = Path(os.environ["CE_V3_BUILD_DIR"]) if os.environ.get("CE_V3_BUILD_DIR") else EVAL_DATA_DIR / "ce_v3_build"
+# CE_BUILD_DIR lets a second process build a separate state (e.g. a top-up for deficit articles) while the main build runs
+BUILD_DIR = Path(os.environ["CE_BUILD_DIR"]) if os.environ.get("CE_BUILD_DIR") else EVAL_DATA_DIR / "ce_build"
 STATE_FILE = BUILD_DIR / "items.jsonl"
-OUT_FILE = EVAL_DATA_DIR / "constitution_eval_ro_v3.jsonl"
-REPORT_FILE = EVALS_DIR / "constitution_eval_v3_build_report.json"
-HTML_FILE = EVALS_DIR / "constitution_eval_v3_review.html"
+OUT_FILE = EVAL_DATA_DIR / "constitution_eval_ro.jsonl"
+REPORT_FILE = EVALS_DIR / "constitution_eval_build_report.json"
+HTML_FILE = EVALS_DIR / "constitution_eval_review.html"
 LABELS_FILE = SIDECAR_DIR / "severity_labels.parquet"
 LETTERS = "ABCD"
 
@@ -645,7 +645,7 @@ textarea{width:100%;font-family:sans-serif;font-size:12px;box-sizing:border-box;
 &nbsp; articol: <select id="art"><option value="">toate</option></select>
 &nbsp; bandă: <select id="band"><option value="">toate</option><option>hard</option><option>mid</option><option>easy</option></select>
 &nbsp; stare: <select id="st"><option value="">toate</option><option value="new">neverificate încă</option><option value="ok">verificate OK</option><option value="rm">marcate eliminat</option><option value="ed">modificate</option><option value="dis">cu dezacord la modelele mari</option></select>
-&nbsp; <button id="exportTsv" title="fișierul pe care îl aplică src\apply_ce_v3_corrections.py">exportă corecturile (TSV)</button>
+&nbsp; <button id="exportTsv" title="fișierul pe care îl aplică src\apply_ce_corrections.py">exportă corecturile (TSV)</button>
 <button id="exportJson" title="toată starea paginii, pentru backup sau alt browser">backup stare (JSON)</button>
 <label style="cursor:pointer"><input type="file" id="importJson" accept=".json" style="display:none"><u>încarcă backup</u></label>
 <span id="count"></span></div>
@@ -713,7 +713,7 @@ load();
 const sel=document.getElementById('art');[...new Set(ROWS.map(r=>r.target_section))].sort().forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent='§'+a;sel.appendChild(o)});
 document.getElementById('show').addEventListener('change',()=>{list.className=document.getElementById('show').checked?'':'hide'});
 ['art','band','st'].forEach(id=>document.getElementById(id).addEventListener('change',render));
-document.getElementById('exportTsv').onclick=()=>download('ce_v3_corrections.tsv',tsv());
+document.getElementById('exportTsv').onclick=()=>download('ce_corrections.tsv',tsv());
 document.getElementById('exportJson').onclick=()=>download('ce3_stare_verificare.json',JSON.stringify(S,null,1));
 document.getElementById('importJson').addEventListener('change',ev=>{const f=ev.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);for(const k in j)if(k)S[k]=Object.assign(S[k]||{},j[k]);save();render()}catch(x){alert('fișier invalid')}};rd.readAsText(f)});
 render();</script></body></html>"""
@@ -721,7 +721,7 @@ render();</script></body></html>"""
 
 
 # --------------------------------------------------------------------------------------- 8. verify (validity table)
-VERIFY_FILE = EVALS_DIR / "constitution_eval_v3_validity.json"
+VERIFY_FILE = EVALS_DIR / "constitution_eval_validity.json"
 
 
 def stage_verify(workers: int, workers_guard: int):

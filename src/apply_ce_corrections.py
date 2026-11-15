@@ -1,20 +1,20 @@
 """
-Aplică corecturile manuale (gramaticale) și eliminările din data/eval/ce_v3_corrections.tsv pe ConstitutionEval-Ro v3.
+Applies the manual corrections (grammar) and removals from data/eval/ce_corrections.tsv to ConstitutionEval-Ro.
 
-Fișierul TSV: o linie per corectură, trei câmpuri separate prin TAB, fără antet; liniile goale și cele care încep cu # se ignoră.
-    <id>    <câmp>    <text nou complet>
-<câmp> = scenario | provision | A | B | C | D   (litera variantei în ordinea afișată în pagina HTML / documentul Word)
-       = elimina   (al treilea câmp = motivul; itemul primește status "failed_manual" și iese din set la următorul finalize)
+TSV file: one line per correction, three TAB-separated fields, no header; empty lines and lines starting with # are ignored.
+    <id>    <field>    <new full text>
+<field> = scenario | provision | A | B | C | D   (option letter in the order displayed in the HTML review page / Word document)
+        = elimina   (third field = the reason; the item gets status "failed_manual" and leaves the set at the next finalize)
 
-Scrie în AMBELE locuri, ca să nu se piardă corecturile la finalize:
-  - data/eval/constitution_eval_ro_v3.jsonl   (setul final, ordinea afișată)
-  - data/eval/ce_v3_build/items.jsonl          (starea de construcție, ordinea de dinainte de rebalansare)
-Păstrează o copie .bak a fiecărui fișier și scrie un jurnal al modificărilor. Nu folosește API și nici GPU.
+Writes to BOTH places, so the corrections survive a finalize:
+  - data/eval/constitution_eval_ro.jsonl   (the final set, displayed order)
+  - data/eval/ce_build/items.jsonl          (the build state, order before rebalancing)
+Keeps a .bak copy of each file and writes a log of the changes. Uses neither the API nor the GPU.
 
-După eliminări:  py src\\build_constitution_eval_v3.py --stage finalize   (refac setul final din starea de construcție; itemii
-                 eliminați sunt înlocuiți cu următorii candidați „pass” ai aceluiași articol, dacă există; altfel articolul rămâne cu mai puțini)
-Oricum după:     py src\\build_constitution_eval_v3.py --stage review     (pagina HTML)
-Opțional:        run_v3_verify.bat   (reface tabelul de validitate și scorurile pe textul corectat; ~20 min, API ≈ 2 $)
+After removals:  py src\\build_constitution_eval.py --stage finalize   (rebuilds the final set from the build state; removed items
+                 are replaced by the next "pass" candidates of the same article, if any; otherwise the article keeps fewer items)
+Then always:     py src\\build_constitution_eval.py --stage review     (the HTML page)
+Optional:        py src\\build_constitution_eval.py --stage verify     (recomputes the validity table on the corrected text; ~1 h, API ~ $2)
 """
 from __future__ import annotations
 
@@ -26,11 +26,11 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_constitution_eval_v3 import OUT_FILE, STATE_FILE, build_to_final_map, gold_index, load_state, save_state  # noqa: E402
+from build_constitution_eval import OUT_FILE, STATE_FILE, build_to_final_map, gold_index, load_state, save_state  # noqa: E402
 from config import EVAL_DATA_DIR  # noqa: E402
 
-CORRECTIONS_FILE = EVAL_DATA_DIR / "ce_v3_corrections.tsv"
-LOG_FILE = EVAL_DATA_DIR / "ce_v3_corrections_applied.jsonl"
+CORRECTIONS_FILE = EVAL_DATA_DIR / "ce_corrections.tsv"
+LOG_FILE = EVAL_DATA_DIR / "ce_corrections_applied.jsonl"
 LETTERS = "ABCD"
 
 
@@ -115,8 +115,8 @@ def main():
             f.write(json.dumps({"when": stamp, "id": item_id, "field": "elimina", "reason": why}, ensure_ascii=False) + "\n")
     print(f"scris: {OUT_FILE} ({len(kept)} itemi) și {STATE_FILE}; copii .{stamp}.bak; jurnal {LOG_FILE}")
     if removed:
-        print("ai eliminat itemi: rulează  py src\\build_constitution_eval_v3.py --stage finalize  ca să refaci setul final cu înlocuitori")
-    print("apoi:  py src\\build_constitution_eval_v3.py --stage review")
+        print("ai eliminat itemi: rulează  py src\\build_constitution_eval.py --stage finalize  ca să refaci setul final cu înlocuitori")
+    print("apoi:  py src\\build_constitution_eval.py --stage review")
 
 
 if __name__ == "__main__":

@@ -2,13 +2,13 @@
 Safety classifier (the paper's "SafeLM" step), Romanian.
 
 1. Fine-tunes dumitrescustefan/bert-base-romanian-cased-v1 on Qwen-labelled documents
-   (data/sidecar/severity_labels.parquet from `generate_reflections_v2.py --label-only`):
+   (data/sidecar/severity_labels.parquet from `generate_reflections.py --label-only`):
    binary target = severity >= 3 (harmful / sensitive) vs <= 2.
 2. Picks the decision threshold on a held-out split so that recall >= --recall (the paper
    favours coverage over precision: 61% of its flagged documents were benign).
 3. Scores the WHOLE training corpus (first --max-len tokens of every document) and writes
-   data/clean/spp_candidates_v2.parquet = all flagged documents + an equal number of random
-   low-score benign documents. `generate_reflections_v2.py --candidates <file>` then annotates
+   data/clean/spp_candidates.parquet = all flagged documents + an equal number of random
+   low-score benign documents. `generate_reflections.py --candidates <file>` then annotates
    exactly these documents (classifier defines the sets, as in the paper).
 
 GPU: ~10 min training + ~1-2 h scoring 1.5M documents at 384 tokens on an RTX 3060.
@@ -55,8 +55,8 @@ BASE_CLF = "dumitrescustefan/bert-base-romanian-cased-v1"
 DEV_CACHE = {"y": None, "p": None}
 LABELS_FILE = SIDECAR_DIR / "severity_labels.parquet"
 CLF_DIR = MODELS_DIR / "safety_clf_ro"
-CANDIDATES_FILE = CLEAN_DATA_DIR / "spp_candidates_v2.parquet"
-SCORES_SUMMARY = CLEAN_DATA_DIR / "spp_candidates_v2_summary.json"
+CANDIDATES_FILE = CLEAN_DATA_DIR / "spp_candidates.parquet"
+SCORES_SUMMARY = CLEAN_DATA_DIR / "spp_candidates_summary.json"
 CORPUS_FILE = CLEAN_DATA_DIR / "corpus_scale_stream.parquet"
 
 
@@ -212,9 +212,9 @@ def score_corpus(model, tok, thr: float, args, device):
     pf = pq.ParquetFile(str(CORPUS_FILE))
     heldout = set(doc_key(t) for t in pq.read_table(str(HELDOUT_FILE), columns=["text"])["text"].to_pylist()) if HELDOUT_FILE.exists() else set()
     if getattr(args, "exclude_parquet", None):
-        # expansion run (v3): documents already in the sidecar are neither flagged again nor used as benign fill
+        # expansion run: documents already in the sidecar are neither flagged again nor used as benign fill
         heldout |= set(pq.read_table(args.exclude_parquet, columns=["doc_key"])["doc_key"].to_pylist())
-        skip_file = SIDECAR_DIR / "reflections_v2_skip_keys.json"   # adult/escort pages removed in v2: never candidates again
+        skip_file = SIDECAR_DIR / "reflections_first_pass_skip_keys.json"   # adult/escort pages removed by clean_reflections.py: never candidates again
         if skip_file.exists():
             heldout |= set(json.load(open(skip_file, encoding="utf-8")))
         print(f"[score] excluding {len(heldout):,} documents (held-out + already annotated in {Path(args.exclude_parquet).name})")
@@ -272,7 +272,7 @@ def score_corpus(model, tok, thr: float, args, device):
         json.dump(summary, f, indent=2)
     print(json.dumps(summary, indent=2))
     print(f"\nSaved {len(rows):,} candidate documents -> {CANDIDATES_FILE}")
-    print(f"Next: py src/generate_reflections_v2.py --candidates {CANDIDATES_FILE}  (~{summary['api_calls_needed_batch3']:,} API calls with batch 3)")
+    print(f"Next: py src/generate_reflections.py --candidates {CANDIDATES_FILE}  (~{summary['api_calls_needed_batch3']:,} API calls with batch 3)")
 
 
 def main():
@@ -287,11 +287,11 @@ def main():
     ap.add_argument("--score-bs", type=int, default=96)
     ap.add_argument("--max-rowgroups", type=int, default=0, help="score only the first N row groups (smoke test); 0 = whole corpus")
     ap.add_argument("--labels", type=str, default=None, help="labels parquet (default data/sidecar/severity_labels.parquet)")
-    ap.add_argument("--out-candidates", type=str, default=None, help="output parquet (default data/clean/spp_candidates_v2.parquet)")
+    ap.add_argument("--out-candidates", type=str, default=None, help="output parquet (default data/clean/spp_candidates.parquet)")
     ap.add_argument("--clf-dir", type=str, default=None, help="where to save/load the classifier (default models/safety_clf_ro)")
     ap.add_argument("--device", type=str, default=None, help="cuda|cpu (default: auto)")
     ap.add_argument("--score-only", action="store_true")
-    ap.add_argument("--threshold", type=float, default=None, help="override the saved decision threshold when scoring (v3 expansion: 0.1 -> higher recall, as the paper favours coverage)")
+    ap.add_argument("--threshold", type=float, default=None, help="override the saved decision threshold when scoring (sidecar expansion: 0.1 -> higher recall, as the paper favours coverage)")
     ap.add_argument("--exclude-parquet", type=str, default=None, help="parquet with a doc_key column (the current sidecar): those documents are skipped, so the candidates file holds only NEW documents")
     ap.add_argument("--train-only", action="store_true")
     args = ap.parse_args()
@@ -314,7 +314,7 @@ def main():
             thr = args.threshold
     else:
         if not LABELS_FILE.exists():
-            raise SystemExit(f"{LABELS_FILE} missing: run `py src/generate_reflections_v2.py --label-only` first")
+            raise SystemExit(f"{LABELS_FILE} missing: run `py src/generate_reflections.py --label-only` first")
         model, tok, thr = train(args, device)
     if not args.train_only:
         score_corpus(model, tok, thr, args, device)

@@ -2,58 +2,8 @@
   "task": "4-way last-word cloze on held-out web sentences",
   "n_items": 1000,
   "results": {
-    "Base-Ro-88M": {
-      "description": "Vanilla control (no reflections)",
-      "n": 1000,
-      "correct": 865,
-      "accuracy": 86.5,
-      "ci95": [
-        84.3,
-        88.6
-      ]
-    },
-    "SPP-Ro-88M": {
-      "description": "SPP{T0} v1, 10% synthetic sidecar",
-      "n": 1000,
-      "correct": 884,
-      "accuracy": 88.4,
-      "ci95": [
-        86.4,
-        90.4
-      ]
-    },
-    "SPP-Ro-88M-20pct": {
-      "description": "SPP{T0} v1, 20% synthetic sidecar",
-      "n": 1000,
-      "correct": 796,
-      "accuracy": 79.6,
-      "ci95": [
-        77.0,
-        82.1
-      ]
-    },
-    "Base-Ro-88M-rewarm": {
-      "description": "Control: Base@45k + 5k steps, fresh LR schedule, no reflections",
-      "n": 1000,
-      "correct": 866,
-      "accuracy": 86.6,
-      "ci95": [
-        84.4,
-        88.7
-      ]
-    },
-    "SPP-Ro-88M-MT": {
-      "description": "SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar",
-      "n": 1000,
-      "correct": 870,
-      "accuracy": 87.0,
-      "ci95": [
-        84.8,
-        89.0
-      ]
-    },
-    "Base-Ro-88M-pack": {
-      "description": "Vanilla control, packed sequences (v3)",
+    "Base-Ro": {
+      "description": "Vanilla control: plain documents, no reflections",
       "n": 1000,
       "correct": 895,
       "accuracy": 89.5,
@@ -62,8 +12,8 @@
         91.4
       ]
     },
-    "SPP-Ro-88M-pack": {
-      "description": "SPP{T0} v3: real documents, expanded sidecar, packed sequences",
+    "SPP-Ro": {
+      "description": "SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule)",
       "n": 1000,
       "correct": 891,
       "accuracy": 89.1,
@@ -72,8 +22,18 @@
         91.0
       ]
     },
-    "Base-Ro-88M-pack-rewarm": {
-      "description": "Control: Base-pack@45k + 5k steps, fresh LR schedule, no reflections",
+    "Filtered-Ro": {
+      "description": "Filtered baseline: classifier-flagged documents kept in context, loss-masked",
+      "n": 1000,
+      "correct": 885,
+      "accuracy": 88.5,
+      "ci95": [
+        86.4,
+        90.4
+      ]
+    },
+    "Base-Ro-rewarm": {
+      "description": "Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections",
       "n": 1000,
       "correct": 893,
       "accuracy": 89.3,
@@ -82,24 +42,14 @@
         91.2
       ]
     },
-    "SPP-Ro-88M-MT-pack": {
-      "description": "SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream",
+    "SPP-Ro-MT": {
+      "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences)",
       "n": 1000,
       "correct": 894,
       "accuracy": 89.4,
       "ci95": [
         87.4,
         91.3
-      ]
-    },
-    "Filtered-Ro-88M-pack": {
-      "description": "Filtered baseline, packed sequences (v3)",
-      "n": 1000,
-      "correct": 885,
-      "accuracy": 88.5,
-      "ci95": [
-        86.4,
-        90.4
       ]
     }
   }

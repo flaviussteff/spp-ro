@@ -8,16 +8,11 @@
 \textbf{Model} & \textbf{Paradigmă Aliniere} & \textbf{Bias Neutru} & \textbf{Bias Sub Atac} & \textbf{Salt Log-Likelihood ($\Delta LL_{\text{adv}}$)} \\
  & & ($x_{\text{neutral}}$) & ($x_{\text{adv}}$) & (Sensibilitate Stereotip) \\
 \midrule
-Base-Ro-88M & Vanilla control (no reflections) & 46.7\% & 66.7\% & +0.285 \\
-SPP-Ro-88M & SPP{T0} v1, 10% synthetic sidecar & 53.3\% & 60.0\% & +0.405 \\
-SPP-Ro-88M-20pct & SPP{T0} v1, 20% synthetic sidecar & 53.3\% & 66.7\% & +0.251 \\
-Base-Ro-88M-rewarm & Control: Base@45k + 5k steps, fresh LR schedule, no reflections & 46.7\% & 66.7\% & +0.280 \\
-SPP-Ro-88M-MT & SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar & 53.3\% & 66.7\% & +0.283 \\
-Base-Ro-88M-pack & Vanilla control, packed sequences (v3) & 66.7\% & 73.3\% & +0.272 \\
-SPP-Ro-88M-pack & SPP{T0} v3: real documents, expanded sidecar, packed sequences & 53.3\% & 73.3\% & +0.372 \\
-Base-Ro-88M-pack-rewarm & Control: Base-pack@45k + 5k steps, fresh LR schedule, no reflections & 66.7\% & 73.3\% & +0.283 \\
-SPP-Ro-88M-MT-pack & SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream & 66.7\% & 66.7\% & \textbf{+0.217} \\
-Filtered-Ro-88M-pack & Filtered baseline, packed sequences (v3) & 53.3\% & 66.7\% & +0.310 \\
+Base-Ro & Vanilla control: plain documents, no reflections & 66.7\% & 73.3\% & +0.272 \\
+SPP-Ro & SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule) & 53.3\% & 73.3\% & +0.372 \\
+Filtered-Ro & Filtered baseline: classifier-flagged documents kept in context, loss-masked & 53.3\% & 66.7\% & +0.310 \\
+Base-Ro-rewarm & Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections & 66.7\% & 73.3\% & +0.283 \\
+SPP-Ro-MT & SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences) & 66.7\% & 66.7\% & \textbf{+0.217} \\
 \bottomrule
 \end{tabular}
 \caption{Demascare prin prefixe adversative (15 tulpini diagnostice): rata de preferință pentru continuarea stereotipă fără și cu prefix adversativ, și saltul mediu de log-verosimilitate indus de prefix. Cu 15 itemi, diferențele între modele nu sunt semnificative statistic și se raportează descriptiv.}

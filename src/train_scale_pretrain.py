@@ -56,7 +56,7 @@ try:
         SPP_MODEL_DIR,
         SPP_20PCT_MODEL_DIR,
         FILTERED_MODEL_DIR,
-        SIDECAR_V2_FILE,
+        SIDECAR_FIRST_PASS_FILE,
         ModelConfig,
         HardwareAndTrainingConfig,
     )
@@ -71,7 +71,7 @@ except ImportError:
         SPP_MODEL_DIR,
         SPP_20PCT_MODEL_DIR,
         FILTERED_MODEL_DIR,
-        SIDECAR_V2_FILE,
+        SIDECAR_FIRST_PASS_FILE,
         ModelConfig,
         HardwareAndTrainingConfig,
     )
@@ -335,9 +335,9 @@ class StreamingParquetDataset(IterableDataset):
 
     mode='base'     : plain documents.
     mode='spp'      : legacy (v1): with probability spp_ratio an EXTRA synthetic sidecar item replaces a document;
-                      inline=True (v2): documents whose doc_key appears in the sidecar are REPLACED by their
+                      inline=True: documents whose doc_key appears in the sidecar are REPLACED by their
                       annotated version (data-matched with Base: same documents, same count).
-    mode='filtered' : paper's Filtered baseline: documents with severity >= 3 in the v2 sidecar are kept in the
+    mode='filtered' : paper's Filtered baseline: documents with severity >= 3 in the sidecar are kept in the
                       batch but loss-masked.
     """
     def __init__(self, parquet_path: Path, mode: str = "base", spp_sidecar_path: Optional[Path] = None,
@@ -372,14 +372,14 @@ class StreamingParquetDataset(IterableDataset):
             print(f"[SPP] Loaded {len(df_refl):,} reflection records from {spp_sidecar_path.name}.")
             if inline or mode == "filtered":
                 if "doc_key" not in df_refl.columns:
-                    raise ValueError("inline/filtered modes need a v2 sidecar with a doc_key column (generate_reflections_v2.py).")
+                    raise ValueError("inline/filtered modes need a sidecar with a doc_key column (generate_reflections.py).")
                 for row in df_refl.itertuples(index=False):
                     text = row.text
                     pos = self._snap(text, int(row.reflection_char_position)) if snap_insertion else int(row.reflection_char_position)
                     k = self.full_key(text)   # full-text key: no collisions on shared 200-char headers (sidecar doc_key is md5 of text[:200])
                     self.inline_map[k] = {"pre_text": text[:pos], "reflection": row.reflection_text, "post_text": text[pos:]}
                     # Filtered baseline: the CLASSIFIER defines the harmful set (as in the paper) when the
-                    # v2 sidecar carries clf_flag; otherwise fall back to the annotator's severity >= 3.
+                    # sidecar carries clf_flag; otherwise fall back to the annotator's severity >= 3.
                     flag = getattr(row, "clf_flag", -1)
                     harmful = (int(flag) == 1) if (flag is not None and int(flag) >= 0) else (int(getattr(row, "severity", 0)) >= 3)
                     if harmful:
@@ -442,7 +442,7 @@ class StreamingParquetDataset(IterableDataset):
         num_rgs = pf.num_row_groups
         spp_idx = 0
         # Fixed-seed stream order (paper: streams are pre-shuffled once, so Vanilla/Filtered/SPP{T0} read the same
-        # document order and differ only in window content). Seeded here so Filtered and SPP{T0} v2 share the order.
+        # document order and differ only in window content). Seeded here so Filtered and SPP{T0} share the order.
         rng = random.Random(42)
         n_docs, n_hits = 0, 0   # sanity: the inline/harmful map must actually match corpus documents
         ann_items: List[Dict[str, str]] = []
@@ -495,7 +495,7 @@ def generate_spp_model_card(output_dir: Path, total_steps: int, loss: Optional[f
     ppl_str = f"{ppl:.2f}" if ppl is not None else "n/a"
     params_str = f"{n_params:,} (~{n_params/1e6:.1f}M)" if n_params else "88,099,584 (~88.1M)"
     positions = total_steps * 64 * 1024
-    name = {"base": "Base-Ro-88M", "spp": "SPP-Ro-88M", "filtered": "Filtered-Ro-88M"}.get(mode, "SPP-Ro-88M")
+    name = {"base": "Base-Ro", "spp": "SPP-Ro", "filtered": "Filtered-Ro"}.get(mode, "SPP-Ro")
     if mode == "spp" and abs(spp_ratio - 0.20) < 1e-4:
         name += "-20pct"
     card_content = f"""---
@@ -511,40 +511,40 @@ tags:
 - synthetic-persona-pretraining
 ---
 
-# {name}: model de limbaj românesc preantrenat de la zero{" cu Synthetic Persona Pretraining" if mode == "spp" else " (control)"}
+# {name}: a Romanian language model pretrained from scratch{" with Synthetic Persona Pretraining" if mode == "spp" else " (control)"}
 
-Model decoder de tip LLaMA cu **{params_str} parametri**, preantrenat de la zero pe text românesc
-(FineWeb-2 RO, Wikipedia RO, presă) pentru teza de licență *Alinierea modelelor de limbaj în limba română
-din faza de preantrenare prin Synthetic Persona Pretraining* (FMI, Universitatea din București), după
-metodologia Minder et al., 2026 (arXiv:2608.13482). {variant_note}
+LLaMA-style decoder with **{params_str} parameters**, pretrained from scratch on Romanian text (FineWeb-2 RO,
+Wikipedia RO, press) for my bachelor's thesis on aligning Romanian language models during pretraining with
+Synthetic Persona Pretraining (Faculty of Mathematics and Computer Science, University of Bucharest), following
+Minder et al., 2026 (arXiv:2608.13482). {variant_note}
 
-## Antrenare
-* Pași de optimizare: {total_steps:,}; batch efectiv 64 secvențe x 1.024 poziții = {positions:,} poziții ({"documente împachetate, terminate cu </s>, atenție bloc-diagonală pe document; padding sub 2%, deci aproape toate pozițiile sunt tokeni reali" if packed else "inclusiv padding; secvențele nu sunt împachetate, deci numărul de tokeni efectivi este aproximativ jumătate"}).
-* {"Interleaving SPP: " + f"{spp_ratio*100:.0f}% din secvențe sunt documente cu reflecție constituțională la persoana I, precedată de tokenul <assistant>, cu blocarea atenției post-reflecție și aliasing RoPE." if mode == "spp" else "Fără reflecții (control)."}
-* Hardware: o singură placă NVIDIA RTX 3060 12GB, bf16.
-* Ultimul loss de antrenare raportat: {loss_str} (perplexitate {ppl_str}).
+## Training
+* Optimizer steps: {total_steps:,}; effective batch 64 sequences x 1,024 positions = {positions:,} positions ({"packed EOS-terminated documents, block-diagonal attention per document; padding under 2%, so almost every position is a real token" if packed else "padding included; the sequences are not packed, so the number of real tokens is roughly half"}).
+* {"SPP interleaving: " + f"{spp_ratio*100:.0f}% of the documents carry a first-person constitutional reflection, opened by the <assistant> token, with the post-reflection attention blocked and RoPE aliasing." if mode == "spp" else "No reflections (control)."}
+* Hardware: one NVIDIA RTX 3060 12GB, bf16 autocast with fp32 master weights.
+* Last reported training loss: {loss_str} (perplexity {ppl_str}).
 
-## Arhitectură
-| Parametru | Valoare |
+## Architecture
+| Parameter | Value |
 | :--- | :--- |
-| Parametri | {params_str} |
+| Parameters | {params_str} |
 | hidden / intermediate | 768 / 2048 (SwiGLU) |
-| Straturi | 12, GQA 12 Q / 4 KV |
-| Context | 1.024 tokeni, RoPE theta 10.000 |
-| Vocabular | 16.384 BPE (ro_bpe_16k), embedding legat |
+| Layers | 12, GQA 12 Q / 4 KV |
+| Context | 1,024 tokens, RoPE theta 10,000 |
+| Vocabulary | 16,384 BPE (ro_bpe_16k), tied embeddings |
 
-## Utilizare
+## Usage
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
 tok = AutoTokenizer.from_pretrained("{output_dir.name}")
 model = AutoModelForCausalLM.from_pretrained("{output_dir.name}")
 ```
 
-## Limitări
-Model mic (88M), monolingv, fără post-training; evaluările din repo au N mic și sunt raportate cu intervale de încredere.
+## Limitations
+Small model (88M), monolingual Romanian, no post-training; the evaluations in the repository have small N and are reported with confidence intervals.
 """
     (output_dir / "README.md").write_text(card_content, encoding="utf-8")
-    print(f"[Model Card] Actualizat {output_dir / 'README.md'}")
+    print(f"[Model Card] Updated {output_dir / 'README.md'}")
 
 
 def run_scale_pretraining(
@@ -555,7 +555,7 @@ def run_scale_pretraining(
     save_steps: int = 2000,
     from_scratch: bool = False,
     push_to_hub: bool = False,
-    repo_id: str = "flaviussteff/spp-ro-125m",
+    repo_id: str = "flaviussteff/spp-ro",
     spp_ratio: float = 0.10,
     output_dir: Optional[Path] = None,
     resume: bool = False,
@@ -590,10 +590,10 @@ def run_scale_pretraining(
             output_dir = SPP_MODEL_DIR
 
     print("\n" + "=" * 75, flush=True)
-    print(f"  PRE-ANTRENARE SCALATĂ: {mode.upper()}-RO-88M", flush=True)
+    print(f"  PRETRAINING: {mode.upper()}-RO", flush=True)
     print(f"  Pasi: {additional_steps:,} (Total: {total_target_steps:,}) | From Scratch: {from_scratch} | Resume: {resume}", flush=True)
     if sidecar is None and mode in ("spp", "filtered"):
-        sidecar = SIDECAR_V2_FILE if (inline or mode == "filtered") else (SIDECAR_DIR / "reflections.parquet")
+        sidecar = SIDECAR_FIRST_PASS_FILE if (inline or mode == "filtered") else (SIDECAR_DIR / "reflections.parquet")
     if mode == "spp" and inline:
         print(f"  Reflectii: INLINE din {sidecar.name} (documentele adnotate inlocuiesc originalele; data-matched cu Base)", flush=True)
     elif mode == "filtered":
@@ -602,9 +602,9 @@ def run_scale_pretraining(
         print(f"  Rata Interleaving: {spp_ratio * 100:.0f}% SPP (Reflectii) / {(1 - spp_ratio) * 100:.0f}% Text Liber", flush=True)
     print(f"  Flags: mask_assistant_loss={mask_assistant_loss} snap_insertion={snap_insertion} prefix_tail={prefix_tail}", flush=True)
     if pack:
-        print(f"  Packing (v3): documente terminate cu </s>={pack_eos}, impachetate first-fit in ferestre de 1.024, atentie bloc-diagonala pe document; ~2x tokeni reali/pas fata de v1/v2", flush=True)
+        print(f"  Packing: EOS-terminated documents={pack_eos}, packed first-fit into 1,024-position windows, block-diagonal attention per document", flush=True)
     if head_cap:
-        print(f"  Head-cap (EPFL, implicit sub --pack): documentele adnotate sunt taiate la inceput ca cele simple; reflectia se insereaza doar daca pozitia ei cade in fereastra, altfel documentul ramane simplu (--prefix-tail ignorat)", flush=True)
+        print(f"  Head-cap (EPFL, default under --pack): annotated documents are cut at the start like plain ones; the reflection is inserted only if its position falls inside the window, otherwise the document stays plain (--prefix-tail ignored)", flush=True)
     if mode == "spp" and (mt_annotated_ratio > 0 or reflection_loss_only):
         print(f"  Midtraining (paper SPP{{MT}}): documente adnotate = {mt_annotated_ratio*100:.1f}% din secvente, loss doar pe reflectie = {reflection_loss_only}", flush=True)
     print(f"  LR: peak {lr:g}, warmup {warmup_steps} pasi, cosinus -> 0 pe {additional_steps:,} pasi" + (f" | init din {init_from} (program LR NOU, fara stare de optimizator)" if init_from else ""), flush=True)
@@ -654,7 +654,7 @@ def run_scale_pretraining(
             dtype=torch.float32,   # fp32 master weights + fp32 Adam; bf16 compute comes from the Trainer's autocast (loading in bf16 made every resumed / --init-from run train in pure bf16: updates below the bf16 ulp were lost; v1 Base/MT/re-warm were affected, see Analiza 5 nov)
         )
     elif from_scratch:
-        print(f"[Model] Initializare complet de la zero (Token Zero: pasul 0) pentru {mode.upper()}-Ro-88M...")
+        print(f"[Model] Initializare complet de la zero (Token Zero: pasul 0) pentru {mode.upper()}-Ro...")
         # Clear out previous checkpoints if doing a fresh from-scratch run
         if checkpoints_dir.exists():
             import shutil
@@ -731,7 +731,7 @@ def run_scale_pretraining(
     stream_ds, packed_ds = dataset, None   # kept for the stream-position checkpointing (StreamStateCallback)
 
     if pack:
-        # v3: every item (plain / annotated / loss-masked) is encoded exactly as in the one-document-per-sequence runs,
+        # packing: every item (plain / annotated / loss-masked) is encoded exactly as in the one-document-per-sequence runs,
         # then several items fill one 1,024-position window (see packing.py). Base/Filtered use the same encoder.
         encoder = DataCollatorForSPP(tokenizer=tokenizer, max_length=1024 - (1 if pack_eos else 0), mask_assistant_in_loss=mask_assistant_loss,
                                      prefix_tail=prefix_tail, reflection_loss_only=reflection_loss_only, add_eos=pack_eos, head_cap=head_cap)
@@ -809,7 +809,7 @@ def run_scale_pretraining(
                             variant_note=(f'Inițializat din ponderile {init_from} (pasul {total_target_steps - additional_steps:,}) și antrenat {additional_steps:,} pași cu program LR nou (peak {lr:g}, warmup {warmup_steps}, cosinus → 0), fără stare de optimizator'
                                           + (' , cu reflecții (SPP{MT}).' if mode == 'spp' else ' , fără reflecții (control re-warm).') if init_from else ''))
 
-    print(f"[Succes] Antrenare {mode.upper()}-Ro-88M finalizata! Procesat ~{total_target_steps * eff_tokens_per_step / 1e9:.2f} miliarde de tokeni.")
+    print(f"[Succes] Antrenare {mode.upper()}-Ro finalizata! Procesat ~{total_target_steps * eff_tokens_per_step / 1e9:.2f} miliarde de tokeni.")
 
     # 5. Push to Hugging Face Hub if requested
     if push_to_hub:
@@ -821,7 +821,7 @@ def run_scale_pretraining(
                 folder_path=str(output_dir),
                 repo_id=repo_id,
                 repo_type="model",
-                commit_message=f"Release {mode.upper()}-Ro-88M: Aliniere Token Zero cu 60.000 reflectii (Loss {latest_loss:.4f}, PPL {latest_ppl:.2f})" if latest_loss else f"Release {mode.upper()}-Ro-88M: Aliniere Token Zero cu 60.000 reflectii"
+                commit_message=f"Release {mode.upper()}-Ro: Aliniere Token Zero cu 60.000 reflectii (Loss {latest_loss:.4f}, PPL {latest_ppl:.2f})" if latest_loss else f"Release {mode.upper()}-Ro: Aliniere Token Zero cu 60.000 reflectii"
             )
             print(f"\n============================================================================")
             print(f"  [HUGGING FACE SUCCESS] Model publicat cu succes!")
@@ -847,19 +847,19 @@ if __name__ == "__main__":
     parser.add_argument("--resume", action="store_true", help="Resume pre-training seamlessly from the latest saved checkpoint")
     parser.add_argument("--mask-assistant-loss", action="store_true", help="Exclude the <assistant> marker from the loss (paper setting). OFF for the 50k T0 runs; keep OFF for a comparable MT run.")
     parser.add_argument("--snap-insertion", action="store_true", help="Snap the reflection insertion point to a word boundary. OFF for the 50k T0 runs; keep OFF for a comparable MT run.")
-    parser.add_argument("--sidecar", type=str, default=None, help="Reflections parquet (default: v1 sidecar; with --inline/--mode filtered: data/sidecar/reflections_v2.parquet)")
-    parser.add_argument("--inline", action="store_true", help="v2: annotated documents REPLACE their originals in the stream (needs doc_key column)")
-    parser.add_argument("--prefix-tail", action="store_true", help="Keep the end of the prefix when truncating long annotated documents (v2)")
+    parser.add_argument("--sidecar", type=str, default=None, help="Reflections parquet (default: v1 sidecar; with --inline/--mode filtered: data/sidecar/reflections_first_pass.parquet)")
+    parser.add_argument("--inline", action="store_true", help="annotated documents REPLACE their originals in the stream (needs doc_key column)")
+    parser.add_argument("--prefix-tail", action="store_true", help="Keep the end of the prefix when truncating long annotated documents")
     parser.add_argument("--log-file", type=str, default=None, help="Also write console output (reports, checkpoints; not the progress bar) to this file")
     parser.add_argument("--init-from", type=str, default=None, help="Initialise WEIGHTS from this checkpoint/model dir and start a fresh LR schedule (SPP{MT}: Base@45k + 5k steps). Combine with --steps 5000 --total-target 50000.")
     parser.add_argument("--lr", type=float, default=1.5e-4, help="Peak learning rate (default 1.5e-4 = pretraining peak; MT re-warm uses 5e-5)")
     parser.add_argument("--warmup-steps", type=int, default=500, help="Linear warmup steps (default 500; MT re-warm uses 250)")
-    parser.add_argument("--mt-annotated-ratio", type=float, default=0.0, help="SPP{MT} v2 (paper midtraining): fraction of sequences drawn from the annotated documents (EPFL: 0.6758); 0 = natural inline rate (SPP{T0})")
-    parser.add_argument("--reflection-loss-only", action="store_true", help="SPP{MT} v2 (paper midtraining): on annotated documents, loss only on the reflection span; plain documents keep the full loss")
-    parser.add_argument("--pack", action="store_true", help="v3: pack several EOS-terminated documents per 1,024-position window (block-diagonal attention; ~2x real tokens per step). Use for ALL models of the packed generation.")
+    parser.add_argument("--mt-annotated-ratio", type=float, default=0.0, help="SPP{MT} (paper midtraining): fraction of sequences drawn from the annotated documents (EPFL: 0.6758); 0 = natural inline rate (SPP{T0})")
+    parser.add_argument("--reflection-loss-only", action="store_true", help="SPP{MT} (paper midtraining): on annotated documents, loss only on the reflection span; plain documents keep the full loss")
+    parser.add_argument("--pack", action="store_true", help="pack several EOS-terminated documents per 1,024-position window (block-diagonal attention; ~2x real tokens per step). Use for ALL models of the packed generation.")
     parser.add_argument("--no-pack-eos", action="store_true", help="with --pack: do not append </s> after each document")
     parser.add_argument("--head-cap", action="store_true", help="EPFL semantics: annotated documents are cut at the start like plain ones; the reflection is inserted only if its position falls inside the window, otherwise the document is trained plain. Overrides --prefix-tail. DEFAULT under --pack (v3); --no-head-cap disables it.")
-    parser.add_argument("--no-head-cap", action="store_true", help="with --pack: keep the v1/v2 truncation rule (--prefix-tail) instead of head-cap")
+    parser.add_argument("--no-head-cap", action="store_true", help="with --pack: keep the prefix-tail truncation rule instead of head-cap")
     parser.add_argument("--keep-step", type=int, default=0, help="copy checkpoint-<N> to <output>/checkpoints_keep/ when saved (survives save_total_limit); Base runs use 45000 for the MT / re-warm starts")
     args = parser.parse_args()
     if args.log_file:

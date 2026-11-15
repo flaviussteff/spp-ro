@@ -10,193 +10,8 @@
   },
   "results": [
     {
-      "model": "Base-Ro-88M",
-      "description": "Vanilla control (no reflections)",
-      "domains": {
-        "Web (held-out)": {
-          "loss": 3.104,
-          "ppl": 22.29,
-          "tokens": 388143
-        },
-        "Web held-out, semnalat de clasificator": {
-          "loss": 3.4535,
-          "ppl": 31.61,
-          "tokens": 85581
-        },
-        "Web held-out, nesemnalat": {
-          "loss": 3.0714,
-          "ppl": 21.57,
-          "tokens": 386340
-        },
-        "Wikipedia (în antrenare)": {
-          "loss": 2.9166,
-          "ppl": 18.48,
-          "tokens": 330659
-        },
-        "Presă (în antrenare)": {
-          "loss": 2.7675,
-          "ppl": 15.92,
-          "tokens": 453558
-        }
-      },
-      "heldout_ppl": 22.29,
-      "heldout_loss": 3.104,
-      "delta_ppl_heldout_vs_base": 0.0,
-      "flagged_ppl": 31.61,
-      "unflagged_ppl": 21.57,
-      "delta_ppl_flagged_vs_base": 0.0
-    },
-    {
-      "model": "SPP-Ro-88M",
-      "description": "SPP{T0} v1, 10% synthetic sidecar",
-      "domains": {
-        "Web (held-out)": {
-          "loss": 2.9754,
-          "ppl": 19.6,
-          "tokens": 388143
-        },
-        "Web held-out, semnalat de clasificator": {
-          "loss": 3.3289,
-          "ppl": 27.91,
-          "tokens": 85581
-        },
-        "Web held-out, nesemnalat": {
-          "loss": 2.9423,
-          "ppl": 18.96,
-          "tokens": 386340
-        },
-        "Wikipedia (în antrenare)": {
-          "loss": 2.6724,
-          "ppl": 14.48,
-          "tokens": 330659
-        },
-        "Presă (în antrenare)": {
-          "loss": 2.5244,
-          "ppl": 12.48,
-          "tokens": 453558
-        }
-      },
-      "heldout_ppl": 19.6,
-      "heldout_loss": 2.9754,
-      "delta_ppl_heldout_vs_base": -2.69,
-      "flagged_ppl": 27.91,
-      "unflagged_ppl": 18.96,
-      "delta_ppl_flagged_vs_base": -3.7
-    },
-    {
-      "model": "SPP-Ro-88M-20pct",
-      "description": "SPP{T0} v1, 20% synthetic sidecar",
-      "domains": {
-        "Web (held-out)": {
-          "loss": 3.3864,
-          "ppl": 29.56,
-          "tokens": 388143
-        },
-        "Web held-out, semnalat de clasificator": {
-          "loss": 3.7137,
-          "ppl": 41.0,
-          "tokens": 85581
-        },
-        "Web held-out, nesemnalat": {
-          "loss": 3.3552,
-          "ppl": 28.65,
-          "tokens": 386340
-        },
-        "Wikipedia (în antrenare)": {
-          "loss": 3.1295,
-          "ppl": 22.86,
-          "tokens": 330659
-        },
-        "Presă (în antrenare)": {
-          "loss": 2.9349,
-          "ppl": 18.82,
-          "tokens": 453558
-        }
-      },
-      "heldout_ppl": 29.56,
-      "heldout_loss": 3.3864,
-      "delta_ppl_heldout_vs_base": 7.27,
-      "flagged_ppl": 41.0,
-      "unflagged_ppl": 28.65,
-      "delta_ppl_flagged_vs_base": 9.39
-    },
-    {
-      "model": "Base-Ro-88M-rewarm",
-      "description": "Control: Base@45k + 5k steps, fresh LR schedule, no reflections",
-      "domains": {
-        "Web (held-out)": {
-          "loss": 3.1056,
-          "ppl": 22.32,
-          "tokens": 388143
-        },
-        "Web held-out, semnalat de clasificator": {
-          "loss": 3.4549,
-          "ppl": 31.66,
-          "tokens": 85581
-        },
-        "Web held-out, nesemnalat": {
-          "loss": 3.073,
-          "ppl": 21.61,
-          "tokens": 386340
-        },
-        "Wikipedia (în antrenare)": {
-          "loss": 2.9175,
-          "ppl": 18.5,
-          "tokens": 330659
-        },
-        "Presă (în antrenare)": {
-          "loss": 2.7687,
-          "ppl": 15.94,
-          "tokens": 453558
-        }
-      },
-      "heldout_ppl": 22.32,
-      "heldout_loss": 3.1056,
-      "delta_ppl_heldout_vs_base": 0.03,
-      "flagged_ppl": 31.66,
-      "unflagged_ppl": 21.61,
-      "delta_ppl_flagged_vs_base": 0.05
-    },
-    {
-      "model": "SPP-Ro-88M-MT",
-      "description": "SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar",
-      "domains": {
-        "Web (held-out)": {
-          "loss": 3.1028,
-          "ppl": 22.26,
-          "tokens": 388143
-        },
-        "Web held-out, semnalat de clasificator": {
-          "loss": 3.4515,
-          "ppl": 31.55,
-          "tokens": 85581
-        },
-        "Web held-out, nesemnalat": {
-          "loss": 3.0702,
-          "ppl": 21.55,
-          "tokens": 386340
-        },
-        "Wikipedia (în antrenare)": {
-          "loss": 2.9164,
-          "ppl": 18.48,
-          "tokens": 330659
-        },
-        "Presă (în antrenare)": {
-          "loss": 2.766,
-          "ppl": 15.89,
-          "tokens": 453558
-        }
-      },
-      "heldout_ppl": 22.26,
-      "heldout_loss": 3.1028,
-      "delta_ppl_heldout_vs_base": -0.06,
-      "flagged_ppl": 31.55,
-      "unflagged_ppl": 21.55,
-      "delta_ppl_flagged_vs_base": -0.11
-    },
-    {
-      "model": "Base-Ro-88M-pack",
-      "description": "Vanilla control, packed sequences (v3)",
+      "model": "Base-Ro",
+      "description": "Vanilla control: plain documents, no reflections",
       "domains": {
         "Web (held-out)": {
           "loss": 2.9137,
@@ -232,8 +47,8 @@
       "delta_ppl_flagged_vs_base": 0.0
     },
     {
-      "model": "SPP-Ro-88M-pack",
-      "description": "SPP{T0} v3: real documents, expanded sidecar, packed sequences",
+      "model": "SPP-Ro",
+      "description": "SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule)",
       "domains": {
         "Web (held-out)": {
           "loss": 2.908,
@@ -269,8 +84,45 @@
       "delta_ppl_flagged_vs_base": -0.17
     },
     {
-      "model": "Base-Ro-88M-pack-rewarm",
-      "description": "Control: Base-pack@45k + 5k steps, fresh LR schedule, no reflections",
+      "model": "Filtered-Ro",
+      "description": "Filtered baseline: classifier-flagged documents kept in context, loss-masked",
+      "domains": {
+        "Web (held-out)": {
+          "loss": 2.9165,
+          "ppl": 18.48,
+          "tokens": 388143
+        },
+        "Web held-out, semnalat de clasificator": {
+          "loss": 3.3066,
+          "ppl": 27.29,
+          "tokens": 85581
+        },
+        "Web held-out, nesemnalat": {
+          "loss": 2.88,
+          "ppl": 17.81,
+          "tokens": 386340
+        },
+        "Wikipedia (în antrenare)": {
+          "loss": 2.6335,
+          "ppl": 13.92,
+          "tokens": 330659
+        },
+        "Presă (în antrenare)": {
+          "loss": 2.5382,
+          "ppl": 12.66,
+          "tokens": 453558
+        }
+      },
+      "heldout_ppl": 18.48,
+      "heldout_loss": 2.9165,
+      "delta_ppl_heldout_vs_base": 0.06,
+      "flagged_ppl": 27.29,
+      "unflagged_ppl": 17.81,
+      "delta_ppl_flagged_vs_base": 1.13
+    },
+    {
+      "model": "Base-Ro-rewarm",
+      "description": "Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections",
       "domains": {
         "Web (held-out)": {
           "loss": 2.9133,
@@ -306,8 +158,8 @@
       "delta_ppl_flagged_vs_base": -0.03
     },
     {
-      "model": "SPP-Ro-88M-MT-pack",
-      "description": "SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream",
+      "model": "SPP-Ro-MT",
+      "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences)",
       "domains": {
         "Web (held-out)": {
           "loss": 2.9383,
@@ -341,43 +193,6 @@
       "flagged_ppl": 26.91,
       "unflagged_ppl": 18.26,
       "delta_ppl_flagged_vs_base": 0.78
-    },
-    {
-      "model": "Filtered-Ro-88M-pack",
-      "description": "Filtered baseline, packed sequences (v3)",
-      "domains": {
-        "Web (held-out)": {
-          "loss": 2.9165,
-          "ppl": 18.48,
-          "tokens": 388143
-        },
-        "Web held-out, semnalat de clasificator": {
-          "loss": 3.3066,
-          "ppl": 27.29,
-          "tokens": 85581
-        },
-        "Web held-out, nesemnalat": {
-          "loss": 2.88,
-          "ppl": 17.81,
-          "tokens": 386340
-        },
-        "Wikipedia (în antrenare)": {
-          "loss": 2.6335,
-          "ppl": 13.92,
-          "tokens": 330659
-        },
-        "Presă (în antrenare)": {
-          "loss": 2.5382,
-          "ppl": 12.66,
-          "tokens": 453558
-        }
-      },
-      "heldout_ppl": 18.48,
-      "heldout_loss": 2.9165,
-      "delta_ppl_heldout_vs_base": 0.06,
-      "flagged_ppl": 27.29,
-      "unflagged_ppl": 17.81,
-      "delta_ppl_flagged_vs_base": 1.13
     }
   ]
 }

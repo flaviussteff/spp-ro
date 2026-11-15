@@ -6,16 +6,11 @@
 \toprule
 \textbf{Model} & \textbf{Variantă} & \textbf{Acuratețe cloze (IC 95\%)} \\
 \midrule
-Base-Ro-88M & Vanilla control (no reflections) & 86.5\% [84--89] \\
-SPP-Ro-88M & SPP{T0} v1, 10% synthetic sidecar & 88.4\% [86--90] \\
-SPP-Ro-88M-20pct & SPP{T0} v1, 20% synthetic sidecar & 79.6\% [77--82] \\
-Base-Ro-88M-rewarm & Control: Base@45k + 5k steps, fresh LR schedule, no reflections & 86.6\% [84--89] \\
-SPP-Ro-88M-MT & SPP{MT} v1: Base@45k + 5k steps, fresh LR schedule, synthetic sidecar & 87.0\% [85--89] \\
-Base-Ro-88M-pack & Vanilla control, packed sequences (v3) & 89.5\% [88--91] \\
-SPP-Ro-88M-pack & SPP{T0} v3: real documents, expanded sidecar, packed sequences & 89.1\% [87--91] \\
-Base-Ro-88M-pack-rewarm & Control: Base-pack@45k + 5k steps, fresh LR schedule, no reflections & 89.3\% [87--91] \\
-SPP-Ro-88M-MT-pack & SPP{MT} v3: Base-pack@45k + 5k steps on the annotated stream & 89.4\% [87--91] \\
-Filtered-Ro-88M-pack & Filtered baseline, packed sequences (v3) & 88.5\% [86--90] \\
+Base-Ro & Vanilla control: plain documents, no reflections & 89.5\% [88--91] \\
+SPP-Ro & SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule) & 89.1\% [87--91] \\
+Filtered-Ro & Filtered baseline: classifier-flagged documents kept in context, loss-masked & 88.5\% [86--90] \\
+Base-Ro-rewarm & Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections & 89.3\% [87--91] \\
+SPP-Ro-MT & SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences) & 89.4\% [87--91] \\
 \bottomrule
 \end{tabular}
 \caption{Capabilitate lingvistică de bază: alegerea ultimului cuvânt dintr-o propoziție held-out dintre 4 candidați (N=1000, șansă 25\%). O diferență semnificativă față de Base ar indica o taxă (sau un câștig) de aliniere.}

@@ -1,23 +1,24 @@
-# archive/ — tot ce nu mai folosim
+# archive/ — everything I no longer use
 
-Creat la 04.11.2026, completat la 15.11.2026 după terminarea generației 3. Nimic de aici nu este citit de `run_v3_pipeline.bat`, `run_v3_verify.bat`, `run_generate_v2_data.bat` sau de scripturile din `src/`. Păstrat pentru istoric și pentru reproducerea experimentelor preliminare descrise în teză. Se poate șterge integral fără să afecteze pașii curenți.
+Nothing here is read by `run_pipeline.bat`, `run_expand_annotations.bat` or the scripts in `src/`. I keep it for the record and so that the preliminary experiments mentioned in my thesis can be reproduced. It can be deleted entirely without affecting the pipeline.
 
-În git rămân doar părțile mici (lansatoare, scripturi, evaluări v1); datele, modelele, corpusul brut și backup-urile `.env` sunt ignorate (vezi `.gitignore`).
+Only the small parts stay in git (launchers, scripts, evaluations, the old web site); data, models, the raw corpus and the `.env` backups are ignored (see `.gitignore`).
 
-| Folder | Ce conține | De unde vine |
+| Folder | Contents | Comes from |
 |---|---|---|
-| `v1/launchers/` | `run_overnight.bat` (prima încercare MT, experiment nul), `run_mt_rewarm.bat` (SPP{MT} v1 + control re-warm, 2→3 nov) | rădăcina repo-ului |
-| `v1/src/` | scripturile folosite doar în v1: generatoarele de reflecții sintetice (`generate_sensitive_reflections.py`, `generate_factual_reflections.py`, `complete_reflections.py`), evaluările retrase (`eval_biases.py`, `eval_deliberative.py`) și benchmark-urile vechi (`eval_constitution.py`, `constitution_eval_items_v2.py`, `build_master_benchmark_600.py`, `build_html_evaluator.py`) | `src/legacy_v1/` |
-| `v1/evals/` | ieșirile v1 retrase și `benchmark_v1/` (ConstitutionEval v1/v2/HARD, AIRisk-Ro, benchmark-ul de 600 nevalidat); `training_states/trainer_state_spp_ro_88m_mt_cosinetail.json` = starea primei încercări MT (experiment nul) | `evals/` |
-| `v1/logs/` | log-urile v1 | `logs/` |
-| `v1/data/` | ≈60k reflecții **sintetice** v1 (`sidecar/reflections.parquet`) și cache-ul candidaților v1 | `data/` |
-| `v1/models/` | `spp_ro_88m_mt_cosinetail/` (prima încercare MT: LR ≈ 0, ponderi identice cu Base; neraportat) și `checkpoints/<model>/` ale modelelor v1 terminate | `models/` |
-| `v2/launchers/run_v2_pipeline.bat` | lansatorul generației 2 (SPP{T0} v2 fără packing → MT v2 → Filtered → evaluări); pornit 4 nov, oprit la pasul 12.500 în favoarea generației 3 | rădăcina repo-ului |
-| `v2/models/spp_ro_88m_v2/` | checkpoint-urile 10.000 și 12.500 ale rulării v2 oprite (2 GB); nemăsurat | `models/` |
-| `v2/sidecar/` | `reflections_v2.bak.parquet` (copia dinaintea curățării) și `reflections_v2_rejected_diag1.jsonl` | `data/sidecar/` |
-| `v3_build/` | `ce_v3_build_topup/` (starea completării articolelor deficitare, fuzionată în `data/eval/ce_v3_build/items.jsonl`), `items.pre_merge.bak`, `review_notes/` (listele de itemi din verificarea manuală), `patches/` (scripturi temporare de corecție) | `data/eval/`, `evals/`, `archive/` |
-| `docs/` | `Analiza_Licenta_SPP-Ro_v2_20261105_1738.md`: analiza din 5 nov care a dus la decizia de a reface totul cu packing (generația 3) | — |
-| `raw_corpus/` | descărcările brute: `fineweb_shards/` (43 GB), `wiki_ro.jsonl`, `news_recent.jsonl`; necesare doar pentru a reconstrui corpusul sau setul held-out | `data/raw/` |
-| `env_backups/` | copii ale `.env` (conțin chei API: nu se publică) | — |
+| `v1/models/` | my preliminary models with **synthetic reflections** (LLM-invented scenarios, no packing): `base_ro_125m/` (first Base: 10k steps + 50k continuation in pure bf16), `spp_ro_125m/` (SPP 10 %), `spp_ro_125m_20pct/` (SPP 20 %), `spp_ro_88m_mt/` (MT), `base_ro_88m_rewarm/` (MT control), `spp_ro_88m_mt_cosinetail/` (first MT attempt: LR ≈ 0, a null run) and `checkpoints/<model>/`. I published the first two on Hugging Face as `flaviussteff/base-ro-125m` and `flaviussteff/spp-ro-125m`; they are not the reported models | `models/` |
+| `v1/evals/` | the withdrawn preliminary outputs (bias, cross-lingual probes, old deliberative probing), `benchmark_v1/` (the earlier ConstitutionEval versions, AIRisk-Ro, an unvalidated 600-item set) and the `training_states/` of the models above | `evals/` |
+| `v1/docs/site/` | the GitHub Pages site (`index.html`, `app.js`, `style.css`) with the preliminary results; it does not reflect the current models | `docs/` |
+| `v1/launchers/` | `run_overnight.bat`, `run_mt_rewarm.bat` (the preliminary launchers) | repository root |
+| `v1/src/` | scripts used only in the preliminary phase: the synthetic-reflection generators, the withdrawn evaluations, the old benchmarks, `interact.py` (terminal chat) | `src/` |
+| `v1/logs/`, `v1/data/` | the preliminary logs; ≈60k synthetic reflections and the candidate cache | `logs/`, `data/` |
+| `v2/launchers/run_v2_pipeline.bat` | the launcher of the un-packed run (SPP → MT → Filtered → evaluations) that I stopped at step 12,500 when the analysis showed that half of every step was padding; I redid it with packing on the same data | repository root |
+| `v2/models/spp_ro_88m_v2/` | checkpoints 10,000 and 12,500 of the stopped run (2 GB); never measured | `models/` |
+| `v2/sidecar/` | `reflections_v2.bak.parquet` (the first-pass reflections before cleanup) and `reflections_v2_rejected_diag1.jsonl` | `data/sidecar/` |
+| `launchers/` | thin launchers I no longer need: `run_v3_verify.bat` (benchmark validity table + scoring; replaced by `py src/build_constitution_eval.py --stage verify` and the pipeline's evaluation step), `run_generate_data.bat` (the three data commands, now listed in the README), `run_upload_hf.bat` (wrapper for `py src/upload_to_hf.py`) | repository root |
+| `benchmark_build/` | `ce_v3_build_topup/` (the top-up state for deficit articles, merged into `data/eval/ce_build/items.jsonl`), `items.pre_merge.bak`, `review_notes/` (my manual-review item lists), `patches/` (temporary correction scripts) | `data/eval/`, `evals/` |
+| `docs/` | the analysis note that led me to redo the trainings with packing | — |
+| `raw_corpus/` | the raw downloads: `fineweb_shards/` (43 GB), `wiki_ro.jsonl`, `news_recent.jsonl`; needed only to rebuild the corpus or the held-out set | `data/raw/` |
+| `env_backups/` | copies of `.env` (they contain API keys: never published) | — |
 
-Dacă vrei să eliberezi spațiu: `raw_corpus/` (43 GB), `v1/models/` (6 GB) și `v2/models/` (2 GB) sunt cele mari.
+To free space: `raw_corpus/` (43 GB), `v1/models/` (≈8 GB with checkpoints) and `v2/models/` (2 GB) are the large ones.

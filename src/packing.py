@@ -1,6 +1,6 @@
 """
-Sequence packing for the v3 runs: several EOS-terminated documents per 1,024-position window instead of
-one padded document per sequence (the v1/v2 runs spent ~51% of every step on padding).
+Sequence packing: several EOS-terminated documents per 1,024-position window instead of
+one padded document per sequence (the earlier one-document-per-sequence runs spent ~51% of every step on padding).
 
 * Every stream item (plain / SPP-annotated / loss-masked) is encoded exactly as in the one-document-per-
   sequence runs (`DataCollatorForSPP.encode_item`: same truncation, same aliased positions, same labels),
@@ -14,7 +14,7 @@ one padded document per sequence (the v1/v2 runs spent ~51% of every step on pad
 * Attention is block-diagonal per document (a document never sees its window neighbours), and inside an
   annotated document the post-reflection block cannot see the reflection (the SPP invariant). Position ids
   restart at 0 for every document, with RoPE aliasing after a reflection.
-Per token, the model therefore sees exactly what it saw in the v2 runs; only the padding is gone.
+Per token, the model therefore sees exactly what it saw in the un-packed runs; only the padding is gone.
 """
 from collections import deque
 from typing import Any, Dict, Iterator, List, Optional

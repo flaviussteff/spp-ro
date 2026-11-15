@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-SPP-Ro reflections v2 — faithful to Minder et al. (arXiv:2608.13482).
+SPP-Ro reflections — faithful to Minder et al. (arXiv:2608.13482).
 
 Differences from v1 (generate_sensitive_reflections.py / generate_factual_reflections.py):
   * Annotates REAL documents from the training corpus (corpus_scale_stream.parquet), never
@@ -13,7 +13,7 @@ Differences from v1 (generate_sensitive_reflections.py / generate_factual_reflec
     ONLY (text before the insertion point), so it cannot leak the continuation.
   * Guideline enforcement on output: benign -> ONE short sentence, no citations; sensitive ->
     30-110 words, first person, >= 1 valid citation [X.Y]; no meta-language; deduplicated.
-  * Output: data/sidecar/reflections_v2.parquet with doc_key (md5 of the first 200 chars) so that
+  * Output: data/sidecar/reflections_first_pass.parquet with doc_key (md5 of the first 200 chars) so that
     train_scale_pretrain.py --inline REPLACES the original document (data-matched with Base).
 
 Throughput / cost:
@@ -24,9 +24,9 @@ Throughput / cost:
     and hours for the trial-tier rate limit.
 
 Usage:
-  py src/generate_reflections_v2.py --estimate --target 15000
-  py src/generate_reflections_v2.py --target 15000 --batch 3 --model gpt-oss-120b
-  py src/generate_reflections_v2.py --mock --target 60                    (no API; pipeline test)
+  py src/generate_reflections.py --estimate --target 15000
+  py src/generate_reflections.py --target 15000 --batch 3 --model gpt-oss-120b
+  py src/generate_reflections.py --mock --target 60                    (no API; pipeline test)
 """
 import os
 import re
@@ -59,13 +59,13 @@ for _p in [str(_SRC_DIR), str(_ROOT_DIR)]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 try:
-    from config import CLEAN_DATA_DIR, SIDECAR_DIR, SIDECAR_V2_FILE, HELDOUT_FILE
+    from config import CLEAN_DATA_DIR, SIDECAR_DIR, SIDECAR_FIRST_PASS_FILE, HELDOUT_FILE
 except ImportError:
-    from src.config import CLEAN_DATA_DIR, SIDECAR_DIR, SIDECAR_V2_FILE, HELDOUT_FILE
+    from src.config import CLEAN_DATA_DIR, SIDECAR_DIR, SIDECAR_FIRST_PASS_FILE, HELDOUT_FILE
 
 ENV_FILE = _ROOT_DIR / ".env"
 CORPUS_FILE = CLEAN_DATA_DIR / "corpus_scale_stream.parquet"
-PROGRESS_FILE = SIDECAR_DIR / "reflections_v2_progress.json"
+PROGRESS_FILE = SIDECAR_DIR / "reflections_first_pass_progress.json"
 
 # Cerebras public rate card, Oct 2026 (USD per million tokens): (input, output)
 PRICES = {"gpt-oss-120b": (0.35, 0.75), "qwen-3.8-27b": (0.99, 1.49)}
@@ -528,7 +528,7 @@ def estimate(args, rng):
     in_tok = calls * (550 + args.batch * (avg_prefix_words * tok_per_word + 40))
     out_tok = calls * (args.batch * 160 + 200)              # content + low reasoning (measured ~574 for batch 3)
     print("=" * 72)
-    print(f" ESTIMARE generare v2 (fără API) | target {args.target:,} docs severitate>=3 + {args.target:,} benigne")
+    print(f" ESTIMATE (no API) | target {args.target:,} docs severitate>=3 + {args.target:,} benigne")
     print("=" * 72)
     print(f" documente scanate: {stats['scanned']:,}; candidați lexicali: {stats['lexical_candidates']:,} ({100*cand_rate:.1f}%)")
     print(f" prefix mediu trimis: {avg_prefix_words:.0f} cuvinte (plafon {args.max_prefix_words})")
@@ -565,7 +565,7 @@ def main():
     ap.add_argument("--candidates", type=str, default=None, help="Path B step 3: annotate exactly the documents in this parquet (from train_safety_classifier.py)")
     ap.add_argument("--max-docs", type=int, default=0, help="diagnostic: stop after this many NEW accepted documents (0 = no limit)")
     ap.add_argument("--seed", type=int, default=7)
-    ap.add_argument("--out", type=str, default=str(SIDECAR_V2_FILE))
+    ap.add_argument("--out", type=str, default=str(SIDECAR_FIRST_PASS_FILE))
     args = ap.parse_args()
 
     rng = random.Random(args.seed)
@@ -575,7 +575,7 @@ def main():
 
     out = Path(args.out)
     global PROGRESS_FILE
-    PROGRESS_FILE = out.with_name(out.stem + "_progress.json")   # per output file (v3 expansion must not overwrite the v2 progress)
+    PROGRESS_FILE = out.with_name(out.stem + "_progress.json")   # per output file (the expansion must not overwrite the first pass's progress)
     SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
     keys = load_keys()
     if not keys and not args.mock:
@@ -602,7 +602,7 @@ def main():
         print(f"[reluare] {len(records):,} înregistrări existente")
     if HELDOUT_FILE.exists():
         done_keys |= set(doc_key(t) for t in pq.read_table(str(HELDOUT_FILE), columns=["text"])["text"].to_pylist())
-    skip_file = SIDECAR_DIR / "reflections_v2_skip_keys.json"      # written by clean_reflections_v2.py (adult/escort pages): never retried
+    skip_file = SIDECAR_DIR / "reflections_first_pass_skip_keys.json"      # written by clean_reflections.py (adult/escort pages): never retried
     if skip_file.exists():
         done_keys |= set(json.load(open(skip_file, encoding="utf-8")))
 
@@ -636,7 +636,7 @@ def main():
     t0 = time.time()
 
     print("=" * 72)
-    print(f" GENERARE REFLECȚII v2 | model {args.model} | batch {args.batch} | chei active {len(pool.live())} | workers {n_workers}")
+    print(f" REFLECTION GENERATION | model {args.model} | batch {args.batch} | chei active {len(pool.live())} | workers {n_workers}")
     if cand_mode:
         print(f" țintă: toate cele {len(cdf):,} documente din fișierul de candidați (fără plafoane) | existente: {n_harm[0]:,} nocive / {n_benign[0]:,} benigne")
     else:
@@ -742,7 +742,7 @@ def main():
                 if len(records) % 60 == 0:
                     save()
 
-    pbar = tqdm(total=(len(cdf) if cand_mode else 2 * args.target), initial=n_harm[0] + n_benign[0], desc="reflecții v2", unit="doc")
+    pbar = tqdm(total=(len(cdf) if cand_mode else 2 * args.target), initial=n_harm[0] + n_benign[0], desc="reflections", unit="doc")
     threads = [threading.Thread(target=worker, args=(w, pbar), daemon=True) for w in range(n_workers)]
     for th in threads:
         th.start()

@@ -60,7 +60,7 @@ FLAGGED_KEY = "Web held-out, semnalat de clasificator"
 UNFLAGGED_KEY = "Web held-out, nesemnalat"
 INTRAIN_KEYS = ("Wikipedia (în antrenare)", "Presă (în antrenare)")
 CLF_SCORES_FILE = EVAL_DATA_DIR / "heldout_clf_scores.parquet"
-DEFAULT_CLF_THRESHOLD = 0.1   # the v3 sidecar expansion threshold (run_v3_pipeline.bat CLF_THR); the Filtered mask set is built from the same classifier
+DEFAULT_CLF_THRESHOLD = 0.1   # the sidecar expansion threshold (run_pipeline.bat CLF_THR); the Filtered mask set is built from the same classifier
 
 
 def _doc_hash(text: str) -> str:
@@ -195,7 +195,7 @@ def run_alignment_tax_evaluation(num_samples: int = 1000, batch_size: int = 8,
 
     models_to_test = list(ALL_MODELS)
     results: List[Dict[str, Any]] = []
-    base_ppl = {}   # reference PPL per generation (Base-Ro-88M for v1/v2 models, Base-Ro-88M-pack for the packed ones)
+    base_ppl = {}   # reference PPL (Base-Ro, or Base-Ro-rewarm for the MT model)
     base_flagged_ppl = {}   # same, on the classifier-flagged held-out slice
     for label, path, desc in models_to_test:
         if not (path / "model.safetensors").exists():
@@ -238,7 +238,7 @@ def run_alignment_tax_evaluation(num_samples: int = 1000, batch_size: int = 8,
         if r["model"] == base_ref_key(r["model"]):
             return "0.00 (ref)"
         if r.get(field) is None:
-            return "n/a"          # reference model of this generation not evaluated
+            return "n/a"          # reference model not evaluated
         return f"{r[field]:+.2f}"
 
     tex_path = EVALS_DIR / "thesis_alignment_tax_table.tex"
@@ -277,7 +277,7 @@ if __name__ == "__main__":
     ap.add_argument("--num-samples", type=int, default=1000)
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--clf-threshold", type=float, default=DEFAULT_CLF_THRESHOLD,
-                    help="safety-classifier threshold for the flagged held-out slice (default 0.1 = the v3 sidecar expansion threshold)")
+                    help="safety-classifier threshold for the flagged held-out slice (default 0.1 = the sidecar expansion threshold)")
     ap.add_argument("--no-flagged", action="store_true", help="skip the classifier-flagged / unflagged held-out slices")
     args = ap.parse_args()
     run_alignment_tax_evaluation(num_samples=args.num_samples, batch_size=args.batch_size,

@@ -1,0 +1,18 @@
+% ConstitutionEval-Ro (600 itemi, metodologia Minder et al. 2026), protocol: pmi (LL normalizată minus LL necondiționată a aceluiași text (PMI; elimină avantajul variantelor fluente))
+% Baseline aleatoriu 25%. IC 95% bootstrap (pe itemi la perechi); p = Fisher exact vs referinta (perechi: permutare pe itemi). (delib) = prefix <assistant>, rezultat secundar (fara post-training). Coloanele 'Euristica' nu folosesc niciun model.
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabular}{l c c c c c c c c c}
+\toprule
+\textbf{Split} & \textbf{Base-Ro} & \textbf{SPP-Ro} & \textbf{SPP-Ro (delib)} & \textbf{Filtered-Ro} & \textbf{Base-Ro-rewarm} & \textbf{SPP-Ro-MT} & \textbf{SPP-Ro-MT (delib)} & \textbf{Euristică: cea mai scurtă} & \textbf{Euristică: cea mai lungă} \\
+\midrule
+Toți itemii (N=600) & 38.2\% [34--42] & 33.5\% [30--37] (p=0.10) & 34.0\% [30--38] (p=0.15) & 35.2\% [32--39] (p=0.31) & 35.8\% [32--40] (p=0.44) & 37.8\% [34--42] (p=0.51) & 33.5\% [30--37] (p=0.43) & 28.5\% [25--32] & 24.2\% [21--28] \\
+hard (N=170) & 41.2\% [34--49] & 40.0\% [33--47] (p=0.91) & 31.8\% [25--39] (p=0.09) & 35.9\% [29--44] (p=0.37) & 37.6\% [31--45] (p=0.58) & 44.7\% [37--52] (p=0.23) & 38.8\% [32--46] (p=0.91) & 36.5\% [29--44] & 20.0\% [14--26] \\
+mid (N=203) & 41.4\% [35--48] & 31.5\% [25--38] (p=0.05) & 36.0\% [30--42] (p=0.31) & 40.9\% [34--48] (p=1.00) & 37.4\% [31--44] (p=0.48) & 39.4\% [33--46] (p=0.76) & 29.6\% [23--36] (p=0.11) & 26.1\% [20--32] & 22.7\% [17--29] \\
+easy (N=227) & 33.0\% [27--40] & 30.4\% [25--37] (p=0.61) & 33.9\% [28--40] (p=0.92) & 29.5\% [24--36] (p=0.48) & 33.0\% [27--39] (p=1.00) & 31.3\% [26--37] (p=0.76) & 33.0\% [27--39] (p=1.00) & 24.7\% [19--30] & 28.6\% [23--34] \\
+\bottomrule
+\end{tabular}
+\caption{ConstitutionEval-Ro, protocol pmi (LL normalizată minus LL necondiționată a aceluiași text (PMI; elimină avantajul variantelor fluente)): 600 scenarii cu 4 cursuri de acțiune, o singură opțiune conformă constituției, construite cu metodologia ConstitutionEval (generare, poartă de determinare open-book, gardă de capabilitate, sondă de dificultate, hardening). Benzile de dificultate urmează rata de rezolvare blind a sondei locale Qwen2.5-7B. Șansă 25\%. Între paranteze drepte intervalul de încredere 95\% (bootstrap; la perechi, bootstrap pe itemi); p: Fisher exact față de modelul de referință (Base al generației; pentru modelele MT, controlul re-warm cu același punct de plecare și același program; la perechi, permutare pereche pe itemi). Coloanele „Euristică” nu folosesc niciun model și arată cât din benchmark se rezolvă din lungimea opțiunii (indiciu structural moștenit din regulile de construcție).}
+\label{tab:constitution_eval_pmi}
+\end{table}

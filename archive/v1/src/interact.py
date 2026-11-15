@@ -141,8 +141,8 @@ def run_single_interactive(model_path: Path, max_new_tokens: int = 64, temperatu
 
 
 def run_comparison_interactive(max_new_tokens: int = 64, temperature: float = 0.7):
-    base_dir = Path("models/base_ro_125m")
-    spp_dir = Path("models/spp_ro_125m")
+    base_dir = Path("models/base_ro_88m_pack")
+    spp_dir = Path("models/spp_ro_88m_pack")
     
     print("\n" + "=" * 76)
     print("  MOD COMPARATIE SIDE-BY-SIDE: Base-Ro-88M vs. SPP-Ro-88M")
@@ -195,6 +195,6 @@ if __name__ == "__main__":
     if args.model == "compare":
         run_comparison_interactive(args.max_tokens, args.temp)
     elif args.model == "base":
-        run_single_interactive(Path("models/base_ro_125m"), args.max_tokens, args.temp)
+        run_single_interactive(Path("models/base_ro_88m_pack"), args.max_tokens, args.temp)
     elif args.model == "spp":
-        run_single_interactive(Path("models/spp_ro_125m"), args.max_tokens, args.temp)
+        run_single_interactive(Path("models/spp_ro_88m_pack"), args.max_tokens, args.temp)
