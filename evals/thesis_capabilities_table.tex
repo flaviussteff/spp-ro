@@ -2,17 +2,17 @@
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{l l c}
+\begin{tabular}{l l c c}
 \toprule
-\textbf{Model} & \textbf{Variantă} & \textbf{Acuratețe cloze (IC 95\%)} \\
+\textbf{Model} & \textbf{Variantă} & \textbf{Acuratețe cloze (IC 95\%)} & \textbf{$p$ vs ref. (McNemar)} \\
 \midrule
-Base-Ro & Vanilla control: plain documents, no reflections & 89.5\% [88--91] \\
-SPP-Ro & SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule) & 89.1\% [87--91] \\
-Filtered-Ro & Filtered baseline: classifier-flagged documents kept in context, loss-masked & 88.5\% [86--90] \\
-Base-Ro-rewarm & Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections & 89.3\% [87--91] \\
-SPP-Ro-MT & SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences) & 89.4\% [87--91] \\
+Base-Ro & Vanilla control: plain documents, no reflections & 88.4\% [86--90] & ref. \\
+SPP-Ro & SPP\{T0\}: 10\% of the documents carry an inline reflection (head-cap rule) & 88.3\% [86--90] & 1 \\
+Filtered-Ro & Filtered baseline: classifier-flagged documents kept in context, loss-masked & 88.5\% [86--90] & 1 \\
+Base-Ro-rewarm & Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections & 88.6\% [87--91] & 0.774 \\
+SPP-Ro-MT & SPP\{MT\}: Base@45k + 5k steps on the annotated stream (67.6\% of the documents carry a reflection) & 88.7\% [87--91] & 1 \\
 \bottomrule
 \end{tabular}
-\caption{Capabilitate lingvistică de bază: alegerea ultimului cuvânt dintr-o propoziție held-out dintre 4 candidați (N=1000, șansă 25\%). O diferență semnificativă față de Base ar indica o taxă (sau un câștig) de aliniere.}
+\caption{Capabilitate lingvistică de bază: alegerea ultimului cuvânt dintr-o propoziție held-out dintre 4 candidați (N=1000, șansă 25\%). $p$: testul exact McNemar pe aceiași itemi față de referința modelului (Base-Ro; Base-Ro-rewarm pentru SPP-Ro-MT); o diferență semnificativă ar indica o taxă (sau un câștig) de capabilitate.}
 \label{tab:thesis_capabilities}
 \end{table}

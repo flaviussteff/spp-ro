@@ -59,7 +59,7 @@ class DataCollatorForSPP:
         # loss covers only the reflection span (<assistant> -> r1, ..., rN -> first post-context token); the pre/post
         # document tokens are context only. Plain documents in the same batch keep the full next-token loss.
         self.reflection_loss_only = reflection_loss_only
-        # paper: reflections are cut at a 128-token budget (mean 53); ours average 39 tokens, 1.7% exceed 128
+        # paper: reflections are cut at a 128-token budget (mean 53); the final sidecar averages 36 tokens, 1.3% exceed 128
         self.reflection_budget = reflection_budget
         self.add_eos = add_eos
         # head_cap (EPFL semantics): the annotated document is cut at the START exactly like the plain document
@@ -163,7 +163,9 @@ class DataCollatorForSPP:
 
         if self.add_eos and total_len > 0:
             input_ids = input_ids + [self.eos_token_id]
-            position_ids = position_ids + [position_ids[-1] + 1]
+            # the </s> continues the DOCUMENT: after a reflection its position follows the (aliased) post-text, which
+            # equals position_ids[-1] + 1 unless the post-text is empty (reflection at the very end of the document)
+            position_ids = position_ids + [(len_pre + len_post) if is_spp else total_len]
             # the EOS is a trained target like any document token, except where the item carries no loss
             eos_label = -100 if (item.get("mask_loss", False) or (is_spp and self.reflection_loss_only)) else self.eos_token_id
             labels = labels + [eos_label]

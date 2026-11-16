@@ -1,0 +1,28 @@
+% Comparatii pereche pe documente (eval_alignment_paired.py): delta = loss(A) - loss(B), nats/token, media pe documente
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{l l r c c c c}
+\toprule
+\textbf{Comparație} & \textbf{Felie} & \textbf{n} & \textbf{$\Delta$loss [IÎ 95\%]} & \textbf{doc. cu loss mai mare} & \textbf{$p$ semn} & \textbf{$p$ Holm} \\
+\midrule
+Filtered-Ro vs Base-Ro & toate & 3000 & +0.0062 [+0.0045, +0.0078] & 55\% & 5.6e-09 & 4.4e-08 \\
+Filtered-Ro vs Base-Ro & semnalat & 206 & +0.0495 [+0.0405, +0.0594] & 86\% & 4.2e-27 & 5.0e-26 \\
+Filtered-Ro vs Base-Ro & nesemnalat & 2794 & +0.0030 [+0.0015, +0.0046] & 53\% & 0.00121 & 0.00485 \\
+SPP-Ro vs Base-Ro & toate & 3000 & +0.0026 [+0.0012, +0.0041] & 54\% & 4.0e-05 & 2.8e-04 \\
+SPP-Ro vs Base-Ro & semnalat & 206 & +0.0038 [-0.0018, +0.0093] & 53\% & 0.365 & 0.73 \\
+SPP-Ro vs Base-Ro & nesemnalat & 2794 & +0.0026 [+0.0010, +0.0041] & 54\% & 6.5e-05 & 3.9e-04 \\
+Filtered-Ro vs SPP-Ro & toate & 3000 & +0.0035 [+0.0018, +0.0052] & 53\% & 6.4e-04 & 0.00319 \\
+Filtered-Ro vs SPP-Ro & semnalat & 206 & +0.0457 [+0.0367, +0.0559] & 80\% & 7.9e-19 & 8.7e-18 \\
+Filtered-Ro vs SPP-Ro & nesemnalat & 2794 & +0.0004 [-0.0012, +0.0020] & 51\% & 0.233 & 0.7 \\
+SPP-Ro-MT vs Base-Ro-rewarm & toate & 3000 & +0.0252 [+0.0245, +0.0259] & 93\% & <1e-300 & <1e-300 \\
+SPP-Ro-MT vs Base-Ro-rewarm & semnalat & 206 & +0.0327 [+0.0301, +0.0353] & 94\% & 1.8e-43 & 2.4e-42 \\
+SPP-Ro-MT vs Base-Ro-rewarm & nesemnalat & 2794 & +0.0247 [+0.0239, +0.0254] & 92\% & <1e-300 & <1e-300 \\
+Base-Ro-rewarm vs Base-Ro & toate & 3000 & +0.0020 [+0.0015, +0.0026] & 57\% & 2.4e-14 & 2.2e-13 \\
+Base-Ro-rewarm vs Base-Ro & semnalat & 206 & +0.0015 [-0.0008, +0.0043] & 52\% & 0.531 & 0.73 \\
+Base-Ro-rewarm vs Base-Ro & nesemnalat & 2794 & +0.0021 [+0.0015, +0.0026] & 57\% & 1.2e-14 & 1.2e-13 \\
+\bottomrule
+\end{tabular}
+\caption{Diferențe pereche de loss pe documentele held-out (același document evaluat de ambele modele). $\Delta$loss = media pe documente a diferenței de cross-entropie (nats/token, primii 512 tokeni), cu interval de încredere bootstrap pe documente; `doc. cu loss mai mare' = procentul documentelor pe care primul model are loss mai mare; $p$ = testul exact al semnului, corectat Holm pe toate rândurile tabelului.}
+\label{tab:thesis_alignment_paired}
+\end{table}

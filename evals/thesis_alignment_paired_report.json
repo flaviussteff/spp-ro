@@ -1,0 +1,263 @@
+{
+  "note": "Paired per-document comparison of the held-out perplexity evaluation. delta = loss(A) - loss(B), mean cross-entropy per document (nats/token), documents weighted equally; CI = percentile bootstrap over documents (5000 resamples, seed 0); p_sign = exact two-sided sign test on the per-document differences; p_sign_holm = Holm correction over all rows.",
+  "source": "thesis_alignment_tax_perdoc_losses.json",
+  "heldout_order_md5": "fc735dd24ddf69087f0f388d8269307d",
+  "clf_threshold": 0.1,
+  "rows": [
+    {
+      "a": "Filtered-Ro",
+      "b": "Base-Ro",
+      "what": "cost of loss-masking the flagged documents",
+      "slice": "heldout",
+      "n": 3000,
+      "mean_delta_loss": 0.00617,
+      "ci95": [
+        0.00447,
+        0.00782
+      ],
+      "share_a_higher": 0.5533,
+      "n_ties": 0,
+      "p_sign": 5.561e-09,
+      "delta_ppl_token_weighted": 0.097,
+      "p_sign_holm": 4.449e-08
+    },
+    {
+      "a": "Filtered-Ro",
+      "b": "Base-Ro",
+      "what": "cost of loss-masking the flagged documents",
+      "slice": "flagged",
+      "n": 206,
+      "mean_delta_loss": 0.04949,
+      "ci95": [
+        0.04047,
+        0.05936
+      ],
+      "share_a_higher": 0.8592,
+      "n_ties": 0,
+      "p_sign": 4.194e-27,
+      "delta_ppl_token_weighted": 1.126,
+      "p_sign_holm": 5.033e-26
+    },
+    {
+      "a": "Filtered-Ro",
+      "b": "Base-Ro",
+      "what": "cost of loss-masking the flagged documents",
+      "slice": "unflagged",
+      "n": 2794,
+      "mean_delta_loss": 0.00298,
+      "ci95": [
+        0.00147,
+        0.00455
+      ],
+      "share_a_higher": 0.5308,
+      "n_ties": 0,
+      "p_sign": 0.001212,
+      "delta_ppl_token_weighted": 0.045,
+      "p_sign_holm": 0.004848
+    },
+    {
+      "a": "SPP-Ro",
+      "b": "Base-Ro",
+      "what": "alignment tax of SPP{T0}",
+      "slice": "heldout",
+      "n": 3000,
+      "mean_delta_loss": 0.00264,
+      "ci95": [
+        0.00117,
+        0.00414
+      ],
+      "share_a_higher": 0.5377,
+      "n_ties": 0,
+      "p_sign": 3.961e-05,
+      "delta_ppl_token_weighted": 0.046,
+      "p_sign_holm": 0.0002773
+    },
+    {
+      "a": "SPP-Ro",
+      "b": "Base-Ro",
+      "what": "alignment tax of SPP{T0}",
+      "slice": "flagged",
+      "n": 206,
+      "mean_delta_loss": 0.00377,
+      "ci95": [
+        -0.00182,
+        0.00928
+      ],
+      "share_a_higher": 0.534,
+      "n_ties": 0,
+      "p_sign": 0.3651,
+      "delta_ppl_token_weighted": 0.117,
+      "p_sign_holm": 0.7302
+    },
+    {
+      "a": "SPP-Ro",
+      "b": "Base-Ro",
+      "what": "alignment tax of SPP{T0}",
+      "slice": "unflagged",
+      "n": 2794,
+      "mean_delta_loss": 0.00256,
+      "ci95": [
+        0.00099,
+        0.00414
+      ],
+      "share_a_higher": 0.5379,
+      "n_ties": 0,
+      "p_sign": 6.508e-05,
+      "delta_ppl_token_weighted": 0.042,
+      "p_sign_holm": 0.0003905
+    },
+    {
+      "a": "Filtered-Ro",
+      "b": "SPP-Ro",
+      "what": "Filtered vs SPP{T0}",
+      "slice": "heldout",
+      "n": 3000,
+      "mean_delta_loss": 0.00353,
+      "ci95": [
+        0.00181,
+        0.00522
+      ],
+      "share_a_higher": 0.5313,
+      "n_ties": 0,
+      "p_sign": 0.0006375,
+      "delta_ppl_token_weighted": 0.052,
+      "p_sign_holm": 0.003188
+    },
+    {
+      "a": "Filtered-Ro",
+      "b": "SPP-Ro",
+      "what": "Filtered vs SPP{T0}",
+      "slice": "flagged",
+      "n": 206,
+      "mean_delta_loss": 0.04572,
+      "ci95": [
+        0.03671,
+        0.05592
+      ],
+      "share_a_higher": 0.801,
+      "n_ties": 0,
+      "p_sign": 7.945e-19,
+      "delta_ppl_token_weighted": 1.009,
+      "p_sign_holm": 8.74e-18
+    },
+    {
+      "a": "Filtered-Ro",
+      "b": "SPP-Ro",
+      "what": "Filtered vs SPP{T0}",
+      "slice": "unflagged",
+      "n": 2794,
+      "mean_delta_loss": 0.00042,
+      "ci95": [
+        -0.00123,
+        0.00204
+      ],
+      "share_a_higher": 0.5115,
+      "n_ties": 0,
+      "p_sign": 0.2333,
+      "delta_ppl_token_weighted": 0.003,
+      "p_sign_holm": 0.6999
+    },
+    {
+      "a": "SPP-Ro-MT",
+      "b": "Base-Ro-rewarm",
+      "what": "alignment tax of SPP{MT} (matched control)",
+      "slice": "heldout",
+      "n": 3000,
+      "mean_delta_loss": 0.02521,
+      "ci95": [
+        0.02449,
+        0.02594
+      ],
+      "share_a_higher": 0.926,
+      "n_ties": 0,
+      "p_sign": 0.0,
+      "delta_ppl_token_weighted": 0.37,
+      "p_sign_holm": 0.0
+    },
+    {
+      "a": "SPP-Ro-MT",
+      "b": "Base-Ro-rewarm",
+      "what": "alignment tax of SPP{MT} (matched control)",
+      "slice": "flagged",
+      "n": 206,
+      "mean_delta_loss": 0.03268,
+      "ci95": [
+        0.03005,
+        0.03529
+      ],
+      "share_a_higher": 0.9417,
+      "n_ties": 0,
+      "p_sign": 1.822e-43,
+      "delta_ppl_token_weighted": 0.749,
+      "p_sign_holm": 2.369e-42
+    },
+    {
+      "a": "SPP-Ro-MT",
+      "b": "Base-Ro-rewarm",
+      "what": "alignment tax of SPP{MT} (matched control)",
+      "slice": "unflagged",
+      "n": 2794,
+      "mean_delta_loss": 0.02466,
+      "ci95": [
+        0.02393,
+        0.02542
+      ],
+      "share_a_higher": 0.9248,
+      "n_ties": 0,
+      "p_sign": 0.0,
+      "delta_ppl_token_weighted": 0.348,
+      "p_sign_holm": 0.0
+    },
+    {
+      "a": "Base-Ro-rewarm",
+      "b": "Base-Ro",
+      "what": "effect of the re-warm schedule alone",
+      "slice": "heldout",
+      "n": 3000,
+      "mean_delta_loss": 0.00203,
+      "ci95": [
+        0.00148,
+        0.00258
+      ],
+      "share_a_higher": 0.5697,
+      "n_ties": 0,
+      "p_sign": 2.431e-14,
+      "delta_ppl_token_weighted": 0.03,
+      "p_sign_holm": 2.188e-13
+    },
+    {
+      "a": "Base-Ro-rewarm",
+      "b": "Base-Ro",
+      "what": "effect of the re-warm schedule alone",
+      "slice": "flagged",
+      "n": 206,
+      "mean_delta_loss": 0.00146,
+      "ci95": [
+        -0.00078,
+        0.00426
+      ],
+      "share_a_higher": 0.5243,
+      "n_ties": 0,
+      "p_sign": 0.5307,
+      "delta_ppl_token_weighted": 0.034,
+      "p_sign_holm": 0.7302
+    },
+    {
+      "a": "Base-Ro-rewarm",
+      "b": "Base-Ro",
+      "what": "effect of the re-warm schedule alone",
+      "slice": "unflagged",
+      "n": 2794,
+      "mean_delta_loss": 0.00207,
+      "ci95": [
+        0.00151,
+        0.00262
+      ],
+      "share_a_higher": 0.573,
+      "n_ties": 0,
+      "p_sign": 1.226e-14,
+      "delta_ppl_token_weighted": 0.029,
+      "p_sign_holm": 1.226e-13
+    }
+  ]
+}

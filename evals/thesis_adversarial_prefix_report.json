@@ -7070,7 +7070,7 @@
       }
     },
     "SPP-Ro-MT": {
-      "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences)",
+      "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% of the documents carry a reflection)",
       "n": 240,
       "neutral_rate": 37.9,
       "neutral_rate_ci95": [

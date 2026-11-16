@@ -7,14 +7,19 @@ Shared evaluation utilities for SPP-Ro.
    ("Răspuns: ") yields a standalone "Ġ" token on its own, but when followed by
    the option the space merges into the option's first token ("ĠTrat"). The old
    code therefore skipped the first option token and miscounted the length.
-2. Statistics: bootstrap confidence intervals, two-sided Fisher exact test and a
-   paired sign-flip permutation test, so that small benchmarks (N=20..600) are
-   reported with uncertainty instead of bare percentages.
+2. Statistics, so that small benchmarks (N=20..600) are reported with uncertainty instead of bare
+   percentages: bootstrap confidence intervals; for two models scored on the SAME items, the exact
+   McNemar test (binomial test on the discordant items) and an exact paired sign-flip test for integer
+   per-item scores; the exact sign test for continuous paired differences; Holm's step-down correction
+   for a family of comparisons. Fisher's exact test is kept only for unpaired samples (it ignores the
+   pairing and is too conservative for two models on the same items).
+3. `tex_escape` for every free-text string written into a LaTeX table (a bare % starts a comment).
 """
 from __future__ import annotations
 
 import math
 import random
+from fractions import Fraction
 from typing import Dict, List, Sequence, Tuple
 
 import torch
@@ -147,8 +152,87 @@ def paired_permutation_p(flags_a: Sequence[bool], flags_b: Sequence[bool], n_per
     return round(count / n_perm, 4)
 
 
+def _binom_two_sided_half(k: int, n: int) -> float:
+    """Exact two-sided binomial test of k successes in n trials against p = 0.5 (exact integer arithmetic)."""
+    if n <= 0:
+        return 1.0
+    m = min(k, n - k)
+    tail = sum(math.comb(n, i) for i in range(m + 1))
+    return min(1.0, float(Fraction(2 * tail, 1 << n)))
+
+
+def mcnemar_exact_p(flags_a: Sequence[bool], flags_b: Sequence[bool]) -> float:
+    """Two-sided exact McNemar test for two models scored on the same items: binomial test on the discordant
+    items (a right / b wrong vs a wrong / b right)."""
+    assert len(flags_a) == len(flags_b)
+    gained = sum(1 for a, b in zip(flags_a, flags_b) if a and not b)
+    lost = sum(1 for a, b in zip(flags_a, flags_b) if b and not a)
+    return _binom_two_sided_half(gained, gained + lost)
+
+
+def sign_test_p(diffs: Sequence[float]) -> float:
+    """Two-sided exact sign test on paired differences (zeros dropped)."""
+    pos = sum(1 for d in diffs if d > 0)
+    neg = sum(1 for d in diffs if d < 0)
+    return _binom_two_sided_half(pos, pos + neg)
+
+
+def signflip_exact_p(diffs: Sequence[int]) -> float:
+    """Exact two-sided paired sign-flip (randomisation) test for INTEGER per-item differences: the probability, over
+    all 2^m sign assignments of the m non-zero differences, that |sum| is at least the observed |sum|. Computed exactly
+    by dynamic programming over the attainable sums. For 0/1 outcomes (differences in {-1, 0, 1}) it equals the exact
+    McNemar test."""
+    vals = [abs(int(d)) for d in diffs if int(d) != 0]
+    if not vals:
+        return 1.0
+    obs = abs(sum(int(d) for d in diffs))
+    total = sum(vals)
+    counts = [0] * (2 * total + 1)        # counts[s + total] = number of sign assignments with sum s
+    counts[total] = 1
+    reach = 0
+    for v in vals:
+        new = [0] * len(counts)
+        for s in range(total - reach, total + reach + 1):
+            c = counts[s]
+            if c:
+                new[s - v] += c
+                new[s + v] += c
+        counts = new
+        reach += v
+    extreme = sum(c for i, c in enumerate(counts) if c and abs(i - total) >= obs)
+    return min(1.0, float(Fraction(extreme, 1 << len(vals))))
+
+
+def holm_adjust(pvals: Sequence[float]) -> List[float]:
+    """Holm's step-down adjusted p-values (family-wise error control), in the input order."""
+    m = len(pvals)
+    order = sorted(range(m), key=lambda i: pvals[i])
+    adj = [1.0] * m
+    running = 0.0
+    for rank, i in enumerate(order):
+        running = max(running, min(1.0, (m - rank) * pvals[i]))
+        adj[i] = running
+    return adj
+
+
+def round_p(p: float) -> float:
+    """p-values are stored with 4 significant digits (rounding to 4 decimals would turn 1e-24 into 0)."""
+    return float(f"{p:.4g}")
+
+
+_TEX_SPECIAL = {"\\": r"\textbackslash{}", "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#", "_": r"\_",
+                "{": r"\{", "}": r"\}", "~": r"\textasciitilde{}", "^": r"\textasciicircum{}"}
+
+
+def tex_escape(s: object) -> str:
+    """Escapes LaTeX special characters in free text (model descriptions, labels): a bare % would comment out the
+    rest of a table row, & would add a column, _ { } would break the line."""
+    return "".join(_TEX_SPECIAL.get(ch, ch) for ch in str(s))
+
+
 def summarize_accuracy(flags: Sequence[bool], base_flags: Sequence[bool] | None = None) -> Dict[str, object]:
-    """Accuracy with bootstrap CI and, if a baseline is given, Fisher and paired permutation p-values."""
+    """Accuracy with a bootstrap CI and, if the reference model's flags on the same items are given, the exact
+    McNemar test on the paired items (`p_vs_base`)."""
     n = len(flags)
     k = sum(1 for f in flags if f)
     out: Dict[str, object] = {
@@ -158,10 +242,9 @@ def summarize_accuracy(flags: Sequence[bool], base_flags: Sequence[bool] | None 
         "ci95": bootstrap_ci(flags),
     }
     if base_flags is not None and len(base_flags) == n:
-        kb = sum(1 for f in base_flags if f)
-        out["baseline_correct"] = kb
-        out["fisher_p_vs_base"] = fisher_exact_two_sided(k, n, kb, n)
-        out["paired_perm_p_vs_base"] = paired_permutation_p(flags, base_flags)
+        out["baseline_correct"] = sum(1 for f in base_flags if f)
         out["items_gained"] = sum(1 for a, b in zip(flags, base_flags) if a and not b)
         out["items_lost"] = sum(1 for a, b in zip(flags, base_flags) if b and not a)
+        out["p_vs_base"] = round_p(mcnemar_exact_p(flags, base_flags))
+        out["p_method"] = "McNemar exact (paired items)"
     return out

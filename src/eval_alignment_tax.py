@@ -1,23 +1,25 @@
 """
-Alignment Tax Evaluation Harness (corrected)
+Alignment Tax Evaluation Harness
 
-Measures cross-entropy / perplexity of every available model on:
-  1. "Web (held-out)" : data/eval/heldout_fineweb.parquet, built by build_heldout_set.py from a
-     FineWeb-2 shard that was NOT consumed by the training corpus, with every document whose
-     prefix or hash appears in the corpus or in the reflection sidecar removed. This is the
-     ONLY set on which an alignment-tax conclusion may be drawn.
-  2. "Wikipedia (în antrenare)" / "Presă (în antrenare)" : the tails of wiki_clean / news_recent,
-     kept for transparency. They were used in the first version of the thesis as "held-out",
-     but 92-99% of these passages are inside the training corpus and ~800 are reflection hosts,
-     so their perplexity measures memorisation, not generalisation.
+Measures cross-entropy / perplexity (first 512 tokens of every document) of every available model on:
+  1. "Web (held-out)" : ALL documents of data/eval/heldout_fineweb.parquet, built by build_heldout_set.py from a
+     FineWeb-2 shard that was NOT consumed by the training corpus, cleaned exactly like the corpus
+     (prepare_scale_corpus.clean_text_content) and with every document whose corpus deduplication key (first 64
+     cleaned characters) or MD5 occurs in the corpus or in the reflection sidecar removed. This is the ONLY set on
+     which an alignment-tax conclusion may be drawn.
+  2. "Web held-out, semnalat de clasificator" / "Web held-out, nesemnalat" : the same documents split by the safety
+     classifier (models/safety_clf_ro, the one that defines the Filtered baseline's loss-masked set and the SPP
+     annotation candidates). The flagged slice is where the Filtered baseline is expected to pay (no loss on such
+     documents during training) and SPP is expected not to (the documents stay in the loss); the unflagged slice is
+     the control. Both slices use every held-out document on their side of the threshold; they are computed from the
+     same per-document losses as (1). Classifier scores are cached in data/eval/heldout_clf_scores.parquet.
+  3. "Wikipedia (în antrenare)" / "Presă (în antrenare)" : the last --num-samples documents of wiki_clean /
+     news_recent, kept for transparency only. They were used in the first version of the thesis as "held-out", but
+     92-99 % of these passages are inside the training corpus, so their perplexity measures memorisation.
 
-  3. "Web held-out, semnalat de clasificator" / "Web held-out, nesemnalat" : the same held-out set split by the
-     safety classifier (models/safety_clf_ro, the one that defines the Filtered baseline's loss-masked set and the
-     SPP annotation candidates). The flagged slice is where the Filtered baseline is expected to pay (no loss on
-     such documents during training) and where SPP is expected not to (the documents stay in the loss); the
-     unflagged slice is the control. Classifier scores are cached in data/eval/heldout_clf_scores.parquet.
-
-Delta PPL is computed on the held-out web set (overall and flagged slice) only.
+Outputs: evals/thesis_alignment_tax_report.json, evals/thesis_alignment_tax_table.tex and
+evals/thesis_alignment_tax_perdoc_losses.json (the mean loss of every held-out document for every model, in the same
+order, for the paired tests of eval_alignment_paired.py).
 """
 import sys
 import math
@@ -35,6 +37,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 import pandas as pd
 import torch
+import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -45,13 +48,13 @@ for _p in [str(_SRC_DIR), str(_ROOT_DIR)]:
         sys.path.insert(0, _p)
 
 try:
-    from config import (BASE_MODEL_DIR, SPP_MODEL_DIR, SPP_20PCT_MODEL_DIR, SPP_MT_MODEL_DIR,
-                        TOKENIZER_DIR, CLEAN_DATA_DIR, EVALS_DIR, EVAL_DATA_DIR, HELDOUT_FILE, ALL_MODELS, base_ref_key)
+    from config import TOKENIZER_DIR, CLEAN_DATA_DIR, EVALS_DIR, EVAL_DATA_DIR, HELDOUT_FILE, ALL_MODELS, base_ref_key
     from train_safety_classifier import CLF_DIR, predict_probs
+    from eval_utils import tex_escape
 except ImportError:
-    from src.config import (BASE_MODEL_DIR, SPP_MODEL_DIR, SPP_20PCT_MODEL_DIR, SPP_MT_MODEL_DIR,
-                            TOKENIZER_DIR, CLEAN_DATA_DIR, EVALS_DIR, EVAL_DATA_DIR, HELDOUT_FILE, ALL_MODELS, base_ref_key)
+    from src.config import TOKENIZER_DIR, CLEAN_DATA_DIR, EVALS_DIR, EVAL_DATA_DIR, HELDOUT_FILE, ALL_MODELS, base_ref_key
     from src.train_safety_classifier import CLF_DIR, predict_probs
+    from src.eval_utils import tex_escape
 
 EVALS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -59,8 +62,11 @@ HELDOUT_KEY = "Web (held-out)"
 FLAGGED_KEY = "Web held-out, semnalat de clasificator"
 UNFLAGGED_KEY = "Web held-out, nesemnalat"
 INTRAIN_KEYS = ("Wikipedia (în antrenare)", "Presă (în antrenare)")
+SLICE_NAMES = {HELDOUT_KEY: "heldout", FLAGGED_KEY: "flagged", UNFLAGGED_KEY: "unflagged"}   # keys of the per-doc file
 CLF_SCORES_FILE = EVAL_DATA_DIR / "heldout_clf_scores.parquet"
-DEFAULT_CLF_THRESHOLD = 0.1   # the sidecar expansion threshold (run_pipeline.bat CLF_THR); the Filtered mask set is built from the same classifier
+PERDOC_FILE = EVALS_DIR / "thesis_alignment_tax_perdoc_losses.json"
+DEFAULT_CLF_THRESHOLD = 0.1   # the threshold of the sidecar expansion; the Filtered mask set is built from the same classifier
+MAX_LEN = 512
 
 
 def _doc_hash(text: str) -> str:
@@ -96,14 +102,16 @@ def heldout_classifier_scores(texts: List[str], device: str) -> List[float]:
 
 
 class ValidationTextDataset(Dataset):
-    def __init__(self, texts: List[str], tokenizer, max_length: int = 512):
-        self.samples = []
-        for t in texts:
+    """First `max_length` tokens of every text; `kept[j]` is the index (in `texts`) of sample j."""
+    def __init__(self, texts: List[str], tokenizer, max_length: int = MAX_LEN):
+        self.samples, self.kept = [], []
+        for i, t in enumerate(texts):
             if len(t.strip()) < 50:
                 continue
             enc = tokenizer.encode(t.strip(), add_special_tokens=False)
             if len(enc) > 16:
                 self.samples.append(enc[:max_length])
+                self.kept.append(i)
 
     def __len__(self):
         return len(self.samples)
@@ -130,109 +138,149 @@ def collate_fn_pad(batch, pad_token_id=0):
 
 
 @torch.no_grad()
-def compute_dataset_perplexity(model, dataloader, device) -> Tuple[float, float, int]:
-    """Token-weighted cross-entropy and perplexity. Returns (loss, ppl, n_tokens)."""
+def score_documents(model, dataloader, device) -> Tuple[List[float], List[int]]:
+    """Per-document summed cross-entropy (nats) and number of predicted tokens, in dataset order. Token t is
+    predicted from tokens < t (the first token of a document is never a target), exactly like the HF loss."""
     model.eval()
-    total_loss, total_tokens = 0.0, 0
+    sums: List[float] = []
+    counts: List[int] = []
     for batch in dataloader:
         input_ids = batch["input_ids"].to(device)
         labels = batch["labels"].to(device)
         attention_mask = batch["attention_mask"].to(device)
-        out = model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
-        # HF averages over all valid label positions (shifted); recover the token count accordingly
-        valid = (labels[:, 1:] != -100).sum().item()
-        if valid > 0:
-            total_loss += out.loss.item() * valid
-            total_tokens += valid
-    if total_tokens == 0:
-        return 0.0, float("nan"), 0
-    avg = total_loss / total_tokens
-    return round(avg, 4), round(math.exp(min(avg, 20.0)), 2), total_tokens
+        logits = model(input_ids=input_ids, attention_mask=attention_mask).logits[:, :-1].float()
+        tgt = labels[:, 1:]
+        nll = F.cross_entropy(logits.reshape(-1, logits.size(-1)), tgt.reshape(-1), ignore_index=-100,
+                              reduction="none").view(tgt.shape)
+        valid = tgt != -100
+        sums.extend(nll.masked_fill(~valid, 0.0).double().sum(dim=1).tolist())
+        counts.extend(valid.sum(dim=1).tolist())
+    return sums, counts
+
+
+def aggregate(sums: List[float], counts: List[int], idx: Optional[List[int]] = None) -> Dict[str, Any]:
+    """Token-weighted loss / perplexity over the documents in `idx` (all if None)."""
+    if idx is not None:
+        sums = [sums[i] for i in idx]
+        counts = [counts[i] for i in idx]
+    ntok = int(sum(counts))
+    if ntok == 0:
+        return {"loss": 0.0, "ppl": float("nan"), "tokens": 0, "docs": 0}
+    avg = math.fsum(sums) / ntok
+    return {"loss": round(avg, 4), "ppl": round(math.exp(min(avg, 20.0)), 2), "tokens": ntok, "docs": len(counts)}
 
 
 def load_passages(num_samples: int, clf_threshold: Optional[float] = DEFAULT_CLF_THRESHOLD,
-                  device: str = "cpu") -> Dict[str, List[str]]:
+                  device: str = "cpu") -> Tuple[Dict[str, List[str]], Optional[List[float]]]:
+    """Returns ({domain: texts}, classifier score of every held-out document or None)."""
     domains: Dict[str, List[str]] = {}
     if not HELDOUT_FILE.exists():
         raise FileNotFoundError(
             f"{HELDOUT_FILE} missing. Run `py src/build_heldout_set.py` first; the wiki/news tails are NOT held out.")
     heldout_all = pd.read_parquet(HELDOUT_FILE)["text"].dropna().tolist()
-    domains[HELDOUT_KEY] = heldout_all[:num_samples]
-    if clf_threshold is not None:
-        # Flagged slice over the WHOLE held-out file (the flag rate is ~3%, so every flagged document counts);
-        # the unflagged control takes the first num_samples documents below the threshold.
-        scores = heldout_classifier_scores(heldout_all, device)
-        flagged = [t for t, s in zip(heldout_all, scores) if s >= clf_threshold]
-        unflagged = [t for t, s in zip(heldout_all, scores) if s < clf_threshold][:num_samples]
-        print(f"  [clasificator] prag {clf_threshold:.2f}: {len(flagged):,} din {len(heldout_all):,} documente held-out semnalate "
-              f"({100.0 * len(flagged) / max(1, len(heldout_all)):.1f}%)", flush=True)
-        domains[FLAGGED_KEY] = flagged
-        domains[UNFLAGGED_KEY] = unflagged
+    domains[HELDOUT_KEY] = heldout_all
+    scores = heldout_classifier_scores(heldout_all, device) if clf_threshold is not None else None
     wiki = CLEAN_DATA_DIR / "wiki_clean.parquet"
     news = CLEAN_DATA_DIR / "news_recent.parquet"
     if wiki.exists():
         domains[INTRAIN_KEYS[0]] = pd.read_parquet(wiki, columns=["text"])["text"].dropna().tail(num_samples).tolist()
     if news.exists():
         domains[INTRAIN_KEYS[1]] = pd.read_parquet(news, columns=["text"])["text"].dropna().tail(num_samples).tolist()
-    return domains
+    return domains, scores
 
 
 def run_alignment_tax_evaluation(num_samples: int = 1000, batch_size: int = 8,
                                  clf_threshold: Optional[float] = DEFAULT_CLF_THRESHOLD):
     print("\n" + "=" * 72)
-    print(" ALIGNMENT TAX EVALUATION (held-out web set + classifier-flagged slice + in-training reference sets)")
+    print(" ALIGNMENT TAX EVALUATION (held-out web set + classifier slices + in-training reference sets)")
     print("=" * 72)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = AutoTokenizer.from_pretrained(str(TOKENIZER_DIR))
     pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
 
-    passages = load_passages(num_samples, clf_threshold, device)
-    loaders = {}
-    for dom, texts in passages.items():
-        ds = ValidationTextDataset(texts, tokenizer, max_length=512)
-        loaders[dom] = DataLoader(ds, batch_size=batch_size, shuffle=False, collate_fn=lambda b, p=pad_id: collate_fn_pad(b, pad_token_id=p))
+    passages, scores = load_passages(num_samples, clf_threshold, device)
+    datasets = {dom: ValidationTextDataset(texts, tokenizer, max_length=MAX_LEN) for dom, texts in passages.items()}
+    loaders = {dom: DataLoader(ds, batch_size=batch_size, shuffle=False,
+                               collate_fn=lambda b, p=pad_id: collate_fn_pad(b, pad_token_id=p))
+               for dom, ds in datasets.items()}
+    held_ds = datasets[HELDOUT_KEY]
+    held_texts = passages[HELDOUT_KEY]
+    slices: Dict[str, Optional[List[int]]] = {HELDOUT_KEY: None}         # positions inside the held-out dataset
+    if scores is not None:
+        slices[FLAGGED_KEY] = [j for j, i in enumerate(held_ds.kept) if scores[i] >= clf_threshold]
+        slices[UNFLAGGED_KEY] = [j for j, i in enumerate(held_ds.kept) if scores[i] < clf_threshold]
+        print(f"  [clasificator] prag {clf_threshold:.2f}: {len(slices[FLAGGED_KEY]):,} din {len(held_ds):,} documente held-out "
+              f"semnalate ({100.0 * len(slices[FLAGGED_KEY]) / max(1, len(held_ds)):.1f}%)", flush=True)
+    for dom, ds in datasets.items():
         print(f"  {dom}: {len(ds)} passages")
+    for key in (FLAGGED_KEY, UNFLAGGED_KEY):
+        if key in slices:
+            print(f"  {key}: {len(slices[key])} passages (subset of {HELDOUT_KEY})")
 
-    models_to_test = list(ALL_MODELS)
     results: List[Dict[str, Any]] = []
-    base_ppl = {}   # reference PPL (Base-Ro, or Base-Ro-rewarm for the MT model)
-    base_flagged_ppl = {}   # same, on the classifier-flagged held-out slice
-    for label, path, desc in models_to_test:
+    ref_rows: Dict[str, Dict[str, Any]] = {}      # every model can be a reference (Base for T0, re-warm for MT)
+    perdoc: Dict[str, Any] = {}
+    for label, path, desc in ALL_MODELS:
         if not (path / "model.safetensors").exists():
             print(f"[skip] {label}: {path} not found")
             continue
         print(f"\n[Evaluating] {label} ({desc})")
         dtype = torch.float32   # PPL deltas are reported to 0.01: bf16 weight rounding alone would move them by ~0.3
-        model = AutoModelForCausalLM.from_pretrained(str(path), torch_dtype=dtype).to(device)
+        model = AutoModelForCausalLM.from_pretrained(str(path), dtype=dtype).to(device)
         row: Dict[str, Any] = {"model": label, "description": desc, "domains": {}}
+        held_sums, held_counts = None, None
         for dom, dl in loaders.items():
-            loss, ppl, ntok = compute_dataset_perplexity(model, dl, device)
-            row["domains"][dom] = {"loss": loss, "ppl": ppl, "tokens": ntok}
-            print(f"  -> {dom:28s} loss={loss:.4f}  ppl={ppl:.2f}  ({ntok:,} tokens)")
+            sums, counts = score_documents(model, dl, device)
+            if dom == HELDOUT_KEY:
+                held_sums, held_counts = sums, counts
+                for key, idx in slices.items():
+                    row["domains"][key] = aggregate(sums, counts, idx)
+            else:
+                row["domains"][dom] = aggregate(sums, counts)
+        for dom in list(slices) + [d for d in loaders if d != HELDOUT_KEY]:
+            r = row["domains"][dom]
+            print(f"  -> {dom:40s} loss={r['loss']:.4f}  ppl={r['ppl']:.2f}  ({r['tokens']:,} tokens, {r['docs']} docs)")
+        perdoc[label] = {SLICE_NAMES[k]: [round(held_sums[j] / held_counts[j], 6) for j in (idx if idx is not None else range(len(held_counts)))]
+                         for k, idx in slices.items()}
         row["heldout_ppl"] = row["domains"][HELDOUT_KEY]["ppl"]
         row["heldout_loss"] = row["domains"][HELDOUT_KEY]["loss"]
-        base_ppl[label] = row["heldout_ppl"]   # every model can be a reference (Base for T0, re-warm for MT)
-        ref_ppl = base_ppl.get(base_ref_key(label))
-        row["delta_ppl_heldout_vs_base"] = round(row["heldout_ppl"] - ref_ppl, 2) if ref_ppl else None
         if FLAGGED_KEY in row["domains"]:
             row["flagged_ppl"] = row["domains"][FLAGGED_KEY]["ppl"]
             row["unflagged_ppl"] = row["domains"][UNFLAGGED_KEY]["ppl"]
-            base_flagged_ppl[label] = row["flagged_ppl"]
-            ref_f = base_flagged_ppl.get(base_ref_key(label))
-            row["delta_ppl_flagged_vs_base"] = round(row["flagged_ppl"] - ref_f, 2) if ref_f else None
+        ref = row if label == base_ref_key(label) else ref_rows.get(base_ref_key(label))   # the reference row gets 0.00
+        fields = [("delta_ppl_heldout_vs_base", "heldout_ppl")]
+        if FLAGGED_KEY in row["domains"]:
+            fields += [("delta_ppl_flagged_vs_base", "flagged_ppl"), ("delta_ppl_unflagged_vs_base", "unflagged_ppl")]
+        for out_key, ppl_key in fields:
+            row[out_key] = round(row[ppl_key] - ref[ppl_key], 2) if ref is not None else None
+        ref_rows[label] = row
         results.append(row)
         del model
         if device == "cuda":
             torch.cuda.empty_cache()
 
+    slice_sizes = {k: (len(held_ds) if idx is None else len(idx)) for k, idx in slices.items()}
+    slice_sizes.update({k: len(ds) for k, ds in datasets.items() if k != HELDOUT_KEY})
     report_path = EVALS_DIR / "thesis_alignment_tax_report.json"
-    slice_sizes = {k: len(dl.dataset) for k, dl in loaders.items()}
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump({"note": "Alignment tax is judged on 'Web (held-out)' only; the wiki/news tails are inside the training corpus. "
-                           "The flagged / unflagged slices split the held-out set with the safety classifier that defines the Filtered "
-                           "baseline's loss-masked set (threshold %s)." % (clf_threshold,),
-                   "clf_threshold": clf_threshold, "passages_per_domain": slice_sizes,
+                           "The flagged / unflagged slices split ALL held-out documents with the safety classifier that defines the "
+                           "Filtered baseline's loss-masked set (threshold %s). Perplexity = exp(token-weighted mean cross-entropy) "
+                           "on the first %d tokens of every document." % (clf_threshold, MAX_LEN),
+                   "heldout_file": HELDOUT_FILE.relative_to(_ROOT_DIR).as_posix(), "heldout_docs_in_file": len(held_texts),
+                   "clf_threshold": clf_threshold, "max_len": MAX_LEN, "passages_per_domain": slice_sizes,
                    "results": results}, f, indent=2, ensure_ascii=False)
+
+    order_md5 = hashlib.md5("".join(_doc_hash(held_texts[i]) for i in held_ds.kept).encode()).hexdigest()
+    meta = {"note": "Mean cross-entropy (nats/token, first %d tokens) of every held-out document, same document order for "
+                    "every model (paired). 'flagged'/'unflagged' are the subsets of 'heldout' given by flagged_index / "
+                    "unflagged_index (positions in 'heldout'). Produced by eval_alignment_tax.py; analysed by "
+                    "eval_alignment_paired.py." % MAX_LEN,
+            "heldout_file": HELDOUT_FILE.relative_to(_ROOT_DIR).as_posix(), "heldout_order_md5": order_md5,
+            "clf_threshold": clf_threshold, "n_tokens": held_counts if results else [],
+            "flagged_index": slices.get(FLAGGED_KEY), "unflagged_index": slices.get(UNFLAGGED_KEY)}
+    with open(PERDOC_FILE, "w", encoding="utf-8") as f:
+        json.dump({"_meta": meta, **perdoc}, f, ensure_ascii=False)
 
     def _delta(r: Dict[str, Any], field: str) -> str:
         if r["model"] == base_ref_key(r["model"]):
@@ -242,16 +290,18 @@ def run_alignment_tax_evaluation(num_samples: int = 1000, batch_size: int = 8,
         return f"{r[field]:+.2f}"
 
     tex_path = EVALS_DIR / "thesis_alignment_tax_table.tex"
-    has_flagged = FLAGGED_KEY in loaders
+    has_flagged = FLAGGED_KEY in slices
     doms = [HELDOUT_KEY] + ([FLAGGED_KEY, UNFLAGGED_KEY] if has_flagged else []) + [k for k in INTRAIN_KEYS if k in loaders]
     short = {HELDOUT_KEY: "held-out", FLAGGED_KEY: "held-out semnalat", UNFLAGGED_KEY: "held-out nesemnalat",
              INTRAIN_KEYS[0]: "Wikipedia (antr.)", INTRAIN_KEYS[1]: "Presă (antr.)"}
     delta_cols = ["delta_ppl_heldout_vs_base"] + (["delta_ppl_flagged_vs_base"] if has_flagged else [])
     delta_heads = ["$\\Delta$PPL held-out"] + (["$\\Delta$PPL semnalat"] if has_flagged else [])
     with open(tex_path, "w", encoding="utf-8") as f:
-        f.write("% Taxa de aliniere: perplexitate pe set held-out verificat (FineWeb-2 shard neantrenat, dedup. față de corpus și sidecar)\n")
-        f.write("% 'semnalat' / 'nesemnalat' = felii ale setului held-out dupa clasificatorul de siguranta (acelasi care defineste setul mascat al Filtered).\n")
-        f.write("% Coloanele 'în antrenare' sunt păstrate doar pentru transparență (set folosit greșit ca held-out în v1).\n")
+        f.write("% Taxa de aliniere: perplexitate pe set held-out verificat (FineWeb-2 shard neconsumat, normalizat ca si corpusul, "
+                "dedup. fata de corpus si sidecar cu cheia corpusului)\n")
+        f.write("% 'semnalat' / 'nesemnalat' = toate documentele held-out de o parte si de alta a pragului clasificatorului de siguranta "
+                "(acelasi care defineste setul mascat al Filtered).\n")
+        f.write("% Coloanele 'in antrenare' sunt pastrate doar pentru transparenta (set folosit gresit ca held-out in v1).\n")
         f.write("\\begin{table}[htbp]\n\\centering\n\\small\n")
         f.write("\\begin{tabular}{l l " + "c " * len(doms) + "c " * len(delta_cols) + "}\n\\toprule\n")
         f.write("\\textbf{Model} & \\textbf{Variantă} & " + " & ".join("\\textbf{PPL " + short[d] + "}" for d in doms)
@@ -259,22 +309,25 @@ def run_alignment_tax_evaluation(num_samples: int = 1000, batch_size: int = 8,
         for r in results:
             cells = [f"{r['domains'][d]['ppl']:.2f}" for d in doms]
             deltas = [_delta(r, c) for c in delta_cols]
-            f.write(f"{r['model']} & {r['description']} & " + " & ".join(cells) + " & " + " & ".join(deltas) + " \\\\\n")
+            f.write(f"{tex_escape(r['model'])} & {tex_escape(r['description'])} & " + " & ".join(cells) + " & " + " & ".join(deltas) + " \\\\\n")
         f.write("\\bottomrule\n\\end{tabular}\n")
         flagged_note = (f" Feliile `semnalat' ({slice_sizes.get(FLAGGED_KEY, 0)} documente, scor clasificator $\\geq$ {clf_threshold}) și `nesemnalat' "
-                        f"({slice_sizes.get(UNFLAGGED_KEY, 0)} documente) împart setul held-out cu clasificatorul de siguranță care definește setul mascat al "
-                        "liniei de bază Filtered; pe felia semnalată Filtered nu a primit loss la antrenare, SPP da." if has_flagged else "")
-        f.write("\\caption{Perplexitate (context 512 tokeni) pe un set held-out de pagini web verificate ca absente din corpusul de antrenare și din sidecar-ul de reflecții "
-                "(build\\_heldout\\_set.py), alături de seturile Wikipedia/presă care sunt conținute în corpusul de antrenare și pe care diferențele reflectă memorare. "
-                "Taxa de aliniere ($\\Delta$PPL) se raportează exclusiv pe setul held-out." + flagged_note + "}\n")
+                        f"({slice_sizes.get(UNFLAGGED_KEY, 0)} documente) împart toate documentele held-out cu clasificatorul de siguranță care definește setul "
+                        "mascat al liniei de bază Filtered; pe felia semnalată Filtered nu a primit loss la antrenare, SPP da. Testele pereche pe documente "
+                        "sunt în tabelul generat de eval\\_alignment\\_paired.py." if has_flagged else "")
+        f.write(f"\\caption{{Perplexitate (primii {MAX_LEN} tokeni) pe {slice_sizes[HELDOUT_KEY]} pagini web held-out, normalizate exact ca și corpusul de antrenare și "
+                "verificate ca absente din corpus și din sidecar-ul de reflecții (build\\_heldout\\_set.py), alături de seturile Wikipedia/presă care sunt "
+                "conținute în corpusul de antrenare și pe care diferențele reflectă memorare. Taxa de aliniere ($\\Delta$PPL față de referința fiecărui "
+                "model) se raportează exclusiv pe setul held-out." + flagged_note + "}\n")
         f.write("\\label{tab:thesis_alignment_tax}\n\\end{table}\n")
 
-    print("\n[SUCCESS] JSON:", report_path, "\n          LaTeX:", tex_path)
+    print("\n[SUCCESS] JSON:", report_path, "\n          per-document losses:", PERDOC_FILE, "\n          LaTeX:", tex_path)
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--num-samples", type=int, default=1000)
+    ap.add_argument("--num-samples", type=int, default=1000, help="documents taken from the end of the in-training wiki/news sets "
+                                                                 "(the held-out set is always used in full)")
     ap.add_argument("--batch-size", type=int, default=8)
     ap.add_argument("--clf-threshold", type=float, default=DEFAULT_CLF_THRESHOLD,
                     help="safety-classifier threshold for the flagged held-out slice (default 0.1 = the sidecar expansion threshold)")

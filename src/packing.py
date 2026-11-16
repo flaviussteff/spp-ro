@@ -16,8 +16,8 @@ one padded document per sequence (the earlier one-document-per-sequence runs spe
   restart at 0 for every document, with RoPE aliasing after a reflection.
 Per token, the model therefore sees exactly what it saw in the un-packed runs; only the padding is gone.
 """
-from collections import deque
-from typing import Any, Dict, Iterator, List, Optional
+from collections import OrderedDict, deque
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 import torch
 from torch.utils.data import IterableDataset
@@ -66,6 +66,15 @@ class PackedWindowDataset(IterableDataset):
         # after a resume are identical to the uninterrupted run.
         self.pending_items: List[Dict[str, Any]] = []
         self.preload_items: List[Dict[str, Any]] = []
+        # The dataloader reads AHEAD of training (accelerate's DataLoaderShard fetches the next batch before the current
+        # one is trained on), so the state after the last window READ is not the state after the last window TRAINED.
+        # `snapshots[k]` = (items read from the stream, look-ahead buffer) right after the k-th window of the run was
+        # handed out, kept for the most recent windows; the checkpoint callback picks the one of the last trained
+        # window. `window_offset` = windows handed out before a resume, so that k stays absolute across resumes.
+        self.window_offset = 0
+        self.n_windows = 0
+        self.snapshots: "OrderedDict[int, Tuple[Optional[int], List[Dict[str, Any]]]]" = OrderedDict()
+        self.snapshot_keep = 4096
 
     def _encode(self, item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         seg = self.encoder.encode_item(item)
@@ -77,7 +86,16 @@ class PackedWindowDataset(IterableDataset):
         seg["_item"] = item
         return seg
 
+    def _snapshot(self) -> None:
+        """Called right before a window is handed out (after `pending_items` is set)."""
+        self.n_windows += 1
+        self.snapshots[self.n_windows] = (getattr(self.inner, "n_yielded", None), list(self.pending_items))
+        while len(self.snapshots) > self.snapshot_keep:
+            self.snapshots.popitem(last=False)
+
     def __iter__(self) -> Iterator[Dict[str, Any]]:
+        self.n_windows = self.window_offset
+        self.snapshots.clear()
         src = iter(self.inner)
         buf: deque = deque()
         for item in self.preload_items:
@@ -100,6 +118,7 @@ class PackedWindowDataset(IterableDataset):
             if not buf:
                 if window:
                     self.pending_items = []
+                    self._snapshot()
                     yield self._close(window, used)
                 return
             free = self.max_length - used
@@ -110,6 +129,7 @@ class PackedWindowDataset(IterableDataset):
                     break
             if pick is None:
                 self.pending_items = [s["_item"] for s in buf]   # read from the stream, not yet trained on
+                self._snapshot()
                 yield self._close(window, used)
                 window, used = [], 0
                 continue
@@ -119,6 +139,7 @@ class PackedWindowDataset(IterableDataset):
             used += seg["n"]
             if used == self.max_length:
                 self.pending_items = [s["_item"] for s in buf]   # (same snapshot as above: window closed exactly full)
+                self._snapshot()
                 yield self._close(window, used)
                 window, used = [], 0
 

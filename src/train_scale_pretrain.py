@@ -1,13 +1,15 @@
 """
-Scale Pre-training Engine for Romanian Generative LLM (~88.1M Parameters)
-Tuned for 2-3 Days per Model on NVIDIA GeForce RTX 3060 (12GB VRAM).
+Scale Pre-training Engine for the SPP-Ro family (Llama-style, 88.1M parameters), one NVIDIA RTX 3060 (12 GB).
 
-Features:
-1. Continued Pre-training: Resumes directly from existing model weights in models/
-2. Deep Scale: Targets 60,000 steps total (~3.93 Billion tokens per model)
-3. Hourly Live Telemetry: Full diagnostic card + live generated text every 60 minutes
-4. Balanced Data Streaming: Prioritizes FineWeb-2 web data and Wikipedia over news
-5. Checkpointing: Saves every 5,000 steps with automatic checkpoint rotation
+* --mode base / spp / filtered on the same fixed-seed document stream (seed 42); --inline replaces each annotated
+  document by its <assistant>+reflection version (SPP); --mode filtered masks the loss of the clf_flag=1 documents.
+* --pack: EOS-terminated documents packed first-fit into 1,024-position windows (block-diagonal attention,
+  per-document positions; head-cap rule for annotated documents). The reported runs: 50,000 steps x 64 windows
+  (~3.28 B token positions, ~66 h); MT / re-warm: --init-from Base@45k, 5,000 steps, fresh LR schedule.
+* Telemetry every --interval-mins (loss, PPL, sample generation); checkpoints every --save-steps (the last two kept,
+  --keep-step keeps one more), each with stream_state.json: the stream position after the last TRAINED window, so
+  --resume continues exactly where the interrupted run stopped (src/test_resume.py).
+The exact commands of the reported runs are in README.md ("Reproducing the experiments").
 """
 import os
 import json
@@ -256,30 +258,51 @@ class KeepCheckpointCallback(TrainerCallback):
 STREAM_STATE_FILE = "stream_state.json"
 
 
+def windows_per_step(args) -> int:
+    """Sequences (packed windows, or documents without packing) consumed by one optimizer step."""
+    return int(args.gradient_accumulation_steps) * int(args.per_device_train_batch_size) * max(1, int(getattr(args, "world_size", 1) or 1))
+
+
 class StreamStateCallback(TrainerCallback):
     """Writes the data-stream position into every checkpoint (stream_state.json), so that --resume continues the
     fixed-seed stream where the crashed run stopped instead of replaying it from document 0 (the Trainer runs with
     ignore_data_skip=True and the dataset is an IterableDataset, so HF itself keeps no data position).
-    Position = every item the stream has yielded so far (trained on, or still waiting in the packer's look-ahead
-    buffer). The buffered items are not the most recent ones of the stream (first-fit places items out of order), so
-    they are saved verbatim and re-encoded into the buffer on resume, after which the stream continues from the saved
-    position: the windows after the resume are identical to the uninterrupted run. The dataloader runs in-process
-    (num_workers=0), so these counters are the live ones."""
+    The position saved is the one right after the last TRAINED window, W = global_step x gradient_accumulation_steps
+    x batch size. It is not the live position of the stream: the dataloader reads ahead of training (accelerate's
+    DataLoaderShard fetches the next batch before the current one is used), so at a save the stream has already
+    produced the windows of the next micro-batch; saving the live position would skip those windows on resume.
+    With packing, the packer keeps a snapshot (items read from the stream + its look-ahead buffer) for every recent
+    window and the snapshot of window W is saved; the buffered items are saved verbatim and re-encoded into the buffer
+    on resume, after which the stream continues from the saved position, so the windows after the resume are identical
+    to the uninterrupted run (src/test_resume.py checks this through accelerate's DataLoaderShard). Without packing,
+    every window is one stream item and the position is W itself."""
     def __init__(self, stream_ds, packed_ds=None):
         self.stream_ds, self.packed_ds = stream_ds, packed_ds
 
     def on_save(self, args, state, control, **kwargs):
-        pending = list(self.packed_ds.pending_items) if self.packed_ds is not None else []
-        pos = self.stream_ds.n_yielded
         ckpt = Path(args.output_dir) / f"checkpoint-{state.global_step}"
         if not ckpt.is_dir():
             return
-        payload = {"global_step": state.global_step, "stream_items_consumed": pos, "pending_items": pending}
+        trained = state.global_step * windows_per_step(args)
+        exact = True
+        if self.packed_ds is not None:
+            snap = self.packed_ds.snapshots.get(trained)
+            if snap is None or snap[0] is None:
+                exact = False          # should not happen: fall back to the live position (skips the read-ahead windows)
+                pos, pending = self.stream_ds.n_yielded, list(self.packed_ds.pending_items)
+            else:
+                pos, pending = snap[0], list(snap[1])
+            read = self.packed_ds.n_windows
+        else:
+            pos, pending, read = trained, [], self.stream_ds.n_yielded
+        payload = {"format": 2, "global_step": state.global_step, "windows_trained": trained, "windows_read": read,
+                   "stream_items_consumed": pos, "pending_items": pending, "exact": exact}
         (ckpt / STREAM_STATE_FILE).write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-        print(f"[Checkpoint] pozitie flux salvata: {pos:,} documente consumate, {len(pending)} in buffer", flush=True)
+        print(f"[Checkpoint] pozitie flux salvata dupa fereastra antrenata {trained:,} (citite: {read:,}): {pos:,} documente din flux, "
+              f"{len(pending)} in buffer" + ("" if exact else " | AVERTISMENT: instantaneu lipsa, salvez pozitia curenta (ferestrele citite in avans se pierd la reluare)"), flush=True)
 
 
-def restore_stream_state(checkpoint: Path, stream_ds, packed_ds=None) -> None:
+def restore_stream_state(checkpoint: Path, stream_ds, packed_ds=None, per_step: Optional[int] = None) -> None:
     """Fast-forwards the stream (and refills the packer buffer) from a checkpoint's stream_state.json."""
     f = Path(checkpoint) / STREAM_STATE_FILE
     if not f.exists():
@@ -290,8 +313,18 @@ def restore_stream_state(checkpoint: Path, stream_ds, packed_ds=None) -> None:
     stream_ds.skip_items = int(st["stream_items_consumed"])
     if packed_ds is not None:
         packed_ds.preload_items = list(st.get("pending_items", []))
+        trained = st.get("windows_trained")
+        if trained is None and per_step:
+            trained = int(st.get("global_step", 0)) * per_step
+        packed_ds.window_offset = int(trained or 0)
+    if int(st.get("format", 1)) < 2:
+        print(f"[Dataset] AVERTISMENT: {f.name} are formatul vechi (pozitia de dupa ultima fereastra CITITA, cu un micro-lot "
+              f"inaintea antrenarii): ferestrele acelui micro-lot nu vor fi antrenate dupa reluare.", flush=True)
+    elif not st.get("exact", True):
+        print(f"[Dataset] AVERTISMENT: {f.name} nu a avut instantaneul ferestrei antrenate; reluarea sare ferestrele citite in avans.", flush=True)
     print(f"[Dataset] Pozitie flux restaurata din {Path(checkpoint).name}: {stream_ds.skip_items:,} documente consumate, "
-          f"{len(st.get('pending_items', []))} reincarcate in buffer-ul de impachetare.", flush=True)
+          f"{len(st.get('pending_items', []))} reincarcate in buffer-ul de impachetare"
+          + (f", {st['windows_trained']:,} ferestre antrenate" if "windows_trained" in st else "") + ".", flush=True)
 
 
 class VanillaCausalDataCollator:
@@ -337,8 +370,9 @@ class StreamingParquetDataset(IterableDataset):
     mode='spp'      : legacy (v1): with probability spp_ratio an EXTRA synthetic sidecar item replaces a document;
                       inline=True: documents whose doc_key appears in the sidecar are REPLACED by their
                       annotated version (data-matched with Base: same documents, same count).
-    mode='filtered' : paper's Filtered baseline: documents with severity >= 3 in the sidecar are kept in the
-                      batch but loss-masked.
+    mode='filtered' : paper's Filtered baseline: the documents the safety classifier flagged (sidecar clf_flag = 1;
+                      severity >= 3 only for old sidecars without that column) stay in the batch as context but
+                      are loss-masked.
     """
     def __init__(self, parquet_path: Path, mode: str = "base", spp_sidecar_path: Optional[Path] = None,
                  spp_ratio: float = 0.10, snap_insertion: bool = False, inline: bool = False,
@@ -348,8 +382,10 @@ class StreamingParquetDataset(IterableDataset):
         self.spp_ratio = spp_ratio
         self.snap_insertion = snap_insertion
         self.inline = inline
-        # Paper's midtraining stream (SPP{MT}): the annotated documents are up-weighted to this fraction of the
-        # sequences (EPFL run 5: ANNOTATED_WEIGHT 0.6758); the rest are plain, non-annotated corpus documents.
+        # Paper's midtraining stream (SPP{MT}): the annotated documents are up-weighted to this fraction of the stream's
+        # DOCUMENTS (EPFL run 5: ANNOTATED_WEIGHT 0.6758, where each annotated document fills its own sequence; with
+        # packing a window holds ~1.9 documents, so the fraction applies to documents, not windows); the rest are
+        # plain, non-annotated corpus documents.
         # 0 = natural rate (inline replacement only), used for SPP{T0}.
         self.mt_annotated_ratio = mt_annotated_ratio
         # Resume support: the stream is deterministic (seed 42), so its position is fully described by the number of
@@ -489,7 +525,8 @@ class StreamingParquetDataset(IterableDataset):
 
 def generate_spp_model_card(output_dir: Path, total_steps: int, loss: Optional[float] = None, ppl: Optional[float] = None,
                             n_params: Optional[int] = None, mode: str = "spp", spp_ratio: float = 0.10,
-                            variant_note: str = "", packed: bool = False):
+                            variant_note: str = "", packed: bool = False, pad_pct: Optional[float] = None,
+                            mt_annotated_ratio: float = 0.0, reflection_loss_only: bool = False):
     """Hugging Face model card with values computed from the actual run (no hard-coded numbers)."""
     loss_str = f"{loss:.4f}" if loss is not None else "n/a"
     ppl_str = f"{ppl:.2f}" if ppl is not None else "n/a"
@@ -519,8 +556,8 @@ Synthetic Persona Pretraining (Faculty of Mathematics and Computer Science, Univ
 Minder et al., 2026 (arXiv:2608.13482). {variant_note}
 
 ## Training
-* Optimizer steps: {total_steps:,}; effective batch 64 sequences x 1,024 positions = {positions:,} positions ({"packed EOS-terminated documents, block-diagonal attention per document; padding under 2%, so almost every position is a real token" if packed else "padding included; the sequences are not packed, so the number of real tokens is roughly half"}).
-* {"SPP interleaving: " + f"{spp_ratio*100:.0f}% of the documents carry a first-person constitutional reflection, opened by the <assistant> token, with the post-reflection attention blocked and RoPE aliasing." if mode == "spp" else "No reflections (control)."}
+* Optimizer steps: {total_steps:,}; effective batch 64 sequences x 1,024 positions = {positions:,} positions ({("packed EOS-terminated documents, block-diagonal attention per document; padding " + (f"{pad_pct:.1f}% of the positions in this session" if pad_pct is not None else "measured in the training log")) if packed else "padding included; the sequences are not packed, so the number of real tokens is roughly half"}).
+* {("Midtraining (SPP{MT}): " + f"{mt_annotated_ratio*100:.1f}% of the stream's documents carry a first-person constitutional reflection" + (", with loss only on the reflection and the first token after it" if reflection_loss_only else "") + "; <assistant> marker, post-reflection attention blocked, RoPE aliasing.") if (mode == "spp" and mt_annotated_ratio > 0) else ("SPP interleaving: " + f"{spp_ratio*100:.0f}% of the documents carry a first-person constitutional reflection, opened by the <assistant> token, with the post-reflection attention blocked and RoPE aliasing." if mode == "spp" else "No reflections (control).")}
 * Hardware: one NVIDIA RTX 3060 12GB, bf16 autocast with fp32 master weights.
 * Last reported training loss: {loss_str} (perplexity {ppl_str}).
 
@@ -597,7 +634,8 @@ def run_scale_pretraining(
     if mode == "spp" and inline:
         print(f"  Reflectii: INLINE din {sidecar.name} (documentele adnotate inlocuiesc originalele; data-matched cu Base)", flush=True)
     elif mode == "filtered":
-        print(f"  Filtered baseline: documentele cu severitate >= 3 din {sidecar.name} sunt loss-masked", flush=True)
+        print(f"  Filtered baseline: documentele semnalate de clasificator (clf_flag=1) din {sidecar.name} raman in context, fara loss "
+              f"(severitate >= 3 doar pentru sidecar-uri vechi fara clf_flag)", flush=True)
     else:
         print(f"  Rata Interleaving: {spp_ratio * 100:.0f}% SPP (Reflectii) / {(1 - spp_ratio) * 100:.0f}% Text Liber", flush=True)
     print(f"  Flags: mask_assistant_loss={mask_assistant_loss} snap_insertion={snap_insertion} prefix_tail={prefix_tail}", flush=True)
@@ -606,7 +644,7 @@ def run_scale_pretraining(
     if head_cap:
         print(f"  Head-cap (EPFL, default under --pack): annotated documents are cut at the start like plain ones; the reflection is inserted only if its position falls inside the window, otherwise the document stays plain (--prefix-tail ignored)", flush=True)
     if mode == "spp" and (mt_annotated_ratio > 0 or reflection_loss_only):
-        print(f"  Midtraining (paper SPP{{MT}}): documente adnotate = {mt_annotated_ratio*100:.1f}% din secvente, loss doar pe reflectie = {reflection_loss_only}", flush=True)
+        print(f"  Midtraining (paper SPP{{MT}}): documente adnotate = {mt_annotated_ratio*100:.1f}% din documentele fluxului, loss doar pe reflectie = {reflection_loss_only}", flush=True)
     print(f"  LR: peak {lr:g}, warmup {warmup_steps} pasi, cosinus -> 0 pe {additional_steps:,} pasi" + (f" | init din {init_from} (program LR NOU, fara stare de optimizator)" if init_from else ""), flush=True)
     print(f"  Director Iesire: {output_dir.name} | Hub: {repo_id if push_to_hub else 'Local'}", flush=True)
     print(f"  Durata estimata pe RTX 3060: ~{additional_steps / 1000:.1f} ore", flush=True)
@@ -789,7 +827,7 @@ def run_scale_pretraining(
     checkpoint_to_resume = last_checkpoint if (resume or not from_scratch) else None
     if checkpoint_to_resume is not None:
         print(f"\n[Engine] Reluare garantata din: {Path(checkpoint_to_resume).name} (pasul {checkpoint_to_resume})", flush=True)
-        restore_stream_state(Path(checkpoint_to_resume), stream_ds, packed_ds)   # continue the stream, do not replay it
+        restore_stream_state(Path(checkpoint_to_resume), stream_ds, packed_ds, windows_per_step(training_args))   # continue the stream, do not replay it
 
     print(f"\n[Engine] Pornire sesiune de antrenare: {additional_steps:,} pasi...")
     print(f"[Engine] Rapoartele live de diagnostic vor fi afisate la fiecare {update_interval_mins:.0f} minute in consola.\n")
@@ -806,6 +844,8 @@ def run_scale_pretraining(
     latest_ppl = math.exp(min(20.0, latest_loss)) if latest_loss else None
     generate_spp_model_card(output_dir, total_steps=total_target_steps, loss=latest_loss, ppl=latest_ppl,
                             n_params=sum(p_.numel() for p_ in model.parameters()), mode=mode, spp_ratio=spp_ratio, packed=pack,
+                            pad_pct=(100.0 * packed_ds.stats["pad_positions"] / max(1, packed_ds.stats["windows"] * 1024)) if packed_ds is not None else None,
+                            mt_annotated_ratio=mt_annotated_ratio, reflection_loss_only=reflection_loss_only,
                             variant_note=(f'Inițializat din ponderile {init_from} (pasul {total_target_steps - additional_steps:,}) și antrenat {additional_steps:,} pași cu program LR nou (peak {lr:g}, warmup {warmup_steps}, cosinus → 0), fără stare de optimizator'
                                           + (' , cu reflecții (SPP{MT}).' if mode == 'spp' else ' , fără reflecții (control re-warm).') if init_from else ''))
 

@@ -1,6 +1,6 @@
 # SPP-Ro: ghidul de adnotare a datelor de preantrenare (reflecții)
 
-**Versiunea 3.0 (04.11.2026)** — aliniat la *Synthetic Persona Pretraining: Alignment from Token Zero* (Minder et al., 2026, arXiv:2608.13482), Appendix H.1 (prompt-ul generatorului, `generator_reflection_v7.md`) și I.2 (*Value Annotation Guidelines*), din repo-ul `epfl-dlab/spp-data`. Versiunile 1.x–2.0 ale acestui ghid au fost traducerea prompt-ului EPFL; v3.0 corectează ce era inconsistent cu articolul și cu pipeline-ul v2 efectiv rulat (`src/generate_reflections.py`).
+**Versiunea 3.0 (04.11.2026)** — aliniat la *Synthetic Persona Pretraining: Alignment from Token Zero* (Minder et al., 2026, arXiv:2608.13482), Appendix H.1 (prompt-ul generatorului, `generator_reflection_v7.md`) și I.2 (*Value Annotation Guidelines*), din repo-ul `epfl-dlab/spp-data`. Versiunile 1.x–2.0 ale acestui ghid au fost traducerea prompt-ului EPFL; v3.0 corectează ce era inconsistent cu articolul și cu pipeline-ul v2 efectiv rulat (`src/generate_reflections.py`). **v3.1 (16.11.2026):** §2, §5 și §13 dau valorile măsurate pe sidecar-ul final (150.000 de documente) și pe rulările finale, în locul celor din primul pas.
 
 Secțiunile 1–8 sunt specificația pe care o urmează prompt-ul românesc din `generate_reflections.py` (o versiune condensată, cu aceleași reguli). Secțiunile 9–12 descriu ce se întâmplă cu reflecțiile înainte și după generare. Secțiunea 13 listează abaterile față de articol.
 
@@ -14,9 +14,9 @@ Adnotezi date de preantrenare pentru un model crescut de la zero; adnotările de
 
 ## 2. Ce documente se adnotează
 
-Ca în articol (§3.1): un clasificator de siguranță dă fiecărui document din corpus un scor 0–5; documentele cu scor **≥ 3 sunt „nocive”** și se adnotează **toate**, plus **un eșantion aleator de documente benigne de aceeași mărime**. În articol, setul adnotat este ≈10 % din documente; la noi 103.240 din 1,5M (6,9 %), din care 51.188 semnalate de clasificator (49,6 %) și 52.052 benigne.
+Ca în articol (§3.1): un clasificator de siguranță dă fiecărui document din corpus un scor 0–5; documentele cu scor **≥ 3 sunt „nocive”** și se adnotează **toate**, plus **un eșantion aleator de documente benigne de aceeași mărime**. În articol, setul adnotat este ≈10 % din documente; la noi, în sidecar-ul final (`data/sidecar/reflections.parquet`), exact 150.000 din 1,5M (10 %): 75.000 semnalate de clasificator (`clf_flag = 1`, scor ≥ 0,12) și 75.000 benigne (scor < 0,1). Primul pas (prag 0,5) avea 103.240 de documente (51.188 semnalate, 52.052 benigne); extinderea a coborât pragul la 0,1, iar `trim_sidecar.py --fit-only` a păstrat doar documentele al căror punct de inserare intră în fereastra de 1.024 de tokeni, așa că jumătatea semnalată nu e formată din cele mai bine scorate 75.000 de documente (vezi §13).
 
-Diferență operațională: EPFL folosește clasificatorul SafeLM; noi un BERT românesc (`models/safety_clf_ro/`) antrenat pe 3.000 de etichete Qwen date cu scala de mai jos. Adnotatorul (Qwen-3.8-27B) **măsoară din nou** severitatea pe prefix (câmpul `severity`), ceea ce calibrează lungimea reflecției și dă statisticile raportate; scorul clasificatorului (`clf_flag`) rămâne criteriul de selecție și cel folosit de baseline-ul Filtered.
+Diferență operațională: EPFL folosește clasificatorul SafeLM; noi un BERT românesc (`models/safety_clf_ro/`) antrenat pe etichetele Qwen date cu scala de mai jos (2.423 de documente pentru antrenare, 427 pentru dev). Adnotatorul (Qwen-3.8-27B) **măsoară din nou** severitatea pe prefix (câmpul `severity`), ceea ce calibrează lungimea reflecției și dă statisticile raportate; scorul clasificatorului (`clf_flag`) rămâne criteriul de selecție și cel folosit de baseline-ul Filtered.
 
 ## 3. Punctul de pauză (unde se inserează reflecția)
 
@@ -57,7 +57,7 @@ Ambele reflecții se scriu din perspectiva cuiva **care a făcut o pauză în ti
 - severity 0: o frază, max 20 de cuvinte, fără citări, care numește tipul textului (ofertă, rețetă, știre sportivă, tutorial);
 - severity 1–2: 1–2 fraze, 20–45 de cuvinte, cu citări;
 - severity 3–5: 40–90 de cuvinte, ancorate în detalii concrete, cu toate citările.
-Rezultat pe setul v2: media 24,7 cuvinte (39 de tokeni cu tokenizer-ul nostru), 44,9 cuvinte la severitate ≥ 3; 1,7 % depășesc 128 de tokeni și sunt tăiate acolo la antrenare, ca în articol.
+Rezultat pe sidecar-ul final (150.000 de reflecții): media 22,7 cuvinte (36,4 tokeni cu tokenizer-ul nostru, mediana 26), 12,9 cuvinte la severitate 0, 23,3 la severitate 1–2 și 43,8 la severitate ≥ 3 (mediana 39; doar 47 % dintre acestea sunt în intervalul 40–90 cerut de prompt, pentru că validatorul acceptă 15–130 de cuvinte); 1,3 % depășesc 128 de tokeni și sunt tăiate acolo la antrenare, ca în articol. (Primul pas, setul v2: media 24,7 cuvinte, 39 de tokeni, 44,9 cuvinte la severitate ≥ 3, 1,7 % peste 128.)
 
 ## 6. Principii de redactare (EPFL I.2, *Value Annotation Guidelines*)
 
@@ -136,15 +136,18 @@ Textul integral: `constitution_spp_ro.md`. Temele EPFL fără articol propriu la
 
 ## 13. Abateri față de articol (de declarat în teză)
 
-| Aspect | Articol (EPFL) | SPP-Ro v2 |
+| Aspect | Articol (EPFL) | SPP-Ro (rulările finale) |
 |---|---|---|
 | Constituție | 35 de secțiuni, 6 domenii, în engleză | 6 articole, 2 domenii, în română |
-| Clasificator de siguranță | SafeLM, 0–5 | BERT-Ro antrenat pe 3.000 de etichete Qwen, prag la recall 0,9 |
+| Clasificator de siguranță | SafeLM, 0–5 | BERT-Ro antrenat pe etichetele Qwen (2.423 de documente; dev 427), țintă severitate ≥ 3. Pragul 0,5: precizie 0,78, recall 0,58 pe dev (1,0 la severitate 4–5, 0,48 la severitate 3; recall ≥ 0,9 nu se poate atinge pe dev). 0,5 pentru primul pas, 0,1 pentru extinderea la 10 % |
+| Selecția setului adnotat | toate documentele semnalate + tot atâtea benigne | documentele semnalate + tot atâtea benigne, tăiate la exact 10 % cu `--fit-only` (doar documente al căror punct de inserare intră în fereastră): rămân 75.000 semnalate cu scor ≥ 0,12; dintre cele 51.202 adnotate cu scor ≥ 0,5 au căzut 8.692, mai lungi și mai des severe (60 % cu severitate ≥ 3, față de 53 % la cele păstrate). Qwen dă severitate ≥ 3 la 43 % din jumătatea semnalată și la 2 % din cea benignă |
 | Generator | Qwen3.5-35B-A3B, ales dintre 4 finaliști cu judecător Kimi K2.5 + 120 de recenzii umane | Qwen-3.8-27B (Cerebras), fără selecție comparativă; validare pe reguli |
 | Prompt | H.1 în engleză, cu `{writing_guidelines}` și `{charter}` | traducere condensată în română, cu severitate măsurată în același apel și indicii lexicale („pot fi false”) |
-| Fracție adnotată | ≈10 % din documente, 0,55 % din tokeni | 6,9 % din documente, ≈0,30 % din tokeni |
-| Lungime | media 53 de tokeni, plafon 128 | media 39 de tokeni (24,7 cuvinte), plafon 128 la antrenare |
+| Fracție adnotată | ≈10 % din documente, 0,55 % din tokeni | 10 % din documente (150.000), ≈0,68 % din pozițiile antrenate |
+| Lungime | media 53 de tokeni, plafon 128 | media 36 de tokeni (22,7 cuvinte; 50 de tokeni la documentele semnalate, 22 la cele benigne), plafon 128 la antrenare (1,3 % tăiate) |
 | Punct de inserare | rampă 20 % + uniform, în tokeni | aceeași distribuție, în caractere, mutat la sfârșit de propoziție, prefix ≥ 40 de cuvinte |
-| Ordinea documentelor | fluxuri pre-amestecate o dată, identice între Vanilla/Filtered/SPP | ordine cu sămânță fixă (42) pentru rulările v2; Base (septembrie) a avut altă ordine |
-| SPP{MT} | reia checkpoint-ul de dinaintea cooldown-ului WSD, LR scade liniar la zero, fluxul adnotat supra-ponderat, loss doar pe reflecție | Base@45k (program cosinus, LR ≈ 0 acolo) + 5.000 de pași cu program nou (peak 5e-5, warmup 250, cosinus → 0); 67,6 % din documente adnotate (v3, packing: raportul se aplică per document, nu per secvență; numărul de treceri peste documentele adnotate se măsoară din log, `[packing]`, și se declară; articolul face exact o trecere); loss doar pe reflecție; fiecare reflecție văzută ≈ 2 ori, ca în T0 |
+| Ordinea documentelor | fluxuri pre-amestecate o dată, identice între Vanilla/Filtered/SPP | flux cu sămânță fixă (42), identic pentru toate cele cinci modele finale |
+| Antrenare | 2.048 de tokeni, 960 de secvențe pe pas (≈2M tokeni), AdamW β₂ 0,95, program WSD (vârf 2e-4, 3.000 de pași de încălzire, coborâre liniară la 0 în ultimele 10 %); documentele adnotate câte unul pe secvență | 1.024 de poziții, 64 de ferestre împachetate pe pas (65.536 de poziții), AdamW β₂ 0,999 (implicit Transformers), weight decay 0,1, clipping 1,0, program cosinus (vârf 1,5e-4, 500 de pași de încălzire); toate documentele împachetate first-fit, cu atenție bloc-diagonală și poziții per document; ≈4 treceri prin corpus, documentele de peste 1.023 de tokeni trunchiate (20 % din documente, ≈36 % din tokenii corpusului nu sunt văzuți niciodată) |
+| Variante | Vanilla, Filtered, SPP{T0}, SPP{T0,MT}, SPP{MT} | Vanilla, Filtered, SPP{T0}, SPP{MT} + controlul re-warm; fără SPP{T0,MT}; o singură sămânță |
+| SPP{MT} | reia checkpoint-ul de dinaintea cooldown-ului WSD, LR scade liniar la zero, fluxul adnotat supra-ponderat, loss doar pe reflecție; dimensionat ca să egaleze volumul de reflecții al SPP{T0} (14.585 din 72.895 de pași) | Base@45k (program cosinus, LR ≈ 4e-6 acolo, 2,4 % din vârf) + 5.000 de pași cu optimizator și program nou (vârf 5e-5, încălzire 250, cosinus → 0); 67,6 % din documentele fluxului poartă o reflecție (raport per document, nu per secvență: o fereastră împachetată are ≈1,9 documente); loss doar pe reflecție la documentele adnotate; 388.204 segmente adnotate, adică fiecare reflecție văzută ≈ 2,6 ori, față de ≈ 3,9 ori în SPP{T0} (586.383 de segmente): MT are 66 % din volumul de reflecții al T0, nu cât T0 |
 | Post-training (SP-SFT, persona binding) | 300k conversații | nu există; `<assistant>` folosit direct ca activator al personei |

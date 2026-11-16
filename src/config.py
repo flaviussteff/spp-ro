@@ -49,7 +49,7 @@ ALL_MODELS = [
     ("SPP-Ro", SPP_MODEL_DIR, "SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule)"),
     ("Filtered-Ro", FILTERED_MODEL_DIR, "Filtered baseline: classifier-flagged documents kept in context, loss-masked"),
     ("Base-Ro-rewarm", BASE_REWARM_MODEL_DIR, "Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections"),
-    ("SPP-Ro-MT", SPP_MT_MODEL_DIR, "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences)"),
+    ("SPP-Ro-MT", SPP_MT_MODEL_DIR, "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% of the documents carry a reflection)"),
 ]
 
 

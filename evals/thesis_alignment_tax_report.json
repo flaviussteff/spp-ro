@@ -1,10 +1,13 @@
 {
-  "note": "Alignment tax is judged on 'Web (held-out)' only; the wiki/news tails are inside the training corpus. The flagged / unflagged slices split the held-out set with the safety classifier that defines the Filtered baseline's loss-masked set (threshold 0.1).",
+  "note": "Alignment tax is judged on 'Web (held-out)' only; the wiki/news tails are inside the training corpus. The flagged / unflagged slices split ALL held-out documents with the safety classifier that defines the Filtered baseline's loss-masked set (threshold 0.1). Perplexity = exp(token-weighted mean cross-entropy) on the first 512 tokens of every document.",
+  "heldout_file": "data/eval/heldout_fineweb.parquet",
+  "heldout_docs_in_file": 3000,
   "clf_threshold": 0.1,
+  "max_len": 512,
   "passages_per_domain": {
-    "Web (held-out)": 1000,
-    "Web held-out, semnalat de clasificator": 199,
-    "Web held-out, nesemnalat": 1000,
+    "Web (held-out)": 3000,
+    "Web held-out, semnalat de clasificator": 206,
+    "Web held-out, nesemnalat": 2794,
     "Wikipedia (în antrenare)": 1000,
     "Presă (în antrenare)": 1000
   },
@@ -14,185 +17,215 @@
       "description": "Vanilla control: plain documents, no reflections",
       "domains": {
         "Web (held-out)": {
-          "loss": 2.9137,
-          "ppl": 18.42,
-          "tokens": 388143
+          "loss": 2.6934,
+          "ppl": 14.78,
+          "tokens": 1180211,
+          "docs": 3000
         },
         "Web held-out, semnalat de clasificator": {
-          "loss": 3.2641,
-          "ppl": 26.16,
-          "tokens": 85581
+          "loss": 3.118,
+          "ppl": 22.6,
+          "tokens": 88196,
+          "docs": 206
         },
         "Web held-out, nesemnalat": {
-          "loss": 2.8804,
-          "ppl": 17.82,
-          "tokens": 386340
+          "loss": 2.6591,
+          "ppl": 14.28,
+          "tokens": 1092015,
+          "docs": 2794
         },
         "Wikipedia (în antrenare)": {
           "loss": 2.6385,
           "ppl": 13.99,
-          "tokens": 330659
+          "tokens": 330659,
+          "docs": 1000
         },
         "Presă (în antrenare)": {
           "loss": 2.5142,
           "ppl": 12.36,
-          "tokens": 453558
+          "tokens": 453558,
+          "docs": 1000
         }
       },
-      "heldout_ppl": 18.42,
-      "heldout_loss": 2.9137,
+      "heldout_ppl": 14.78,
+      "heldout_loss": 2.6934,
+      "flagged_ppl": 22.6,
+      "unflagged_ppl": 14.28,
       "delta_ppl_heldout_vs_base": 0.0,
-      "flagged_ppl": 26.16,
-      "unflagged_ppl": 17.82,
-      "delta_ppl_flagged_vs_base": 0.0
+      "delta_ppl_flagged_vs_base": 0.0,
+      "delta_ppl_unflagged_vs_base": 0.0
     },
     {
       "model": "SPP-Ro",
       "description": "SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule)",
       "domains": {
         "Web (held-out)": {
-          "loss": 2.908,
-          "ppl": 18.32,
-          "tokens": 388143
+          "loss": 2.6965,
+          "ppl": 14.83,
+          "tokens": 1180211,
+          "docs": 3000
         },
         "Web held-out, semnalat de clasificator": {
-          "loss": 3.2576,
-          "ppl": 25.99,
-          "tokens": 85581
+          "loss": 3.1232,
+          "ppl": 22.72,
+          "tokens": 88196,
+          "docs": 206
         },
         "Web held-out, nesemnalat": {
-          "loss": 2.8754,
-          "ppl": 17.73,
-          "tokens": 386340
+          "loss": 2.6621,
+          "ppl": 14.33,
+          "tokens": 1092015,
+          "docs": 2794
         },
         "Wikipedia (în antrenare)": {
           "loss": 2.6403,
           "ppl": 14.02,
-          "tokens": 330659
+          "tokens": 330659,
+          "docs": 1000
         },
         "Presă (în antrenare)": {
           "loss": 2.5163,
           "ppl": 12.38,
-          "tokens": 453558
+          "tokens": 453558,
+          "docs": 1000
         }
       },
-      "heldout_ppl": 18.32,
-      "heldout_loss": 2.908,
-      "delta_ppl_heldout_vs_base": -0.1,
-      "flagged_ppl": 25.99,
-      "unflagged_ppl": 17.73,
-      "delta_ppl_flagged_vs_base": -0.17
+      "heldout_ppl": 14.83,
+      "heldout_loss": 2.6965,
+      "flagged_ppl": 22.72,
+      "unflagged_ppl": 14.33,
+      "delta_ppl_heldout_vs_base": 0.05,
+      "delta_ppl_flagged_vs_base": 0.12,
+      "delta_ppl_unflagged_vs_base": 0.05
     },
     {
       "model": "Filtered-Ro",
       "description": "Filtered baseline: classifier-flagged documents kept in context, loss-masked",
       "domains": {
         "Web (held-out)": {
-          "loss": 2.9165,
-          "ppl": 18.48,
-          "tokens": 388143
+          "loss": 2.7,
+          "ppl": 14.88,
+          "tokens": 1180211,
+          "docs": 3000
         },
         "Web held-out, semnalat de clasificator": {
-          "loss": 3.3066,
-          "ppl": 27.29,
-          "tokens": 85581
+          "loss": 3.1666,
+          "ppl": 23.73,
+          "tokens": 88196,
+          "docs": 206
         },
         "Web held-out, nesemnalat": {
-          "loss": 2.88,
-          "ppl": 17.81,
-          "tokens": 386340
+          "loss": 2.6623,
+          "ppl": 14.33,
+          "tokens": 1092015,
+          "docs": 2794
         },
         "Wikipedia (în antrenare)": {
           "loss": 2.6335,
           "ppl": 13.92,
-          "tokens": 330659
+          "tokens": 330659,
+          "docs": 1000
         },
         "Presă (în antrenare)": {
           "loss": 2.5382,
           "ppl": 12.66,
-          "tokens": 453558
+          "tokens": 453558,
+          "docs": 1000
         }
       },
-      "heldout_ppl": 18.48,
-      "heldout_loss": 2.9165,
-      "delta_ppl_heldout_vs_base": 0.06,
-      "flagged_ppl": 27.29,
-      "unflagged_ppl": 17.81,
-      "delta_ppl_flagged_vs_base": 1.13
+      "heldout_ppl": 14.88,
+      "heldout_loss": 2.7,
+      "flagged_ppl": 23.73,
+      "unflagged_ppl": 14.33,
+      "delta_ppl_heldout_vs_base": 0.1,
+      "delta_ppl_flagged_vs_base": 1.13,
+      "delta_ppl_unflagged_vs_base": 0.05
     },
     {
       "model": "Base-Ro-rewarm",
       "description": "Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections",
       "domains": {
         "Web (held-out)": {
-          "loss": 2.9133,
-          "ppl": 18.42,
-          "tokens": 388143
+          "loss": 2.6954,
+          "ppl": 14.81,
+          "tokens": 1180211,
+          "docs": 3000
         },
         "Web held-out, semnalat de clasificator": {
-          "loss": 3.2632,
-          "ppl": 26.13,
-          "tokens": 85581
+          "loss": 3.1195,
+          "ppl": 22.64,
+          "tokens": 88196,
+          "docs": 206
         },
         "Web held-out, nesemnalat": {
-          "loss": 2.8801,
-          "ppl": 17.82,
-          "tokens": 386340
+          "loss": 2.6612,
+          "ppl": 14.31,
+          "tokens": 1092015,
+          "docs": 2794
         },
         "Wikipedia (în antrenare)": {
           "loss": 2.6553,
           "ppl": 14.23,
-          "tokens": 330659
+          "tokens": 330659,
+          "docs": 1000
         },
         "Presă (în antrenare)": {
           "loss": 2.5248,
           "ppl": 12.49,
-          "tokens": 453558
+          "tokens": 453558,
+          "docs": 1000
         }
       },
-      "heldout_ppl": 18.42,
-      "heldout_loss": 2.9133,
-      "delta_ppl_heldout_vs_base": 0.0,
-      "flagged_ppl": 26.13,
-      "unflagged_ppl": 17.82,
-      "delta_ppl_flagged_vs_base": -0.03
+      "heldout_ppl": 14.81,
+      "heldout_loss": 2.6954,
+      "flagged_ppl": 22.64,
+      "unflagged_ppl": 14.31,
+      "delta_ppl_heldout_vs_base": 0.03,
+      "delta_ppl_flagged_vs_base": 0.04,
+      "delta_ppl_unflagged_vs_base": 0.03
     },
     {
       "model": "SPP-Ro-MT",
-      "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences)",
+      "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% of the documents carry a reflection)",
       "domains": {
         "Web (held-out)": {
-          "loss": 2.9383,
-          "ppl": 18.88,
-          "tokens": 388143
+          "loss": 2.7201,
+          "ppl": 15.18,
+          "tokens": 1180211,
+          "docs": 3000
         },
         "Web held-out, semnalat de clasificator": {
-          "loss": 3.2927,
-          "ppl": 26.91,
-          "tokens": 85581
+          "loss": 3.1521,
+          "ppl": 23.38,
+          "tokens": 88196,
+          "docs": 206
         },
         "Web held-out, nesemnalat": {
-          "loss": 2.9046,
-          "ppl": 18.26,
-          "tokens": 386340
+          "loss": 2.6852,
+          "ppl": 14.66,
+          "tokens": 1092015,
+          "docs": 2794
         },
         "Wikipedia (în antrenare)": {
           "loss": 2.6869,
           "ppl": 14.69,
-          "tokens": 330659
+          "tokens": 330659,
+          "docs": 1000
         },
         "Presă (în antrenare)": {
           "loss": 2.5549,
           "ppl": 12.87,
-          "tokens": 453558
+          "tokens": 453558,
+          "docs": 1000
         }
       },
-      "heldout_ppl": 18.88,
-      "heldout_loss": 2.9383,
-      "delta_ppl_heldout_vs_base": 0.46,
-      "flagged_ppl": 26.91,
-      "unflagged_ppl": 18.26,
-      "delta_ppl_flagged_vs_base": 0.78
+      "heldout_ppl": 15.18,
+      "heldout_loss": 2.7201,
+      "flagged_ppl": 23.38,
+      "unflagged_ppl": 14.66,
+      "delta_ppl_heldout_vs_base": 0.37,
+      "delta_ppl_flagged_vs_base": 0.74,
+      "delta_ppl_unflagged_vs_base": 0.35
     }
   ]
 }

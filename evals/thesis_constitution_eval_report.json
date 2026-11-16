@@ -1,6 +1,8 @@
 {
  "n_items": 600,
- "items_file": "C:\\Users\\Flavius Stefan\\Desktop\\licenta\\data\\eval\\constitution_eval_ro.jsonl",
+ "items_file": "data/eval/constitution_eval_ro.jsonl",
+ "delib_prompt": "v2 (marker directly after the last sentence, as in training)",
+ "p_method": "McNemar exact (continuation/letter/pmi); sign-flip exact on per-item pairs won (pairwise); Holm over the overall comparisons",
  "results": {
   "Base-Ro": {
    "description": "Vanilla control: plain documents, no reflections",
@@ -407,6 +409,7 @@
   "SPP-Ro": {
    "description": "SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule)",
    "deliberative": false,
+   "reference": "Base-Ro",
    "continuation": {
     "overall": {
      "n": 600,
@@ -417,10 +420,11 @@
       23.5
      ],
      "baseline_correct": 117,
-     "fisher_p_vs_base": 0.8281,
-     "paired_perm_p_vs_base": 0.6594,
      "items_gained": 24,
-     "items_lost": 20
+     "items_lost": 20,
+     "p_vs_base": 0.6516,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -431,10 +435,10 @@
       25.9
      ],
      "baseline_correct": 33,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 8,
-     "items_lost": 8
+     "items_lost": 8,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -445,10 +449,10 @@
       25.6
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 0.7057,
-     "paired_perm_p_vs_base": 0.4261,
      "items_gained": 9,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 0.424,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -459,10 +463,10 @@
       26.0
      ],
      "baseline_correct": 47,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 7,
-     "items_lost": 7
+     "items_lost": 7,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -473,10 +477,10 @@
       27.0
      ],
      "baseline_correct": 17,
-     "fisher_p_vs_base": 0.8542,
-     "paired_perm_p_vs_base": 0.6854,
      "items_gained": 4,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 0.6875,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -487,10 +491,10 @@
       30.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 2,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -501,10 +505,10 @@
       36.0
      ],
      "baseline_correct": 27,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 7,
-     "items_lost": 7
+     "items_lost": 7,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -515,10 +519,10 @@
       31.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 3,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -529,10 +533,10 @@
       25.0
      ],
      "baseline_correct": 15,
-     "fisher_p_vs_base": 0.8473,
-     "paired_perm_p_vs_base": 0.6875,
      "items_gained": 4,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 0.6875,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -543,10 +547,10 @@
       21.0
      ],
      "baseline_correct": 14,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 4,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 142,
@@ -565,10 +569,11 @@
       27.8
      ],
      "baseline_correct": 165,
-     "fisher_p_vs_base": 0.2357,
-     "paired_perm_p_vs_base": 0.2303,
      "items_gained": 105,
-     "items_lost": 124
+     "items_lost": 124,
+     "p_vs_base": 0.2342,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -579,10 +584,10 @@
       34.7
      ],
      "baseline_correct": 46,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 34,
-     "items_lost": 33
+     "items_lost": 33,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -593,10 +598,10 @@
       24.1
      ],
      "baseline_correct": 58,
-     "fisher_p_vs_base": 0.0262,
-     "paired_perm_p_vs_base": 0.0277,
      "items_gained": 27,
-     "items_lost": 47
+     "items_lost": 47,
+     "p_vs_base": 0.02652,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -607,10 +612,10 @@
       32.6
      ],
      "baseline_correct": 61,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 44,
-     "items_lost": 44
+     "items_lost": 44,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -621,10 +626,10 @@
       40.0
      ],
      "baseline_correct": 27,
-     "fisher_p_vs_base": 0.6404,
-     "paired_perm_p_vs_base": 0.645,
      "items_gained": 24,
-     "items_lost": 20
+     "items_lost": 20,
+     "p_vs_base": 0.6516,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -635,10 +640,10 @@
       20.0
      ],
      "baseline_correct": 28,
-     "fisher_p_vs_base": 0.0136,
-     "paired_perm_p_vs_base": 0.0163,
      "items_gained": 10,
-     "items_lost": 25
+     "items_lost": 25,
+     "p_vs_base": 0.01667,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -649,10 +654,10 @@
       34.0
      ],
      "baseline_correct": 26,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 19,
-     "items_lost": 20
+     "items_lost": 20,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -663,10 +668,10 @@
       38.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.5428,
-     "paired_perm_p_vs_base": 0.5198,
      "items_gained": 17,
-     "items_lost": 22
+     "items_lost": 22,
+     "p_vs_base": 0.5224,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -677,10 +682,10 @@
       38.0
      ],
      "baseline_correct": 32,
-     "fisher_p_vs_base": 0.7589,
-     "paired_perm_p_vs_base": 0.7488,
      "items_gained": 18,
-     "items_lost": 21
+     "items_lost": 21,
+     "p_vs_base": 0.7493,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -691,10 +696,10 @@
       27.0
      ],
      "baseline_correct": 18,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 17,
-     "items_lost": 16
+     "items_lost": 16,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 143,
@@ -713,10 +718,11 @@
       37.2
      ],
      "baseline_correct": 229,
-     "fisher_p_vs_base": 0.104,
-     "paired_perm_p_vs_base": 0.0195,
      "items_gained": 53,
-     "items_lost": 81
+     "items_lost": 81,
+     "p_vs_base": 0.01934,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 0.4255
     },
     "band_hard": {
      "n": 170,
@@ -727,10 +733,10 @@
       47.1
      ],
      "baseline_correct": 70,
-     "fisher_p_vs_base": 0.9121,
-     "paired_perm_p_vs_base": 0.876,
      "items_gained": 20,
-     "items_lost": 22
+     "items_lost": 22,
+     "p_vs_base": 0.8776,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -741,10 +747,10 @@
       37.9
      ],
      "baseline_correct": 84,
-     "fisher_p_vs_base": 0.0499,
-     "paired_perm_p_vs_base": 0.006,
      "items_gained": 14,
-     "items_lost": 34
+     "items_lost": 34,
+     "p_vs_base": 0.005515,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -755,10 +761,10 @@
       36.6
      ],
      "baseline_correct": 75,
-     "fisher_p_vs_base": 0.6142,
-     "paired_perm_p_vs_base": 0.4508,
      "items_gained": 19,
-     "items_lost": 25
+     "items_lost": 25,
+     "p_vs_base": 0.4514,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -769,10 +775,10 @@
       34.0
      ],
      "baseline_correct": 35,
-     "fisher_p_vs_base": 0.1646,
-     "paired_perm_p_vs_base": 0.0415,
      "items_gained": 5,
-     "items_lost": 15
+     "items_lost": 15,
+     "p_vs_base": 0.04139,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -783,10 +789,10 @@
       50.0
      ],
      "baseline_correct": 44,
-     "fisher_p_vs_base": 0.7749,
-     "paired_perm_p_vs_base": 0.6476,
      "items_gained": 8,
-     "items_lost": 11
+     "items_lost": 11,
+     "p_vs_base": 0.6476,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -797,10 +803,10 @@
       45.0
      ],
      "baseline_correct": 36,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 10,
-     "items_lost": 10
+     "items_lost": 10,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -811,10 +817,10 @@
       46.0
      ],
      "baseline_correct": 41,
-     "fisher_p_vs_base": 0.5612,
-     "paired_perm_p_vs_base": 0.4254,
      "items_gained": 10,
-     "items_lost": 15
+     "items_lost": 15,
+     "p_vs_base": 0.4244,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -825,10 +831,10 @@
       41.0
      ],
      "baseline_correct": 39,
-     "fisher_p_vs_base": 0.3753,
-     "paired_perm_p_vs_base": 0.254,
      "items_gained": 10,
-     "items_lost": 17
+     "items_lost": 17,
+     "p_vs_base": 0.2478,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -839,10 +845,10 @@
       40.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.7628,
-     "paired_perm_p_vs_base": 0.6778,
      "items_gained": 10,
-     "items_lost": 13
+     "items_lost": 13,
+     "p_vs_base": 0.6776,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 175,
@@ -862,9 +868,11 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 813,
+     "pairs_gained": 80,
+     "pairs_lost": 80,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)",
+     "p_holm": 1.0
     },
     "items_all_pairs_won": 121,
     "items_majority_pairs_won": 262,
@@ -878,9 +886,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 233,
-     "p_vs_base": 0.4995,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.7531
+     "pairs_gained": 20,
+     "pairs_lost": 26,
+     "p_vs_base": 0.4982,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_mid": {
      "n": 609,
@@ -892,9 +901,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 263,
+     "pairs_gained": 32,
+     "pairs_lost": 32,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_easy": {
      "n": 681,
@@ -906,9 +916,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 317,
-     "p_vs_base": 0.493,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.7861
+     "pairs_gained": 28,
+     "pairs_lost": 22,
+     "p_vs_base": 0.4893,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.1": {
      "n": 300,
@@ -920,9 +931,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 135,
+     "pairs_gained": 12,
+     "pairs_lost": 13,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.2": {
      "n": 300,
@@ -934,9 +946,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 140,
-     "p_vs_base": 0.2092,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.6228
+     "pairs_gained": 7,
+     "pairs_lost": 14,
+     "p_vs_base": 0.2114,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.3": {
      "n": 300,
@@ -948,9 +961,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 158,
+     "pairs_gained": 15,
+     "pairs_lost": 16,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.1": {
      "n": 300,
@@ -962,9 +976,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 134,
-     "p_vs_base": 0.3309,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.682
+     "pairs_gained": 14,
+     "pairs_lost": 8,
+     "p_vs_base": 0.3303,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.2": {
      "n": 300,
@@ -976,9 +991,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 121,
+     "pairs_gained": 14,
+     "pairs_lost": 14,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.3": {
      "n": 300,
@@ -990,99 +1006,103 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 125,
-     "p_vs_base": 0.7564,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.8687
+     "pairs_gained": 18,
+     "pairs_lost": 15,
+     "p_vs_base": 0.757,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     }
    }
   },
   "SPP-Ro (delib)": {
    "description": "SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule)",
    "deliberative": true,
+   "reference": "Base-Ro",
    "continuation": {
     "overall": {
      "n": 600,
-     "correct": 134,
-     "accuracy": 22.3,
+     "correct": 135,
+     "accuracy": 22.5,
      "ci95": [
-      19.0,
-      25.7
+      19.2,
+      25.8
      ],
      "baseline_correct": 117,
-     "fisher_p_vs_base": 0.2561,
-     "paired_perm_p_vs_base": 0.1149,
      "items_gained": 60,
-     "items_lost": 43
+     "items_lost": 42,
+     "p_vs_base": 0.09184,
+     "p_method": "McNemar exact (paired items)",
+     "p_vs_same_model_no_marker": 0.1654,
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
-     "correct": 39,
-     "accuracy": 22.9,
+     "correct": 40,
+     "accuracy": 23.5,
      "ci95": [
-      17.1,
-      29.4
+      17.6,
+      30.0
      ],
      "baseline_correct": 33,
-     "fisher_p_vs_base": 0.5071,
-     "paired_perm_p_vs_base": 0.3458,
-     "items_gained": 17,
-     "items_lost": 11
+     "items_gained": 18,
+     "items_lost": 11,
+     "p_vs_base": 0.2649,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
-     "correct": 41,
-     "accuracy": 20.2,
+     "correct": 42,
+     "accuracy": 20.7,
      "ci95": [
-      14.8,
-      25.6
+      15.3,
+      26.6
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 0.7057,
-     "paired_perm_p_vs_base": 0.6115,
      "items_gained": 20,
-     "items_lost": 16
+     "items_lost": 15,
+     "p_vs_base": 0.4996,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
-     "correct": 54,
-     "accuracy": 23.8,
+     "correct": 53,
+     "accuracy": 23.3,
      "ci95": [
-      18.1,
-      29.5
+      17.6,
+      29.1
      ],
      "baseline_correct": 47,
-     "fisher_p_vs_base": 0.4985,
-     "paired_perm_p_vs_base": 0.3384,
-     "items_gained": 23,
-     "items_lost": 16
+     "items_gained": 22,
+     "items_lost": 16,
+     "p_vs_base": 0.4177,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
-     "correct": 22,
-     "accuracy": 22.0,
+     "correct": 23,
+     "accuracy": 23.0,
      "ci95": [
-      14.0,
-      31.0
+      15.0,
+      32.0
      ],
      "baseline_correct": 17,
-     "fisher_p_vs_base": 0.4756,
-     "paired_perm_p_vs_base": 0.387,
-     "items_gained": 13,
-     "items_lost": 8
+     "items_gained": 14,
+     "items_lost": 8,
+     "p_vs_base": 0.2863,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
-     "correct": 25,
-     "accuracy": 25.0,
+     "correct": 24,
+     "accuracy": 24.0,
      "ci95": [
-      17.0,
-      34.0
+      16.0,
+      33.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 0.739,
-     "paired_perm_p_vs_base": 0.6116,
      "items_gained": 9,
-     "items_lost": 6
+     "items_lost": 7,
+     "p_vs_base": 0.8036,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -1093,38 +1113,38 @@
       40.0
      ],
      "baseline_correct": 27,
-     "fisher_p_vs_base": 0.6404,
-     "paired_perm_p_vs_base": 0.5048,
      "items_gained": 12,
-     "items_lost": 8
+     "items_lost": 8,
+     "p_vs_base": 0.5034,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
      "correct": 26,
      "accuracy": 26.0,
      "ci95": [
-      18.0,
-      34.0
+      17.0,
+      35.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 0.6197,
-     "paired_perm_p_vs_base": 0.479,
-     "items_gained": 11,
-     "items_lost": 7
+     "items_gained": 10,
+     "items_lost": 6,
+     "p_vs_base": 0.4545,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
-     "correct": 22,
-     "accuracy": 22.0,
+     "correct": 23,
+     "accuracy": 23.0,
      "ci95": [
-      14.0,
-      30.0
+      15.0,
+      32.0
      ],
      "baseline_correct": 15,
-     "fisher_p_vs_base": 0.2745,
-     "paired_perm_p_vs_base": 0.1181,
      "items_gained": 11,
-     "items_lost": 4
+     "items_lost": 3,
+     "p_vs_base": 0.05737,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -1135,116 +1155,118 @@
       14.0
      ],
      "baseline_correct": 14,
-     "fisher_p_vs_base": 0.2582,
-     "paired_perm_p_vs_base": 0.1796,
      "items_gained": 4,
-     "items_lost": 10
+     "items_lost": 10,
+     "p_vs_base": 0.1796,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
-     "A": 154,
-     "B": 152,
-     "C": 156,
-     "D": 138
+     "A": 153,
+     "B": 147,
+     "C": 157,
+     "D": 143
     }
    },
    "letter": {
     "overall": {
      "n": 600,
-     "correct": 138,
-     "accuracy": 23.0,
+     "correct": 126,
+     "accuracy": 21.0,
      "ci95": [
-      19.7,
-      26.5
+      17.8,
+      24.3
      ],
      "baseline_correct": 165,
-     "fisher_p_vs_base": 0.084,
-     "paired_perm_p_vs_base": 0.0808,
-     "items_gained": 95,
-     "items_lost": 122
+     "items_gained": 87,
+     "items_lost": 126,
+     "p_vs_base": 0.009063,
+     "p_method": "McNemar exact (paired items)",
+     "p_vs_same_model_no_marker": 0.1657,
+     "p_holm": 0.2084
     },
     "band_hard": {
      "n": 170,
-     "correct": 45,
-     "accuracy": 26.5,
+     "correct": 48,
+     "accuracy": 28.2,
      "ci95": [
-      20.0,
-      32.9
+      21.8,
+      35.3
      ],
      "baseline_correct": 46,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
-     "items_gained": 30,
-     "items_lost": 31
+     "items_gained": 34,
+     "items_lost": 32,
+     "p_vs_base": 0.9022,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
-     "correct": 40,
-     "accuracy": 19.7,
+     "correct": 32,
+     "accuracy": 15.8,
      "ci95": [
-      14.3,
-      25.1
+      10.8,
+      21.2
      ],
      "baseline_correct": 58,
-     "fisher_p_vs_base": 0.0483,
-     "paired_perm_p_vs_base": 0.0397,
-     "items_gained": 26,
-     "items_lost": 44
+     "items_gained": 20,
+     "items_lost": 46,
+     "p_vs_base": 0.001858,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
-     "correct": 53,
-     "accuracy": 23.3,
+     "correct": 46,
+     "accuracy": 20.3,
      "ci95": [
-      18.1,
-      29.1
+      15.0,
+      25.6
      ],
      "baseline_correct": 61,
-     "fisher_p_vs_base": 0.4488,
-     "paired_perm_p_vs_base": 0.4446,
-     "items_gained": 39,
-     "items_lost": 47
+     "items_gained": 33,
+     "items_lost": 48,
+     "p_vs_base": 0.1193,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
-     "correct": 13,
-     "accuracy": 13.0,
+     "correct": 10,
+     "accuracy": 10.0,
      "ci95": [
-      7.0,
-      20.0
+      5.0,
+      16.0
      ],
      "baseline_correct": 27,
-     "fisher_p_vs_base": 0.0208,
-     "paired_perm_p_vs_base": 0.0244,
-     "items_gained": 10,
-     "items_lost": 24
+     "items_gained": 8,
+     "items_lost": 25,
+     "p_vs_base": 0.004551,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
-     "correct": 18,
-     "accuracy": 18.0,
+     "correct": 22,
+     "accuracy": 22.0,
      "ci95": [
-      11.0,
-      26.0
+      14.0,
+      31.0
      ],
      "baseline_correct": 28,
-     "fisher_p_vs_base": 0.1299,
-     "paired_perm_p_vs_base": 0.1436,
-     "items_gained": 14,
-     "items_lost": 24
+     "items_gained": 16,
+     "items_lost": 22,
+     "p_vs_base": 0.4177,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
-     "correct": 30,
-     "accuracy": 30.0,
+     "correct": 24,
+     "accuracy": 24.0,
      "ci95": [
-      21.0,
-      39.0
+      16.0,
+      33.0
      ],
      "baseline_correct": 26,
-     "fisher_p_vs_base": 0.6368,
-     "paired_perm_p_vs_base": 0.6171,
-     "items_gained": 20,
-     "items_lost": 16
+     "items_gained": 16,
+     "items_lost": 18,
+     "p_vs_base": 0.8642,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -1255,60 +1277,62 @@
       37.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.4447,
-     "paired_perm_p_vs_base": 0.4127,
-     "items_gained": 16,
-     "items_lost": 22
+     "items_gained": 15,
+     "items_lost": 21,
+     "p_vs_base": 0.405,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
-     "correct": 24,
-     "accuracy": 24.0,
+     "correct": 21,
+     "accuracy": 21.0,
      "ci95": [
-      16.0,
-      33.0
+      13.0,
+      29.0
      ],
      "baseline_correct": 32,
-     "fisher_p_vs_base": 0.2702,
-     "paired_perm_p_vs_base": 0.2677,
-     "items_gained": 16,
-     "items_lost": 24
+     "items_gained": 15,
+     "items_lost": 26,
+     "p_vs_base": 0.1173,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
-     "correct": 25,
-     "accuracy": 25.0,
+     "correct": 21,
+     "accuracy": 21.0,
      "ci95": [
-      17.0,
-      34.0
+      13.0,
+      29.0
      ],
      "baseline_correct": 18,
-     "fisher_p_vs_base": 0.3017,
-     "paired_perm_p_vs_base": 0.2818,
-     "items_gained": 19,
-     "items_lost": 12
+     "items_gained": 17,
+     "items_lost": 14,
+     "p_vs_base": 0.7201,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 152,
-     "B": 159,
-     "C": 158,
-     "D": 131
+     "B": 157,
+     "C": 159,
+     "D": 132
     }
    },
    "pmi": {
     "overall": {
      "n": 600,
-     "correct": 204,
-     "accuracy": 34.0,
+     "correct": 201,
+     "accuracy": 33.5,
      "ci95": [
-      30.3,
-      37.8
+      29.8,
+      37.3
      ],
      "baseline_correct": 229,
-     "fisher_p_vs_base": 0.1491,
-     "paired_perm_p_vs_base": 0.0978,
      "items_gained": 94,
-     "items_lost": 119
+     "items_lost": 122,
+     "p_vs_base": 0.06594,
+     "p_method": "McNemar exact (paired items)",
+     "p_vs_same_model_no_marker": 1.0,
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -1319,52 +1343,52 @@
       38.8
      ],
      "baseline_correct": 70,
-     "fisher_p_vs_base": 0.0908,
-     "paired_perm_p_vs_base": 0.0603,
-     "items_gained": 24,
-     "items_lost": 40
+     "items_gained": 25,
+     "items_lost": 41,
+     "p_vs_base": 0.06402,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
-     "correct": 73,
-     "accuracy": 36.0,
+     "correct": 71,
+     "accuracy": 35.0,
      "ci95": [
-      29.6,
-      42.4
+      28.6,
+      41.4
      ],
      "baseline_correct": 84,
-     "fisher_p_vs_base": 0.3082,
-     "paired_perm_p_vs_base": 0.2428,
-     "items_gained": 31,
-     "items_lost": 42
+     "items_gained": 29,
+     "items_lost": 42,
+     "p_vs_base": 0.1539,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
-     "correct": 77,
-     "accuracy": 33.9,
+     "correct": 76,
+     "accuracy": 33.5,
      "ci95": [
-      27.8,
-      40.1
+      27.3,
+      39.6
      ],
      "baseline_correct": 75,
-     "fisher_p_vs_base": 0.9208,
-     "paired_perm_p_vs_base": 0.9091,
-     "items_gained": 39,
-     "items_lost": 37
+     "items_gained": 40,
+     "items_lost": 39,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
-     "correct": 36,
-     "accuracy": 36.0,
+     "correct": 35,
+     "accuracy": 35.0,
      "ci95": [
-      27.0,
-      45.0
+      26.0,
+      44.0
      ],
      "baseline_correct": 35,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 19,
-     "items_lost": 18
+     "items_lost": 19,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -1375,38 +1399,38 @@
       51.0
      ],
      "baseline_correct": 44,
-     "fisher_p_vs_base": 0.7749,
-     "paired_perm_p_vs_base": 0.7423,
      "items_gained": 18,
-     "items_lost": 21
+     "items_lost": 21,
+     "p_vs_base": 0.7493,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
-     "correct": 28,
-     "accuracy": 28.0,
+     "correct": 29,
+     "accuracy": 29.0,
      "ci95": [
-      19.0,
-      37.0
+      20.0,
+      38.0
      ],
      "baseline_correct": 36,
-     "fisher_p_vs_base": 0.2886,
-     "paired_perm_p_vs_base": 0.1862,
      "items_gained": 10,
-     "items_lost": 18
+     "items_lost": 17,
+     "p_vs_base": 0.2478,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
-     "correct": 39,
-     "accuracy": 39.0,
+     "correct": 37,
+     "accuracy": 37.0,
      "ci95": [
-      30.0,
-      49.0
+      28.0,
+      47.0
      ],
      "baseline_correct": 41,
-     "fisher_p_vs_base": 0.8853,
-     "paired_perm_p_vs_base": 0.8658,
      "items_gained": 16,
-     "items_lost": 18
+     "items_lost": 20,
+     "p_vs_base": 0.6177,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -1417,180 +1441,193 @@
       48.0
      ],
      "baseline_correct": 39,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 18,
-     "items_lost": 19
+     "items_lost": 19,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
-     "correct": 22,
-     "accuracy": 22.0,
+     "correct": 21,
+     "accuracy": 21.0,
      "ci95": [
-      14.0,
-      30.0
+      13.0,
+      29.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.0827,
-     "paired_perm_p_vs_base": 0.073,
      "items_gained": 13,
-     "items_lost": 25
+     "items_lost": 26,
+     "p_vs_base": 0.05325,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
-     "A": 177,
-     "B": 151,
-     "C": 158,
-     "D": 114
+     "A": 180,
+     "B": 161,
+     "C": 155,
+     "D": 104
     }
    },
    "pairwise": {
     "overall": {
      "n": 1800,
-     "correct": 832,
-     "accuracy": 46.2,
+     "correct": 827,
+     "accuracy": 45.9,
      "ci95": [
-      43.2,
-      49.2
+      42.9,
+      48.9
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 813,
-     "p_vs_base": 0.4283,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.547
+     "pairs_gained": 198,
+     "pairs_lost": 184,
+     "p_vs_base": 0.5742,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)",
+     "p_vs_same_model_no_marker": 0.5542,
+     "p_holm": 1.0
     },
-    "items_all_pairs_won": 134,
-    "items_majority_pairs_won": 269,
+    "items_all_pairs_won": 135,
+    "items_majority_pairs_won": 267,
     "band_hard": {
      "n": 510,
-     "correct": 235,
-     "accuracy": 46.1,
+     "correct": 234,
+     "accuracy": 45.9,
      "ci95": [
-      40.4,
-      51.8
+      40.2,
+      51.6
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 233,
-     "p_vs_base": 0.9356,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.9499
+     "pairs_gained": 56,
+     "pairs_lost": 55,
+     "p_vs_base": 1.0,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_mid": {
      "n": 609,
-     "correct": 271,
-     "accuracy": 44.5,
+     "correct": 266,
+     "accuracy": 43.7,
      "ci95": [
-      39.6,
-      49.8
+      38.6,
+      49.1
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 263,
-     "p_vs_base": 0.5886,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.6861
+     "pairs_gained": 62,
+     "pairs_lost": 59,
+     "p_vs_base": 0.8782,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_easy": {
      "n": 681,
-     "correct": 326,
-     "accuracy": 47.9,
+     "correct": 327,
+     "accuracy": 48.0,
      "ci95": [
-      43.0,
-      52.7
+      43.2,
+      52.9
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 317,
-     "p_vs_base": 0.5765,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.6641
+     "pairs_gained": 80,
+     "pairs_lost": 70,
+     "p_vs_base": 0.5355,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.1": {
      "n": 300,
-     "correct": 154,
-     "accuracy": 51.3,
+     "correct": 155,
+     "accuracy": 51.7,
      "ci95": [
-      44.7,
-      58.3
+      45.0,
+      58.7
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 135,
-     "p_vs_base": 0.0674,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.1413
+     "pairs_gained": 49,
+     "pairs_lost": 29,
+     "p_vs_base": 0.06167,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.2": {
      "n": 300,
-     "correct": 138,
-     "accuracy": 46.0,
+     "correct": 136,
+     "accuracy": 45.3,
      "ci95": [
-      38.3,
-      54.0
+      37.7,
+      53.0
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 140,
-     "p_vs_base": 0.9034,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.9348
+     "pairs_gained": 24,
+     "pairs_lost": 28,
+     "p_vs_base": 0.7092,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.3": {
      "n": 300,
-     "correct": 161,
-     "accuracy": 53.7,
+     "correct": 159,
+     "accuracy": 53.0,
      "ci95": [
-      46.3,
-      61.0
+      45.7,
+      60.7
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 158,
-     "p_vs_base": 0.8508,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.87
+     "pairs_gained": 34,
+     "pairs_lost": 33,
+     "p_vs_base": 1.0,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.1": {
      "n": 300,
-     "correct": 154,
-     "accuracy": 51.3,
+     "correct": 153,
+     "accuracy": 51.0,
      "ci95": [
-      44.0,
-      58.3
+      43.7,
+      58.0
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 134,
-     "p_vs_base": 0.0491,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.1204
+     "pairs_gained": 41,
+     "pairs_lost": 22,
+     "p_vs_base": 0.05537,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.2": {
      "n": 300,
-     "correct": 128,
-     "accuracy": 42.7,
+     "correct": 129,
+     "accuracy": 43.0,
      "ci95": [
-      35.0,
-      50.3
+      35.3,
+      50.7
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 121,
-     "p_vs_base": 0.5095,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.6191
+     "pairs_gained": 32,
+     "pairs_lost": 24,
+     "p_vs_base": 0.4481,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.3": {
      "n": 300,
-     "correct": 97,
-     "accuracy": 32.3,
+     "correct": 95,
+     "accuracy": 31.7,
      "ci95": [
-      26.0,
-      39.0
+      25.7,
+      38.0
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 125,
-     "p_vs_base": 0.0013,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.0223
+     "pairs_gained": 18,
+     "pairs_lost": 48,
+     "p_vs_base": 0.0009129,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     }
    }
   },
   "Filtered-Ro": {
    "description": "Filtered baseline: classifier-flagged documents kept in context, loss-masked",
    "deliberative": false,
+   "reference": "Base-Ro",
    "continuation": {
     "overall": {
      "n": 600,
@@ -1601,10 +1638,11 @@
       24.0
      ],
      "baseline_correct": 117,
-     "fisher_p_vs_base": 0.6656,
-     "paired_perm_p_vs_base": 0.4022,
      "items_gained": 29,
-     "items_lost": 22
+     "items_lost": 22,
+     "p_vs_base": 0.4011,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -1615,10 +1653,10 @@
       25.9
      ],
      "baseline_correct": 33,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 7,
-     "items_lost": 6
+     "items_lost": 6,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -1629,10 +1667,10 @@
       26.1
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 0.6162,
-     "paired_perm_p_vs_base": 0.3385,
      "items_gained": 11,
-     "items_lost": 6
+     "items_lost": 6,
+     "p_vs_base": 0.3323,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -1643,10 +1681,10 @@
       26.9
      ],
      "baseline_correct": 47,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 11,
-     "items_lost": 10
+     "items_lost": 10,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -1657,10 +1695,10 @@
       26.0
      ],
      "baseline_correct": 17,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 4,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -1671,10 +1709,10 @@
       36.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 0.511,
-     "paired_perm_p_vs_base": 0.0628,
      "items_gained": 5,
-     "items_lost": 0
+     "items_lost": 0,
+     "p_vs_base": 0.0625,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -1685,10 +1723,10 @@
       33.0
      ],
      "baseline_correct": 27,
-     "fisher_p_vs_base": 0.7458,
-     "paired_perm_p_vs_base": 0.6301,
      "items_gained": 7,
-     "items_lost": 10
+     "items_lost": 10,
+     "p_vs_base": 0.6291,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -1699,10 +1737,10 @@
       28.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 0.8624,
-     "paired_perm_p_vs_base": 0.7278,
      "items_gained": 3,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 0.7266,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -1713,10 +1751,10 @@
       27.0
      ],
      "baseline_correct": 15,
-     "fisher_p_vs_base": 0.5727,
-     "paired_perm_p_vs_base": 0.2882,
      "items_gained": 6,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 0.2891,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -1727,10 +1765,10 @@
       24.0
      ],
      "baseline_correct": 14,
-     "fisher_p_vs_base": 0.8433,
-     "paired_perm_p_vs_base": 0.6842,
      "items_gained": 4,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 0.6875,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 147,
@@ -1749,10 +1787,11 @@
       27.5
      ],
      "baseline_correct": 165,
-     "fisher_p_vs_base": 0.1867,
-     "paired_perm_p_vs_base": 0.1666,
      "items_gained": 95,
-     "items_lost": 116
+     "items_lost": 116,
+     "p_vs_base": 0.1684,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -1763,10 +1802,10 @@
       31.8
      ],
      "baseline_correct": 46,
-     "fisher_p_vs_base": 0.8052,
-     "paired_perm_p_vs_base": 0.7904,
      "items_gained": 29,
-     "items_lost": 32
+     "items_lost": 32,
+     "p_vs_base": 0.7982,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -1777,10 +1816,10 @@
       27.1
      ],
      "baseline_correct": 58,
-     "fisher_p_vs_base": 0.1077,
-     "paired_perm_p_vs_base": 0.0626,
      "items_gained": 21,
-     "items_lost": 36
+     "items_lost": 36,
+     "p_vs_base": 0.06274,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -1791,10 +1830,10 @@
       31.3
      ],
      "baseline_correct": 61,
-     "fisher_p_vs_base": 0.8311,
-     "paired_perm_p_vs_base": 0.837,
      "items_gained": 45,
-     "items_lost": 48
+     "items_lost": 48,
+     "p_vs_base": 0.8358,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -1805,10 +1844,10 @@
       35.0
      ],
      "baseline_correct": 27,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 15,
-     "items_lost": 16
+     "items_lost": 16,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -1819,10 +1858,10 @@
       29.0
      ],
      "baseline_correct": 28,
-     "fisher_p_vs_base": 0.3239,
-     "paired_perm_p_vs_base": 0.2939,
      "items_gained": 13,
-     "items_lost": 20
+     "items_lost": 20,
+     "p_vs_base": 0.2962,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -1833,10 +1872,10 @@
       35.0
      ],
      "baseline_correct": 26,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 19,
-     "items_lost": 19
+     "items_lost": 19,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -1847,10 +1886,10 @@
       35.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.28,
-     "paired_perm_p_vs_base": 0.2516,
      "items_gained": 15,
-     "items_lost": 23
+     "items_lost": 23,
+     "p_vs_base": 0.2559,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -1861,10 +1900,10 @@
       38.0
      ],
      "baseline_correct": 32,
-     "fisher_p_vs_base": 0.7589,
-     "paired_perm_p_vs_base": 0.7692,
      "items_gained": 22,
-     "items_lost": 25
+     "items_lost": 25,
+     "p_vs_base": 0.7709,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -1875,10 +1914,10 @@
       23.0
      ],
      "baseline_correct": 18,
-     "fisher_p_vs_base": 0.8509,
-     "paired_perm_p_vs_base": 0.8397,
      "items_gained": 11,
-     "items_lost": 13
+     "items_lost": 13,
+     "p_vs_base": 0.8388,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 130,
@@ -1897,10 +1936,11 @@
       39.0
      ],
      "baseline_correct": 229,
-     "fisher_p_vs_base": 0.3085,
-     "paired_perm_p_vs_base": 0.1288,
      "items_gained": 54,
-     "items_lost": 72
+     "items_lost": 72,
+     "p_vs_base": 0.1296,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -1911,10 +1951,10 @@
       43.5
      ],
      "baseline_correct": 70,
-     "fisher_p_vs_base": 0.3727,
-     "paired_perm_p_vs_base": 0.1898,
      "items_gained": 14,
-     "items_lost": 23
+     "items_lost": 23,
+     "p_vs_base": 0.1877,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -1925,10 +1965,10 @@
       47.8
      ],
      "baseline_correct": 84,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 23,
-     "items_lost": 24
+     "items_lost": 24,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -1939,10 +1979,10 @@
       35.7
      ],
      "baseline_correct": 75,
-     "fisher_p_vs_base": 0.4786,
-     "paired_perm_p_vs_base": 0.2748,
      "items_gained": 17,
-     "items_lost": 25
+     "items_lost": 25,
+     "p_vs_base": 0.28,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -1953,10 +1993,10 @@
       33.0
      ],
      "baseline_correct": 35,
-     "fisher_p_vs_base": 0.1206,
-     "paired_perm_p_vs_base": 0.0185,
      "items_gained": 4,
-     "items_lost": 15
+     "items_lost": 15,
+     "p_vs_base": 0.01921,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -1967,10 +2007,10 @@
       54.0
      ],
      "baseline_correct": 44,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 8,
-     "items_lost": 8
+     "items_lost": 8,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -1981,10 +2021,10 @@
       49.0
      ],
      "baseline_correct": 36,
-     "fisher_p_vs_base": 0.7703,
-     "paired_perm_p_vs_base": 0.666,
      "items_gained": 12,
-     "items_lost": 9
+     "items_lost": 9,
+     "p_vs_base": 0.6636,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -1995,10 +2035,10 @@
       47.0
      ],
      "baseline_correct": 41,
-     "fisher_p_vs_base": 0.6638,
-     "paired_perm_p_vs_base": 0.543,
      "items_gained": 10,
-     "items_lost": 14
+     "items_lost": 14,
+     "p_vs_base": 0.5413,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -2009,10 +2049,10 @@
       45.0
      ],
      "baseline_correct": 39,
-     "fisher_p_vs_base": 0.6605,
-     "paired_perm_p_vs_base": 0.5042,
      "items_gained": 8,
-     "items_lost": 12
+     "items_lost": 12,
+     "p_vs_base": 0.5034,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -2023,10 +2063,10 @@
       42.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.8805,
-     "paired_perm_p_vs_base": 0.8491,
      "items_gained": 12,
-     "items_lost": 14
+     "items_lost": 14,
+     "p_vs_base": 0.845,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 159,
@@ -2046,9 +2086,11 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 813,
-     "p_vs_base": 0.397,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.6876
+     "pairs_gained": 76,
+     "pairs_lost": 89,
+     "p_vs_base": 0.4002,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)",
+     "p_holm": 1.0
     },
     "items_all_pairs_won": 124,
     "items_majority_pairs_won": 262,
@@ -2062,9 +2104,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 233,
-     "p_vs_base": 0.1157,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.5288
+     "pairs_gained": 14,
+     "pairs_lost": 25,
+     "p_vs_base": 0.1174,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_mid": {
      "n": 609,
@@ -2076,9 +2119,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 263,
-     "p_vs_base": 0.8346,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.908
+     "pairs_gained": 35,
+     "pairs_lost": 32,
+     "p_vs_base": 0.833,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_easy": {
      "n": 681,
@@ -2090,9 +2134,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 317,
-     "p_vs_base": 0.6431,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.8279
+     "pairs_gained": 27,
+     "pairs_lost": 32,
+     "p_vs_base": 0.6412,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.1": {
      "n": 300,
@@ -2104,9 +2149,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 135,
-     "p_vs_base": 0.3342,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.6809
+     "pairs_gained": 9,
+     "pairs_lost": 15,
+     "p_vs_base": 0.3303,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.2": {
      "n": 300,
@@ -2118,9 +2164,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 140,
+     "pairs_gained": 12,
+     "pairs_lost": 12,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.3": {
      "n": 300,
@@ -2132,9 +2179,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 158,
-     "p_vs_base": 0.2534,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.5135
+     "pairs_gained": 14,
+     "pairs_lost": 23,
+     "p_vs_base": 0.255,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.1": {
      "n": 300,
@@ -2146,9 +2194,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 134,
+     "pairs_gained": 12,
+     "pairs_lost": 12,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.2": {
      "n": 300,
@@ -2160,9 +2209,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 121,
-     "p_vs_base": 0.3004,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.6191
+     "pairs_gained": 16,
+     "pairs_lost": 9,
+     "p_vs_base": 0.2999,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.3": {
      "n": 300,
@@ -2174,15 +2224,17 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 125,
-     "p_vs_base": 0.5212,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.7398
+     "pairs_gained": 13,
+     "pairs_lost": 18,
+     "p_vs_base": 0.514,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     }
    }
   },
   "Base-Ro-rewarm": {
    "description": "Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections",
    "deliberative": false,
+   "reference": "Base-Ro",
    "continuation": {
     "overall": {
      "n": 600,
@@ -2193,10 +2245,11 @@
       23.0
      ],
      "baseline_correct": 117,
-     "fisher_p_vs_base": 0.9421,
-     "paired_perm_p_vs_base": 0.7563,
      "items_gained": 6,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 0.7539,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -2207,10 +2260,10 @@
       27.1
      ],
      "baseline_correct": 33,
-     "fisher_p_vs_base": 0.8922,
-     "paired_perm_p_vs_base": 0.6195,
      "items_gained": 3,
-     "items_lost": 1
+     "items_lost": 1,
+     "p_vs_base": 0.625,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -2221,10 +2274,10 @@
       23.6
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 1,
-     "items_lost": 1
+     "items_lost": 1,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -2235,10 +2288,10 @@
       26.0
      ],
      "baseline_correct": 47,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 2,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -2249,10 +2302,10 @@
       22.0
      ],
      "baseline_correct": 17,
-     "fisher_p_vs_base": 0.8473,
-     "paired_perm_p_vs_base": 0.6211,
      "items_gained": 1,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 0.625,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -2263,10 +2316,10 @@
       32.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 1,
-     "items_lost": 0
+     "items_lost": 0,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -2277,10 +2330,10 @@
       37.0
      ],
      "baseline_correct": 27,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 2,
-     "items_lost": 1
+     "items_lost": 1,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -2291,10 +2344,10 @@
       30.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 0,
-     "items_lost": 0
+     "items_lost": 0,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -2305,10 +2358,10 @@
       23.0
      ],
      "baseline_correct": 15,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 1,
-     "items_lost": 0
+     "items_lost": 0,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -2319,10 +2372,10 @@
       22.0
      ],
      "baseline_correct": 14,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 1,
-     "items_lost": 0
+     "items_lost": 0,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 143,
@@ -2341,10 +2394,11 @@
       29.3
      ],
      "baseline_correct": 165,
-     "fisher_p_vs_base": 0.5569,
-     "paired_perm_p_vs_base": 0.1731,
      "items_gained": 17,
-     "items_lost": 27
+     "items_lost": 27,
+     "p_vs_base": 0.1742,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -2355,10 +2409,10 @@
       28.8
      ],
      "baseline_correct": 46,
-     "fisher_p_vs_base": 0.3788,
-     "paired_perm_p_vs_base": 0.0081,
      "items_gained": 0,
-     "items_lost": 8
+     "items_lost": 8,
+     "p_vs_base": 0.007812,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -2369,10 +2423,10 @@
       32.0
      ],
      "baseline_correct": 58,
-     "fisher_p_vs_base": 0.5767,
-     "paired_perm_p_vs_base": 0.1799,
      "items_gained": 4,
-     "items_lost": 10
+     "items_lost": 10,
+     "p_vs_base": 0.1796,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -2383,10 +2437,10 @@
       34.8
      ],
      "baseline_correct": 61,
-     "fisher_p_vs_base": 0.7533,
-     "paired_perm_p_vs_base": 0.5242,
      "items_gained": 13,
-     "items_lost": 9
+     "items_lost": 9,
+     "p_vs_base": 0.5235,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -2397,10 +2451,10 @@
       37.0
      ],
      "baseline_correct": 27,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 3,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -2411,10 +2465,10 @@
       33.0
      ],
      "baseline_correct": 28,
-     "fisher_p_vs_base": 0.6289,
-     "paired_perm_p_vs_base": 0.2203,
      "items_gained": 1,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 0.2188,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -2425,10 +2479,10 @@
       31.0
      ],
      "baseline_correct": 26,
-     "fisher_p_vs_base": 0.6197,
-     "paired_perm_p_vs_base": 0.3432,
      "items_gained": 3,
-     "items_lost": 7
+     "items_lost": 7,
+     "p_vs_base": 0.3438,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -2439,10 +2493,10 @@
       38.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.5428,
-     "paired_perm_p_vs_base": 0.0628,
      "items_gained": 0,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 0.0625,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -2453,10 +2507,10 @@
       42.0
      ],
      "baseline_correct": 32,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 4,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -2467,10 +2521,10 @@
       27.0
      ],
      "baseline_correct": 18,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 6,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 158,
@@ -2489,10 +2543,11 @@
       39.7
      ],
      "baseline_correct": 229,
-     "fisher_p_vs_base": 0.437,
-     "paired_perm_p_vs_base": 0.0352,
      "items_gained": 12,
-     "items_lost": 26
+     "items_lost": 26,
+     "p_vs_base": 0.03355,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 0.7046
     },
     "band_hard": {
      "n": 170,
@@ -2503,10 +2558,10 @@
       44.7
      ],
      "baseline_correct": 70,
-     "fisher_p_vs_base": 0.579,
-     "paired_perm_p_vs_base": 0.1133,
      "items_gained": 2,
-     "items_lost": 8
+     "items_lost": 8,
+     "p_vs_base": 0.1094,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -2517,10 +2572,10 @@
       44.3
      ],
      "baseline_correct": 84,
-     "fisher_p_vs_base": 0.4772,
-     "paired_perm_p_vs_base": 0.1147,
      "items_gained": 6,
-     "items_lost": 14
+     "items_lost": 14,
+     "p_vs_base": 0.1153,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -2531,10 +2586,10 @@
       39.2
      ],
      "baseline_correct": 75,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 4,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -2545,10 +2600,10 @@
       42.0
      ],
      "baseline_correct": 35,
-     "fisher_p_vs_base": 0.8814,
-     "paired_perm_p_vs_base": 0.6848,
      "items_gained": 2,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 0.6875,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -2559,10 +2614,10 @@
       53.0
      ],
      "baseline_correct": 44,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 3,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -2573,10 +2628,10 @@
       46.0
      ],
      "baseline_correct": 36,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 4,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -2587,10 +2642,10 @@
       47.0
      ],
      "baseline_correct": 41,
-     "fisher_p_vs_base": 0.6638,
-     "paired_perm_p_vs_base": 0.1227,
      "items_gained": 0,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 0.125,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -2601,10 +2656,10 @@
       43.0
      ],
      "baseline_correct": 39,
-     "fisher_p_vs_base": 0.557,
-     "paired_perm_p_vs_base": 0.1809,
      "items_gained": 2,
-     "items_lost": 7
+     "items_lost": 7,
+     "p_vs_base": 0.1797,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -2615,10 +2670,10 @@
       40.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.7628,
-     "paired_perm_p_vs_base": 0.3767,
      "items_gained": 1,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 0.375,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 164,
@@ -2638,9 +2693,11 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 813,
-     "p_vs_base": 0.7124,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.9466
+     "pairs_gained": 13,
+     "pairs_lost": 16,
+     "p_vs_base": 0.7111,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)",
+     "p_holm": 1.0
     },
     "items_all_pairs_won": 119,
     "items_majority_pairs_won": 260,
@@ -2654,9 +2711,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 233,
-     "p_vs_base": 0.3896,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.8503
+     "pairs_gained": 4,
+     "pairs_lost": 8,
+     "p_vs_base": 0.3877,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_mid": {
      "n": 609,
@@ -2664,13 +2722,14 @@
      "accuracy": 43.2,
      "ci95": [
       38.4,
-      47.9
+      48.1
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 263,
+     "pairs_gained": 4,
+     "pairs_lost": 4,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_easy": {
      "n": 681,
@@ -2682,9 +2741,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 317,
+     "pairs_gained": 5,
+     "pairs_lost": 4,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.1": {
      "n": 300,
@@ -2696,9 +2756,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 135,
-     "p_vs_base": 0.18,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.7423
+     "pairs_gained": 2,
+     "pairs_lost": 7,
+     "p_vs_base": 0.1797,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.2": {
      "n": 300,
@@ -2710,9 +2771,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 140,
+     "pairs_gained": 1,
+     "pairs_lost": 1,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.3": {
      "n": 300,
@@ -2724,9 +2786,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 158,
+     "pairs_gained": 2,
+     "pairs_lost": 3,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.1": {
      "n": 300,
@@ -2738,9 +2801,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 134,
+     "pairs_gained": 3,
+     "pairs_lost": 3,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.2": {
      "n": 300,
@@ -2752,9 +2816,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 121,
-     "p_vs_base": 0.4993,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.9338
+     "pairs_gained": 2,
+     "pairs_lost": 0,
+     "p_vs_base": 0.5,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.3": {
      "n": 300,
@@ -2766,15 +2831,17 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 125,
+     "pairs_gained": 3,
+     "pairs_lost": 2,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     }
    }
   },
   "SPP-Ro-MT": {
-   "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences)",
+   "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% of the documents carry a reflection)",
    "deliberative": false,
+   "reference": "Base-Ro-rewarm",
    "continuation": {
     "overall": {
      "n": 600,
@@ -2785,10 +2852,11 @@
       23.5
      ],
      "baseline_correct": 119,
-     "fisher_p_vs_base": 0.9425,
-     "paired_perm_p_vs_base": 0.8427,
      "items_gained": 14,
-     "items_lost": 12
+     "items_lost": 12,
+     "p_vs_base": 0.845,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -2799,10 +2867,10 @@
       27.6
      ],
      "baseline_correct": 35,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 6,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -2813,10 +2881,10 @@
       24.6
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 0.8988,
-     "paired_perm_p_vs_base": 0.6183,
      "items_gained": 3,
-     "items_lost": 1
+     "items_lost": 1,
+     "p_vs_base": 0.625,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -2827,10 +2895,10 @@
       25.6
      ],
      "baseline_correct": 47,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 5,
-     "items_lost": 6
+     "items_lost": 6,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -2841,10 +2909,10 @@
       29.0
      ],
      "baseline_correct": 15,
-     "fisher_p_vs_base": 0.3576,
-     "paired_perm_p_vs_base": 0.0675,
      "items_gained": 7,
-     "items_lost": 1
+     "items_lost": 1,
+     "p_vs_base": 0.07031,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -2855,10 +2923,10 @@
       31.0
      ],
      "baseline_correct": 23,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 1,
-     "items_lost": 1
+     "items_lost": 1,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -2869,10 +2937,10 @@
       38.0
      ],
      "baseline_correct": 28,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 2,
-     "items_lost": 1
+     "items_lost": 1,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -2883,10 +2951,10 @@
       30.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 3,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -2897,10 +2965,10 @@
       20.0
      ],
      "baseline_correct": 16,
-     "fisher_p_vs_base": 0.6885,
-     "paired_perm_p_vs_base": 0.2483,
      "items_gained": 0,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 0.25,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -2911,10 +2979,10 @@
       20.0
      ],
      "baseline_correct": 15,
-     "fisher_p_vs_base": 0.8389,
-     "paired_perm_p_vs_base": 0.6195,
      "items_gained": 1,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 0.625,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 142,
@@ -2933,10 +3001,11 @@
       31.7
      ],
      "baseline_correct": 155,
-     "fisher_p_vs_base": 0.4348,
-     "paired_perm_p_vs_base": 0.1853,
      "items_gained": 47,
-     "items_lost": 34
+     "items_lost": 34,
+     "p_vs_base": 0.1821,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -2947,10 +3016,10 @@
       37.1
      ],
      "baseline_correct": 38,
-     "fisher_p_vs_base": 0.1385,
-     "paired_perm_p_vs_base": 0.0115,
      "items_gained": 18,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 0.01062,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -2961,10 +3030,10 @@
       35.0
      ],
      "baseline_correct": 52,
-     "fisher_p_vs_base": 0.5767,
-     "paired_perm_p_vs_base": 0.3587,
      "items_gained": 18,
-     "items_lost": 12
+     "items_lost": 12,
+     "p_vs_base": 0.3616,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -2975,10 +3044,10 @@
       31.7
      ],
      "baseline_correct": 65,
-     "fisher_p_vs_base": 0.5985,
-     "paired_perm_p_vs_base": 0.3503,
      "items_gained": 11,
-     "items_lost": 17
+     "items_lost": 17,
+     "p_vs_base": 0.3449,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -2989,10 +3058,10 @@
       36.0
      ],
      "baseline_correct": 28,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 4,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -3003,10 +3072,10 @@
       41.0
      ],
      "baseline_correct": 24,
-     "fisher_p_vs_base": 0.2702,
-     "paired_perm_p_vs_base": 0.0775,
      "items_gained": 12,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 0.07681,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -3017,10 +3086,10 @@
       35.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 0.6197,
-     "paired_perm_p_vs_base": 0.4526,
      "items_gained": 10,
-     "items_lost": 6
+     "items_lost": 6,
+     "p_vs_base": 0.4545,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -3031,10 +3100,10 @@
       45.0
      ],
      "baseline_correct": 29,
-     "fisher_p_vs_base": 0.4486,
-     "paired_perm_p_vs_base": 0.2102,
      "items_gained": 11,
-     "items_lost": 5
+     "items_lost": 5,
+     "p_vs_base": 0.2101,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -3045,10 +3114,10 @@
       37.0
      ],
      "baseline_correct": 33,
-     "fisher_p_vs_base": 0.5392,
-     "paired_perm_p_vs_base": 0.1774,
      "items_gained": 2,
-     "items_lost": 7
+     "items_lost": 7,
+     "p_vs_base": 0.1797,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -3059,10 +3128,10 @@
       28.0
      ],
      "baseline_correct": 19,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 8,
-     "items_lost": 7
+     "items_lost": 7,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 160,
@@ -3081,10 +3150,11 @@
       41.7
      ],
      "baseline_correct": 215,
-     "fisher_p_vs_base": 0.5104,
-     "paired_perm_p_vs_base": 0.1376,
      "items_gained": 33,
-     "items_lost": 21
+     "items_lost": 21,
+     "p_vs_base": 0.1337,
+     "p_method": "McNemar exact (paired items)",
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
@@ -3095,10 +3165,10 @@
       51.8
      ],
      "baseline_correct": 64,
-     "fisher_p_vs_base": 0.2254,
-     "paired_perm_p_vs_base": 0.0115,
      "items_gained": 16,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 0.01182,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
@@ -3109,10 +3179,10 @@
       46.3
      ],
      "baseline_correct": 76,
-     "fisher_p_vs_base": 0.7596,
-     "paired_perm_p_vs_base": 0.5018,
      "items_gained": 12,
-     "items_lost": 8
+     "items_lost": 8,
+     "p_vs_base": 0.5034,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
@@ -3123,10 +3193,10 @@
       37.4
      ],
      "baseline_correct": 75,
-     "fisher_p_vs_base": 0.7631,
-     "paired_perm_p_vs_base": 0.4286,
      "items_gained": 5,
-     "items_lost": 9
+     "items_lost": 9,
+     "p_vs_base": 0.424,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
@@ -3137,10 +3207,10 @@
       40.0
      ],
      "baseline_correct": 33,
-     "fisher_p_vs_base": 0.8796,
-     "paired_perm_p_vs_base": 0.7602,
      "items_gained": 4,
-     "items_lost": 6
+     "items_lost": 6,
+     "p_vs_base": 0.7539,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
@@ -3151,10 +3221,10 @@
       61.0
      ],
      "baseline_correct": 43,
-     "fisher_p_vs_base": 0.3213,
-     "paired_perm_p_vs_base": 0.0559,
      "items_gained": 11,
-     "items_lost": 3
+     "items_lost": 3,
+     "p_vs_base": 0.05737,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -3165,10 +3235,10 @@
       47.0
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 2,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -3179,10 +3249,10 @@
       52.0
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 0.563,
-     "paired_perm_p_vs_base": 0.27,
      "items_gained": 9,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 0.2668,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -3193,10 +3263,10 @@
       46.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.8822,
-     "paired_perm_p_vs_base": 0.6859,
      "items_gained": 4,
-     "items_lost": 2
+     "items_lost": 2,
+     "p_vs_base": 0.6875,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -3207,10 +3277,10 @@
       39.0
      ],
      "baseline_correct": 31,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 3,
-     "items_lost": 4
+     "items_lost": 4,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
      "A": 168,
@@ -3230,9 +3300,11 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 810,
-     "p_vs_base": 0.0087,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.332
+     "pairs_gained": 68,
+     "pairs_lost": 38,
+     "p_vs_base": 0.007682,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)",
+     "p_holm": 0.1844
     },
     "items_all_pairs_won": 121,
     "items_majority_pairs_won": 278,
@@ -3246,9 +3318,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 229,
-     "p_vs_base": 0.4887,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.8014
+     "pairs_gained": 18,
+     "pairs_lost": 13,
+     "p_vs_base": 0.4891,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_mid": {
      "n": 609,
@@ -3260,9 +3333,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 263,
-     "p_vs_base": 0.0226,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.3871
+     "pairs_gained": 26,
+     "pairs_lost": 10,
+     "p_vs_base": 0.02192,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_easy": {
      "n": 681,
@@ -3274,9 +3348,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 318,
-     "p_vs_base": 0.2225,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.6642
+     "pairs_gained": 24,
+     "pairs_lost": 15,
+     "p_vs_base": 0.2233,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.1": {
      "n": 300,
@@ -3288,9 +3363,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 130,
-     "p_vs_base": 0.0008,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.1017
+     "pairs_gained": 27,
+     "pairs_lost": 6,
+     "p_vs_base": 0.001071,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.2": {
      "n": 300,
@@ -3302,9 +3378,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 140,
+     "pairs_gained": 7,
+     "pairs_lost": 7,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.3": {
      "n": 300,
@@ -3316,9 +3393,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 157,
-     "p_vs_base": 0.7601,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.9348
+     "pairs_gained": 7,
+     "pairs_lost": 5,
+     "p_vs_base": 0.7539,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.1": {
      "n": 300,
@@ -3330,9 +3408,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 134,
-     "p_vs_base": 0.2095,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.623
+     "pairs_gained": 14,
+     "pairs_lost": 7,
+     "p_vs_base": 0.2114,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.2": {
      "n": 300,
@@ -3344,9 +3423,10 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 123,
+     "pairs_gained": 7,
+     "pairs_lost": 7,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.3": {
      "n": 300,
@@ -3358,99 +3438,103 @@
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 126,
+     "pairs_gained": 6,
+     "pairs_lost": 6,
      "p_vs_base": 1.0,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 1.0
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     }
    }
   },
   "SPP-Ro-MT (delib)": {
-   "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences)",
+   "description": "SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% of the documents carry a reflection)",
    "deliberative": true,
+   "reference": "Base-Ro-rewarm",
    "continuation": {
     "overall": {
      "n": 600,
-     "correct": 139,
-     "accuracy": 23.2,
+     "correct": 135,
+     "accuracy": 22.5,
      "ci95": [
-      19.8,
-      26.7
+      19.2,
+      25.8
      ],
      "baseline_correct": 119,
-     "fisher_p_vs_base": 0.1818,
-     "paired_perm_p_vs_base": 0.0779,
-     "items_gained": 68,
-     "items_lost": 48
+     "items_gained": 65,
+     "items_lost": 49,
+     "p_vs_base": 0.1598,
+     "p_method": "McNemar exact (paired items)",
+     "p_vs_same_model_no_marker": 0.2022,
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
-     "correct": 36,
-     "accuracy": 21.2,
+     "correct": 37,
+     "accuracy": 21.8,
      "ci95": [
-      15.3,
-      27.6
+      15.9,
+      28.2
      ],
      "baseline_correct": 35,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 17,
-     "items_lost": 16
+     "items_lost": 15,
+     "p_vs_base": 0.8601,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
-     "correct": 43,
-     "accuracy": 21.2,
+     "correct": 40,
+     "accuracy": 19.7,
      "ci95": [
-      15.8,
-      27.1
+      14.3,
+      25.1
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 0.5329,
-     "paired_perm_p_vs_base": 0.4113,
-     "items_gained": 22,
-     "items_lost": 16
+     "items_gained": 21,
+     "items_lost": 18,
+     "p_vs_base": 0.7493,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
-     "correct": 60,
-     "accuracy": 26.4,
+     "correct": 58,
+     "accuracy": 25.6,
      "ci95": [
-      20.7,
-      32.2
+      19.8,
+      31.3
      ],
      "baseline_correct": 47,
-     "fisher_p_vs_base": 0.1844,
-     "paired_perm_p_vs_base": 0.0712,
-     "items_gained": 29,
-     "items_lost": 16
+     "items_gained": 27,
+     "items_lost": 16,
+     "p_vs_base": 0.1263,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
      "n": 100,
-     "correct": 24,
-     "accuracy": 24.0,
+     "correct": 25,
+     "accuracy": 25.0,
      "ci95": [
-      16.0,
-      33.0
+      17.0,
+      34.0
      ],
      "baseline_correct": 15,
-     "fisher_p_vs_base": 0.1528,
-     "paired_perm_p_vs_base": 0.079,
-     "items_gained": 15,
-     "items_lost": 6
+     "items_gained": 16,
+     "items_lost": 6,
+     "p_vs_base": 0.05248,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
-     "correct": 22,
-     "accuracy": 22.0,
+     "correct": 23,
+     "accuracy": 23.0,
      "ci95": [
-      14.0,
-      30.0
+      15.0,
+      32.0
      ],
      "baseline_correct": 23,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 9,
-     "items_lost": 10
+     "items_lost": 9,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
@@ -3461,24 +3545,174 @@
       38.0
      ],
      "baseline_correct": 28,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
      "items_gained": 12,
-     "items_lost": 11
+     "items_lost": 11,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
-     "correct": 26,
-     "accuracy": 26.0,
+     "correct": 25,
+     "accuracy": 25.0,
      "ci95": [
-      18.0,
-      35.0
+      17.0,
+      34.0
      ],
      "baseline_correct": 22,
-     "fisher_p_vs_base": 0.6197,
-     "paired_perm_p_vs_base": 0.4818,
      "items_gained": 11,
-     "items_lost": 7
+     "items_lost": 8,
+     "p_vs_base": 0.6476,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "art_2.2": {
+     "n": 100,
+     "correct": 22,
+     "accuracy": 22.0,
+     "ci95": [
+      14.0,
+      30.0
+     ],
+     "baseline_correct": 16,
+     "items_gained": 13,
+     "items_lost": 7,
+     "p_vs_base": 0.2632,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "art_2.3": {
+     "n": 100,
+     "correct": 11,
+     "accuracy": 11.0,
+     "ci95": [
+      5.0,
+      18.0
+     ],
+     "baseline_correct": 15,
+     "items_gained": 4,
+     "items_lost": 8,
+     "p_vs_base": 0.3877,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "pred_position_counts": {
+     "A": 155,
+     "B": 161,
+     "C": 148,
+     "D": 136
+    }
+   },
+   "letter": {
+    "overall": {
+     "n": 600,
+     "correct": 164,
+     "accuracy": 27.3,
+     "ci95": [
+      23.8,
+      31.0
+     ],
+     "baseline_correct": 155,
+     "items_gained": 92,
+     "items_lost": 83,
+     "p_vs_base": 0.5455,
+     "p_method": "McNemar exact (paired items)",
+     "p_vs_same_model_no_marker": 0.8115,
+     "p_holm": 1.0
+    },
+    "band_hard": {
+     "n": 170,
+     "correct": 48,
+     "accuracy": 28.2,
+     "ci95": [
+      21.8,
+      35.3
+     ],
+     "baseline_correct": 38,
+     "items_gained": 27,
+     "items_lost": 17,
+     "p_vs_base": 0.1742,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "band_mid": {
+     "n": 203,
+     "correct": 59,
+     "accuracy": 29.1,
+     "ci95": [
+      23.2,
+      35.5
+     ],
+     "baseline_correct": 52,
+     "items_gained": 34,
+     "items_lost": 27,
+     "p_vs_base": 0.4426,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "band_easy": {
+     "n": 227,
+     "correct": 57,
+     "accuracy": 25.1,
+     "ci95": [
+      19.8,
+      30.8
+     ],
+     "baseline_correct": 65,
+     "items_gained": 31,
+     "items_lost": 39,
+     "p_vs_base": 0.403,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "art_1.1": {
+     "n": 100,
+     "correct": 24,
+     "accuracy": 24.0,
+     "ci95": [
+      16.0,
+      33.0
+     ],
+     "baseline_correct": 28,
+     "items_gained": 11,
+     "items_lost": 15,
+     "p_vs_base": 0.5572,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "art_1.2": {
+     "n": 100,
+     "correct": 29,
+     "accuracy": 29.0,
+     "ci95": [
+      20.0,
+      38.0
+     ],
+     "baseline_correct": 24,
+     "items_gained": 14,
+     "items_lost": 9,
+     "p_vs_base": 0.4049,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "art_1.3": {
+     "n": 100,
+     "correct": 24,
+     "accuracy": 24.0,
+     "ci95": [
+      16.0,
+      33.0
+     ],
+     "baseline_correct": 22,
+     "items_gained": 15,
+     "items_lost": 13,
+     "p_vs_base": 0.8506,
+     "p_method": "McNemar exact (paired items)"
+    },
+    "art_2.1": {
+     "n": 100,
+     "correct": 37,
+     "accuracy": 37.0,
+     "ci95": [
+      28.0,
+      47.0
+     ],
+     "baseline_correct": 29,
+     "items_gained": 21,
+     "items_lost": 13,
+     "p_vs_base": 0.2295,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -3488,133 +3722,93 @@
       17.0,
       34.0
      ],
-     "baseline_correct": 16,
-     "fisher_p_vs_base": 0.1606,
-     "paired_perm_p_vs_base": 0.0931,
-     "items_gained": 16,
-     "items_lost": 7
+     "baseline_correct": 33,
+     "items_gained": 13,
+     "items_lost": 21,
+     "p_vs_base": 0.2295,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
-     "correct": 13,
-     "accuracy": 13.0,
+     "correct": 25,
+     "accuracy": 25.0,
      "ci95": [
-      7.0,
-      20.0
+      17.0,
+      34.0
      ],
-     "baseline_correct": 15,
-     "fisher_p_vs_base": 0.8389,
-     "paired_perm_p_vs_base": 0.7773,
-     "items_gained": 5,
-     "items_lost": 7
+     "baseline_correct": 19,
+     "items_gained": 18,
+     "items_lost": 12,
+     "p_vs_base": 0.3616,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
-     "A": 159,
-     "B": 161,
-     "C": 147,
-     "D": 133
+     "A": 157,
+     "B": 140,
+     "C": 163,
+     "D": 140
     }
    },
-   "letter": {
+   "pmi": {
     "overall": {
      "n": 600,
-     "correct": 154,
-     "accuracy": 25.7,
+     "correct": 198,
+     "accuracy": 33.0,
      "ci95": [
-      22.2,
-      29.2
+      29.3,
+      36.8
      ],
-     "baseline_correct": 155,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
-     "items_gained": 87,
-     "items_lost": 88
+     "baseline_correct": 215,
+     "items_gained": 96,
+     "items_lost": 113,
+     "p_vs_base": 0.2684,
+     "p_method": "McNemar exact (paired items)",
+     "p_vs_same_model_no_marker": 0.05138,
+     "p_holm": 1.0
     },
     "band_hard": {
      "n": 170,
-     "correct": 47,
-     "accuracy": 27.6,
+     "correct": 63,
+     "accuracy": 37.1,
      "ci95": [
-      21.2,
-      34.7
+      30.0,
+      44.1
      ],
-     "baseline_correct": 38,
-     "fisher_p_vs_base": 0.3164,
-     "paired_perm_p_vs_base": 0.246,
-     "items_gained": 28,
-     "items_lost": 19
+     "baseline_correct": 64,
+     "items_gained": 30,
+     "items_lost": 31,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_mid": {
      "n": 203,
-     "correct": 53,
-     "accuracy": 26.1,
+     "correct": 61,
+     "accuracy": 30.0,
      "ci95": [
-      20.2,
-      32.5
+      24.1,
+      36.5
      ],
-     "baseline_correct": 52,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
-     "items_gained": 29,
-     "items_lost": 28
+     "baseline_correct": 76,
+     "items_gained": 26,
+     "items_lost": 41,
+     "p_vs_base": 0.08644,
+     "p_method": "McNemar exact (paired items)"
     },
     "band_easy": {
      "n": 227,
-     "correct": 54,
-     "accuracy": 23.8,
+     "correct": 74,
+     "accuracy": 32.6,
      "ci95": [
-      18.5,
-      29.5
+      26.4,
+      38.8
      ],
-     "baseline_correct": 65,
-     "fisher_p_vs_base": 0.2859,
-     "paired_perm_p_vs_base": 0.2344,
-     "items_gained": 30,
-     "items_lost": 41
+     "baseline_correct": 75,
+     "items_gained": 40,
+     "items_lost": 41,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.1": {
-     "n": 100,
-     "correct": 19,
-     "accuracy": 19.0,
-     "ci95": [
-      12.0,
-      27.0
-     ],
-     "baseline_correct": 28,
-     "fisher_p_vs_base": 0.1818,
-     "paired_perm_p_vs_base": 0.1351,
-     "items_gained": 10,
-     "items_lost": 19
-    },
-    "art_1.2": {
-     "n": 100,
-     "correct": 22,
-     "accuracy": 22.0,
-     "ci95": [
-      14.0,
-      30.0
-     ],
-     "baseline_correct": 24,
-     "fisher_p_vs_base": 0.8667,
-     "paired_perm_p_vs_base": 0.8301,
-     "items_gained": 10,
-     "items_lost": 12
-    },
-    "art_1.3": {
-     "n": 100,
-     "correct": 24,
-     "accuracy": 24.0,
-     "ci95": [
-      16.0,
-      33.0
-     ],
-     "baseline_correct": 22,
-     "fisher_p_vs_base": 0.8667,
-     "paired_perm_p_vs_base": 0.8469,
-     "items_gained": 14,
-     "items_lost": 12
-    },
-    "art_2.1": {
      "n": 100,
      "correct": 34,
      "accuracy": 34.0,
@@ -3622,145 +3816,39 @@
       25.0,
       43.0
      ],
-     "baseline_correct": 29,
-     "fisher_p_vs_base": 0.5428,
-     "paired_perm_p_vs_base": 0.4851,
-     "items_gained": 19,
-     "items_lost": 14
-    },
-    "art_2.2": {
-     "n": 100,
-     "correct": 29,
-     "accuracy": 29.0,
-     "ci95": [
-      20.0,
-      38.0
-     ],
      "baseline_correct": 33,
-     "fisher_p_vs_base": 0.6467,
-     "paired_perm_p_vs_base": 0.631,
-     "items_gained": 18,
-     "items_lost": 22
-    },
-    "art_2.3": {
-     "n": 100,
-     "correct": 26,
-     "accuracy": 26.0,
-     "ci95": [
-      18.0,
-      35.0
-     ],
-     "baseline_correct": 19,
-     "fisher_p_vs_base": 0.3096,
-     "paired_perm_p_vs_base": 0.2248,
      "items_gained": 16,
-     "items_lost": 9
-    },
-    "pred_position_counts": {
-     "A": 158,
-     "B": 135,
-     "C": 160,
-     "D": 147
-    }
-   },
-   "pmi": {
-    "overall": {
-     "n": 600,
-     "correct": 201,
-     "accuracy": 33.5,
-     "ci95": [
-      29.8,
-      37.3
-     ],
-     "baseline_correct": 215,
-     "fisher_p_vs_base": 0.4304,
-     "paired_perm_p_vs_base": 0.3608,
-     "items_gained": 97,
-     "items_lost": 111
-    },
-    "band_hard": {
-     "n": 170,
-     "correct": 66,
-     "accuracy": 38.8,
-     "ci95": [
-      31.8,
-      45.9
-     ],
-     "baseline_correct": 64,
-     "fisher_p_vs_base": 0.9112,
-     "paired_perm_p_vs_base": 0.8965,
-     "items_gained": 31,
-     "items_lost": 29
-    },
-    "band_mid": {
-     "n": 203,
-     "correct": 60,
-     "accuracy": 29.6,
-     "ci95": [
-      23.2,
-      36.0
-     ],
-     "baseline_correct": 76,
-     "fisher_p_vs_base": 0.1146,
-     "paired_perm_p_vs_base": 0.0646,
-     "items_gained": 25,
-     "items_lost": 41
-    },
-    "band_easy": {
-     "n": 227,
-     "correct": 75,
-     "accuracy": 33.0,
-     "ci95": [
-      26.9,
-      39.2
-     ],
-     "baseline_correct": 75,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
-     "items_gained": 41,
-     "items_lost": 41
-    },
-    "art_1.1": {
-     "n": 100,
-     "correct": 33,
-     "accuracy": 33.0,
-     "ci95": [
-      24.0,
-      42.0
-     ],
-     "baseline_correct": 33,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
-     "items_gained": 15,
-     "items_lost": 15
+     "items_lost": 15,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.2": {
      "n": 100,
-     "correct": 38,
-     "accuracy": 38.0,
+     "correct": 36,
+     "accuracy": 36.0,
      "ci95": [
-      29.0,
-      48.0
+      27.0,
+      46.0
      ],
      "baseline_correct": 43,
-     "fisher_p_vs_base": 0.5646,
-     "paired_perm_p_vs_base": 0.5102,
-     "items_gained": 16,
-     "items_lost": 21
+     "items_gained": 13,
+     "items_lost": 20,
+     "p_vs_base": 0.2962,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_1.3": {
      "n": 100,
-     "correct": 33,
-     "accuracy": 33.0,
+     "correct": 31,
+     "accuracy": 31.0,
      "ci95": [
-      24.0,
-      42.0
+      22.0,
+      40.0
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 0.6567,
-     "paired_perm_p_vs_base": 0.6053,
      "items_gained": 15,
-     "items_lost": 19
+     "items_lost": 21,
+     "p_vs_base": 0.405,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.1": {
      "n": 100,
@@ -3771,10 +3859,10 @@
       45.0
      ],
      "baseline_correct": 37,
-     "fisher_p_vs_base": 0.883,
-     "paired_perm_p_vs_base": 0.866,
      "items_gained": 17,
-     "items_lost": 19
+     "items_lost": 19,
+     "p_vs_base": 0.8679,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.2": {
      "n": 100,
@@ -3785,10 +3873,10 @@
       39.0
      ],
      "baseline_correct": 34,
-     "fisher_p_vs_base": 0.6495,
-     "paired_perm_p_vs_base": 0.5993,
      "items_gained": 14,
-     "items_lost": 18
+     "items_lost": 18,
+     "p_vs_base": 0.5966,
+     "p_method": "McNemar exact (paired items)"
     },
     "art_2.3": {
      "n": 100,
@@ -3799,160 +3887,172 @@
       41.0
      ],
      "baseline_correct": 31,
-     "fisher_p_vs_base": 1.0,
-     "paired_perm_p_vs_base": 1.0,
-     "items_gained": 20,
-     "items_lost": 19
+     "items_gained": 21,
+     "items_lost": 20,
+     "p_vs_base": 1.0,
+     "p_method": "McNemar exact (paired items)"
     },
     "pred_position_counts": {
-     "A": 184,
-     "B": 141,
-     "C": 155,
-     "D": 120
+     "A": 186,
+     "B": 139,
+     "C": 157,
+     "D": 118
     }
    },
    "pairwise": {
     "overall": {
      "n": 1800,
-     "correct": 844,
-     "accuracy": 46.9,
+     "correct": 839,
+     "accuracy": 46.6,
      "ci95": [
-      43.9,
-      49.9
+      43.6,
+      49.6
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 810,
-     "p_vs_base": 0.1514,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.2697
+     "pairs_gained": 200,
+     "pairs_lost": 171,
+     "p_vs_base": 0.221,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)",
+     "p_vs_same_model_no_marker": 1.0,
+     "p_holm": 1.0
     },
-    "items_all_pairs_won": 139,
-    "items_majority_pairs_won": 282,
+    "items_all_pairs_won": 135,
+    "items_majority_pairs_won": 278,
     "band_hard": {
      "n": 510,
      "correct": 227,
      "accuracy": 44.5,
      "ci95": [
-      38.6,
+      38.8,
       50.2
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 229,
-     "p_vs_base": 0.9365,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.9498
+     "pairs_gained": 51,
+     "pairs_lost": 53,
+     "p_vs_base": 0.9369,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_mid": {
      "n": 609,
-     "correct": 278,
-     "accuracy": 45.6,
+     "correct": 277,
+     "accuracy": 45.5,
      "ci95": [
       40.6,
-      50.7
+      50.4
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 263,
-     "p_vs_base": 0.2724,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.4195
+     "pairs_gained": 66,
+     "pairs_lost": 52,
+     "p_vs_base": 0.3171,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "band_easy": {
      "n": 681,
-     "correct": 339,
-     "accuracy": 49.8,
+     "correct": 335,
+     "accuracy": 49.2,
      "ci95": [
-      44.6,
-      54.8
+      44.2,
+      54.0
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 318,
-     "p_vs_base": 0.1628,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.2781
+     "pairs_gained": 83,
+     "pairs_lost": 66,
+     "p_vs_base": 0.2549,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.1": {
      "n": 300,
-     "correct": 158,
-     "accuracy": 52.7,
+     "correct": 160,
+     "accuracy": 53.3,
      "ci95": [
-      45.7,
-      60.0
+      46.3,
+      60.7
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 130,
-     "p_vs_base": 0.0088,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.0273
+     "pairs_gained": 52,
+     "pairs_lost": 22,
+     "p_vs_base": 0.005003,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.2": {
      "n": 300,
-     "correct": 131,
-     "accuracy": 43.7,
+     "correct": 133,
+     "accuracy": 44.3,
      "ci95": [
-      36.3,
-      51.3
+      37.0,
+      52.3
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 140,
-     "p_vs_base": 0.318,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.5117
+     "pairs_gained": 22,
+     "pairs_lost": 29,
+     "p_vs_base": 0.453,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_1.3": {
      "n": 300,
-     "correct": 151,
-     "accuracy": 50.3,
+     "correct": 152,
+     "accuracy": 50.7,
      "ci95": [
-      42.7,
-      58.0
+      43.3,
+      58.3
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 157,
-     "p_vs_base": 0.6219,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.683
+     "pairs_gained": 30,
+     "pairs_lost": 35,
+     "p_vs_base": 0.6929,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.1": {
      "n": 300,
-     "correct": 151,
-     "accuracy": 50.3,
+     "correct": 148,
+     "accuracy": 49.3,
      "ci95": [
-      43.0,
-      58.0
+      42.0,
+      56.7
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 134,
-     "p_vs_base": 0.0785,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.1908
+     "pairs_gained": 39,
+     "pairs_lost": 25,
+     "p_vs_base": 0.1613,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.2": {
      "n": 300,
-     "correct": 140,
-     "accuracy": 46.7,
+     "correct": 136,
+     "accuracy": 45.3,
      "ci95": [
-      39.0,
-      54.3
+      38.0,
+      53.0
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 123,
-     "p_vs_base": 0.0906,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.188
+     "pairs_gained": 35,
+     "pairs_lost": 22,
+     "p_vs_base": 0.2049,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     },
     "art_2.3": {
      "n": 300,
-     "correct": 113,
-     "accuracy": 37.7,
+     "correct": 110,
+     "accuracy": 36.7,
      "ci95": [
-      31.0,
-      44.7
+      30.0,
+      43.3
      ],
      "ci_method": "bootstrap pe itemi (cluster)",
      "baseline_correct": 126,
-     "p_vs_base": 0.1855,
-     "p_method": "permutare pereche pe itemi",
-     "fisher_p_pairs_iid": 0.317
+     "pairs_gained": 22,
+     "pairs_lost": 38,
+     "p_vs_base": 0.08047,
+     "p_method": "sign-flip exact pe itemi (diferența perechilor câștigate)"
     }
    }
   },
@@ -4312,7 +4412,7 @@
      "accuracy": 54.0,
      "ci95": [
       47.0,
-      61.0
+      61.3
      ],
      "ci_method": "bootstrap pe itemi (cluster)"
     },
@@ -4760,6 +4860,180 @@
     }
    }
   }
+ },
+ "holm": {
+  "family": "overall comparison of every non-reference row with its reference, all 4 protocols",
+  "m": 24,
+  "rows": [
+   {
+    "model": "SPP-Ro",
+    "reference": "Base-Ro",
+    "protocol": "continuation",
+    "p": 0.6516,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro",
+    "reference": "Base-Ro",
+    "protocol": "letter",
+    "p": 0.2342,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro",
+    "reference": "Base-Ro",
+    "protocol": "pmi",
+    "p": 0.01934,
+    "p_holm": 0.4255
+   },
+   {
+    "model": "SPP-Ro",
+    "reference": "Base-Ro",
+    "protocol": "pairwise",
+    "p": 1.0,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro (delib)",
+    "reference": "Base-Ro",
+    "protocol": "continuation",
+    "p": 0.09184,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro (delib)",
+    "reference": "Base-Ro",
+    "protocol": "letter",
+    "p": 0.009063,
+    "p_holm": 0.2084
+   },
+   {
+    "model": "SPP-Ro (delib)",
+    "reference": "Base-Ro",
+    "protocol": "pmi",
+    "p": 0.06594,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro (delib)",
+    "reference": "Base-Ro",
+    "protocol": "pairwise",
+    "p": 0.5742,
+    "p_holm": 1.0
+   },
+   {
+    "model": "Filtered-Ro",
+    "reference": "Base-Ro",
+    "protocol": "continuation",
+    "p": 0.4011,
+    "p_holm": 1.0
+   },
+   {
+    "model": "Filtered-Ro",
+    "reference": "Base-Ro",
+    "protocol": "letter",
+    "p": 0.1684,
+    "p_holm": 1.0
+   },
+   {
+    "model": "Filtered-Ro",
+    "reference": "Base-Ro",
+    "protocol": "pmi",
+    "p": 0.1296,
+    "p_holm": 1.0
+   },
+   {
+    "model": "Filtered-Ro",
+    "reference": "Base-Ro",
+    "protocol": "pairwise",
+    "p": 0.4002,
+    "p_holm": 1.0
+   },
+   {
+    "model": "Base-Ro-rewarm",
+    "reference": "Base-Ro",
+    "protocol": "continuation",
+    "p": 0.7539,
+    "p_holm": 1.0
+   },
+   {
+    "model": "Base-Ro-rewarm",
+    "reference": "Base-Ro",
+    "protocol": "letter",
+    "p": 0.1742,
+    "p_holm": 1.0
+   },
+   {
+    "model": "Base-Ro-rewarm",
+    "reference": "Base-Ro",
+    "protocol": "pmi",
+    "p": 0.03355,
+    "p_holm": 0.7046
+   },
+   {
+    "model": "Base-Ro-rewarm",
+    "reference": "Base-Ro",
+    "protocol": "pairwise",
+    "p": 0.7111,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro-MT",
+    "reference": "Base-Ro-rewarm",
+    "protocol": "continuation",
+    "p": 0.845,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro-MT",
+    "reference": "Base-Ro-rewarm",
+    "protocol": "letter",
+    "p": 0.1821,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro-MT",
+    "reference": "Base-Ro-rewarm",
+    "protocol": "pmi",
+    "p": 0.1337,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro-MT",
+    "reference": "Base-Ro-rewarm",
+    "protocol": "pairwise",
+    "p": 0.007682,
+    "p_holm": 0.1844
+   },
+   {
+    "model": "SPP-Ro-MT (delib)",
+    "reference": "Base-Ro-rewarm",
+    "protocol": "continuation",
+    "p": 0.1598,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro-MT (delib)",
+    "reference": "Base-Ro-rewarm",
+    "protocol": "letter",
+    "p": 0.5455,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro-MT (delib)",
+    "reference": "Base-Ro-rewarm",
+    "protocol": "pmi",
+    "p": 0.2684,
+    "p_holm": 1.0
+   },
+   {
+    "model": "SPP-Ro-MT (delib)",
+    "reference": "Base-Ro-rewarm",
+    "protocol": "pairwise",
+    "p": 0.221,
+    "p_holm": 1.0
+   }
+  ]
  },
  "per_item_predictions": {
   "Base-Ro": {
@@ -14398,7 +14672,7 @@
     1,
     1,
     1,
-    0,
+    2,
     0,
     3,
     0,
@@ -14413,7 +14687,7 @@
     2,
     1,
     2,
-    1,
+    0,
     1,
     1,
     0,
@@ -14434,7 +14708,7 @@
     0,
     2,
     2,
-    0,
+    2,
     3,
     2,
     1,
@@ -14443,7 +14717,7 @@
     1,
     0,
     3,
-    1,
+    2,
     1,
     3,
     2,
@@ -14453,7 +14727,7 @@
     3,
     3,
     0,
-    2,
+    3,
     2,
     3,
     1,
@@ -14501,13 +14775,13 @@
     1,
     1,
     3,
-    2,
+    1,
     2,
     2,
     1,
     0,
     2,
-    1,
+    2,
     3,
     1,
     2,
@@ -14548,7 +14822,7 @@
     1,
     3,
     3,
-    1,
+    3,
     3,
     1,
     3,
@@ -14581,7 +14855,7 @@
     0,
     0,
     3,
-    2,
+    3,
     0,
     3,
     1,
@@ -14653,7 +14927,7 @@
     0,
     0,
     0,
-    1,
+    3,
     0,
     2,
     3,
@@ -14690,9 +14964,9 @@
     1,
     1,
     2,
-    0,
     0,
     0,
+    3,
     2,
     2,
     0,
@@ -14740,7 +15014,7 @@
     1,
     0,
     3,
-    2,
+    0,
     3,
     0,
     3,
@@ -14781,7 +15055,7 @@
     1,
     0,
     3,
-    0,
+    3,
     2,
     2,
     0,
@@ -14794,7 +15068,7 @@
     1,
     1,
     3,
-    2,
+    0,
     1,
     3,
     0,
@@ -14809,7 +15083,7 @@
     1,
     1,
     2,
-    0,
+    1,
     0,
     0,
     2,
@@ -14836,7 +15110,7 @@
     2,
     1,
     2,
-    3,
+    0,
     3,
     2,
     2,
@@ -14875,7 +15149,7 @@
     1,
     1,
     3,
-    1,
+    0,
     3,
     3,
     2,
@@ -14948,9 +15222,9 @@
     2,
     0,
     2,
-    1,
     1,
     1,
+    2,
     3,
     0,
     0,
@@ -14974,7 +15248,7 @@
     2,
     0,
     2,
-    0,
+    2,
     1,
     0,
     2,
@@ -14987,7 +15261,7 @@
    ],
    "letter": [
     1,
-    2,
+    3,
     3,
     1,
     2,
@@ -15004,24 +15278,24 @@
     1,
     2,
     1,
-    1,
+    3,
     1,
     2,
     2,
     2,
     1,
     2,
-    1,
-    2,
     0,
     0,
-    2,
-    1,
     1,
+    0,
     1,
     1,
     1,
+    2,
     1,
+    0,
+    3,
     3,
     2,
     0,
@@ -15029,9 +15303,9 @@
     1,
     2,
     0,
+    1,
     3,
     3,
-    0,
     0,
     0,
     2,
@@ -15039,7 +15313,7 @@
     0,
     3,
     0,
-    0,
+    1,
     3,
     2,
     3,
@@ -15047,48 +15321,48 @@
     0,
     3,
     0,
+    3,
+    1,
     0,
     2,
-    0,
     2,
     2,
     2,
     2,
     3,
-    3,
     2,
     3,
     0,
-    3,
+    0,
     3,
     0,
     1,
     2,
     2,
     2,
-    3,
-    1,
-    3,
+    0,
+    0,
+    2,
     3,
     2,
     3,
     3,
+    2,
     1,
     1,
     2,
-    3,
     1,
     1,
     1,
     0,
     0,
-    0,
-    0,
+    1,
     0,
     2,
+    2,
     3,
     0,
-    1,
+    0,
     1,
     0,
     1,
@@ -15097,86 +15371,86 @@
     3,
     0,
     3,
-    2,
     2,
     0,
+    0,
     1,
     2,
     0,
     1,
     0,
-    1,
     0,
-    2,
-    1,
+    0,
+    0,
+    3,
     0,
     0,
     2,
     1,
     0,
-    3,
     1,
-    0,
     2,
-    1,
     0,
     2,
+    0,
+    0,
     1,
     1,
-    0,
-    2,
+    1,
     3,
+    2,
+    0,
     1,
     0,
     3,
     3,
     1,
-    0,
     0,
+    1,
     2,
-    0,
+    2,
     1,
     2,
     0,
     3,
-    1,
+    2,
     3,
     2,
     2,
-    1,
+    2,
     0,
     3,
     1,
-    1,
-    0,
     2,
-    1,
-    1,
+    0,
+    3,
     2,
     1,
-    1,
     2,
     0,
-    0,
     3,
+    2,
+    0,
     1,
     3,
     0,
-    3,
+    0,
+    1,
+    0,
     2,
     3,
     3,
-    1,
     1,
+    3,
     0,
     3,
     3,
     3,
     0,
     2,
+    3,
+    3,
     2,
-    1,
-    1,
     2,
     2,
     1,
@@ -15185,45 +15459,45 @@
     1,
     3,
     3,
+    2,
     1,
     1,
-    2,
     3,
     2,
-    3,
-    1,
-    3,
+    2,
     1,
+    0,
+    0,
     3,
     3,
     3,
     2,
-    2,
+    3,
     2,
     0,
     3,
     1,
-    1,
     0,
     0,
+    1,
     3,
     3,
-    0,
     1,
-    3,
+    1,
     2,
+    1,
     3,
     3,
     0,
-    3,
+    2,
     3,
     1,
     3,
     2,
     1,
-    2,
+    0,
     3,
-    2,
+    1,
     2,
     0,
     3,
@@ -15231,7 +15505,7 @@
     1,
     3,
     0,
-    3,
+    2,
     0,
     1,
     3,
@@ -15240,71 +15514,71 @@
     1,
     1,
     2,
-    1,
     0,
-    3,
-    2,
     0,
     0,
+    3,
     0,
     1,
-    1,
-    0,
     0,
-    0,
-    0,
+    1,
+    2,
+    1,
     0,
     1,
+    1,
     0,
+    1,
     0,
     0,
+    3,
     0,
     2,
-    1,
-    0,
-    1,
     3,
     0,
-    1,
     3,
     3,
     0,
+    1,
+    0,
     2,
+    2,
+    1,
     3,
     0,
     0,
     2,
     1,
-    1,
+    2,
     0,
     0,
     1,
     1,
     1,
-    2,
     0,
+    0,
     3,
     1,
-    2,
+    1,
     0,
-    3,
+    2,
     1,
     0,
     3,
-    1,
+    2,
     1,
-    0,
     0,
     1,
+    1,
     3,
     3,
     0,
-    3,
     1,
-    2,
     1,
     3,
-    0,
+    1,
+    3,
+    1,
     0,
     2,
     1,
@@ -15315,105 +15589,105 @@
     3,
     1,
     0,
-    2,
     0,
-    3,
+    1,
+    1,
     0,
     1,
     1,
     3,
     1,
     3,
-    3,
+    1,
     1,
     0,
     3,
     1,
     2,
-    0,
+    2,
     0,
     3,
-    0,
+    1,
     0,
     1,
     1,
     2,
-    1,
-    1,
     2,
     1,
+    2,
+    3,
     0,
-    1,
+    3,
     1,
+    2,
     0,
-    3,
     0,
     1,
-    3,
     0,
-    3,
-    3,
+    0,
     3,
     2,
-    0,
     3,
     2,
     0,
     3,
-    2,
-    2,
     3,
-    1,
     2,
     3,
     2,
+    2,
+    3,
     1,
     1,
+    3,
     2,
-    1,
-    0,
     0,
-    1,
     0,
     3,
     1,
     2,
+    0,
     1,
     2,
+    3,
+    1,
     1,
+    3,
     2,
+    1,
     1,
     1,
+    1,
+    1,
     2,
     2,
-    3,
     1,
     1,
+    3,
     1,
-    2,
     3,
-    2,
-    2,
+    3,
     0,
     3,
-    1,
+    3,
+    2,
     0,
-    1,
-    1,
+    2,
+    3,
     1,
     1,
     0,
     3,
-    2,
-    2,
+    3,
     2,
     2,
+    3,
     1,
     3,
-    0,
     3,
-    2,
+    0,
     2,
+    0,
     0,
     3,
     0,
@@ -15423,95 +15697,95 @@
     2,
     1,
     0,
-    3,
     0,
-    3,
-    2,
-    2,
-    1,
     0,
     1,
+    2,
     1,
     1,
     0,
+    1,
     3,
     1,
     0,
+    1,
+    2,
     0,
     0,
+    0,
     2,
     3,
-    1,
+    0,
     3,
     3,
-    1,
     2,
-    0,
     2,
+    0,
     1,
     1,
     1,
-    0,
+    2,
     0,
     2,
+    2,
     1,
     1,
     1,
-    3,
-    3,
+    2,
     2,
     2,
+    2,
     1,
-    3,
+    2,
     0,
     3,
     2,
     3,
     1,
     0,
-    3,
+    2,
     3,
     2,
     2,
     0,
     2,
-    0,
-    0,
     0,
+    1,
+    1,
     3,
     2,
-    2,
-    0,
+    3,
+    1,
     0,
     3,
     2,
-    0,
+    1,
     0,
     2,
-    0,
     1,
+    1,
     2,
     0,
     1,
-    2,
+    3,
     2,
     2,
     3,
-    0,
+    1,
     3,
-    0,
+    1,
     3,
     3,
     2,
     0,
-    2,
+    3,
     3,
     2,
     2,
     2,
     2,
     3,
-    3,
+    2,
     0,
     1,
     1,
@@ -15522,67 +15796,67 @@
     1,
     1,
     2,
-    1,
-    1,
+    2,
+    0,
     2,
     2,
-    1,
+    0,
     1,
     3,
     2,
     2,
     0,
-    3,
     0,
+    0,
     2,
     0,
     2,
+    0,
     3,
     3,
     2,
-    2,
     3,
     3,
-    2,
     1,
     1,
+    2,
     1,
     2,
     0,
     1,
-    2,
+    0,
     2,
     2,
-    0,
+    1,
     2,
     2,
     0,
     2,
+    1,
     0,
     0,
     0,
     0,
-    1,
     2,
     3,
+    2,
+    3,
     1,
     1,
+    0,
     1,
     1,
-    2,
-    0,
-    2,
-    2,
+    3,
     2,
     2,
-    0,
     0,
     3,
+    0,
     2,
     3,
     2,
     2,
-    2,
+    3,
     2,
     3,
     0
@@ -15615,7 +15889,7 @@
     3,
     0,
     3,
-    0,
+    1,
     2,
     0,
     2,
@@ -15639,8 +15913,8 @@
     0,
     2,
     0,
-    2,
     1,
+    0,
     3,
     2,
     3,
@@ -15648,7 +15922,7 @@
     1,
     3,
     3,
-    2,
+    3,
     1,
     3,
     1,
@@ -15672,7 +15946,7 @@
     0,
     0,
     0,
-    2,
+    0,
     1,
     2,
     2,
@@ -15776,7 +16050,7 @@
     2,
     0,
     2,
-    3,
+    2,
     3,
     3,
     1,
@@ -15793,16 +16067,16 @@
     0,
     2,
     2,
-    3,
     3,
     0,
+    0,
     1,
     1,
     0,
     1,
     1,
     2,
-    0,
+    2,
     3,
     1,
     2,
@@ -15811,8 +16085,8 @@
     3,
     0,
     2,
+    1,
     2,
-    0,
     3,
     3,
     0,
@@ -15880,7 +16154,7 @@
     0,
     0,
     2,
-    2,
+    1,
     2,
     2,
     1,
@@ -15892,7 +16166,7 @@
     2,
     0,
     3,
-    2,
+    1,
     1,
     2,
     0,
@@ -15902,7 +16176,7 @@
     1,
     1,
     1,
-    2,
+    0,
     1,
     3,
     3,
@@ -15919,11 +16193,11 @@
     2,
     1,
     2,
-    3,
-    3,
+    0,
     0,
+    0,
     2,
-    3,
+    0,
     2,
     0,
     0,
@@ -15975,7 +16249,7 @@
     1,
     0,
     1,
-    1,
+    3,
     1,
     0,
     2,
@@ -16012,7 +16286,7 @@
     2,
     2,
     2,
-    0,
+    2,
     1,
     0,
     0,
@@ -16048,11 +16322,11 @@
     1,
     0,
     2,
-    0,
+    1,
     2,
     2,
     2,
-    3,
+    1,
     2,
     1,
     2,
@@ -16064,20 +16338,20 @@
     2,
     0,
     1,
-    3,
+    2,
     0,
-    3,
+    1,
     1,
     0,
     0,
     2,
     0,
-    3,
     1,
     1,
+    1,
     2,
     2,
-    3,
+    1,
     3,
     3,
     1,
@@ -16091,7 +16365,7 @@
     0,
     3,
     0,
-    2,
+    3,
     2,
     2,
     0,
@@ -16104,12 +16378,12 @@
     2,
     2,
     2,
-    3,
+    1,
     2,
     1,
     1,
     1,
-    3,
+    0,
     2,
     3,
     2,
@@ -16120,7 +16394,7 @@
     3,
     0,
     1,
-    3,
+    0,
     1,
     2,
     2,
@@ -16150,7 +16424,7 @@
     0,
     0,
     2,
-    0,
+    1,
     2,
     3,
     1,
@@ -16261,8 +16535,8 @@
      1
     ],
     [
-     0,
      1,
+     1,
      1
     ],
     [
@@ -16317,7 +16591,7 @@
     ],
     [
      0,
-     1,
+     0,
      0
     ],
     [
@@ -16378,7 +16652,7 @@
     [
      0,
      0,
-     1
+     0
     ],
     [
      0,
@@ -16386,7 +16660,7 @@
      0
     ],
     [
-     0,
+     1,
      0,
      1
     ],
@@ -16608,7 +16882,7 @@
     [
      0,
      0,
-     0
+     1
     ],
     [
      1,
@@ -16721,7 +16995,7 @@
      0
     ],
     [
-     0,
+     1,
      0,
      0
     ],
@@ -16797,8 +17071,8 @@
     ],
     [
      0,
-     1,
-     1
+     0,
+     0
     ],
     [
      0,
@@ -16807,7 +17081,7 @@
     ],
     [
      1,
-     1,
+     0,
      1
     ],
     [
@@ -17242,7 +17516,7 @@
     ],
     [
      0,
-     1,
+     0,
      0
     ],
     [
@@ -17253,7 +17527,7 @@
     [
      0,
      0,
-     1
+     0
     ],
     [
      1,
@@ -17691,7 +17965,7 @@
      0
     ],
     [
-     1,
+     0,
      1,
      0
     ],
@@ -17876,8 +18150,8 @@
      0
     ],
     [
-     0,
      0,
+     1,
      1
     ],
     [
@@ -17893,7 +18167,7 @@
     [
      1,
      0,
-     0
+     1
     ],
     [
      1,
@@ -17912,7 +18186,7 @@
     ],
     [
      1,
-     1,
+     0,
      0
     ],
     [
@@ -17972,7 +18246,7 @@
     ],
     [
      1,
-     0,
+     1,
      1
     ],
     [
@@ -17983,7 +18257,7 @@
     [
      0,
      1,
-     1
+     0
     ],
     [
      0,
@@ -17993,7 +18267,7 @@
     [
      0,
      0,
-     1
+     0
     ],
     [
      0,
@@ -18106,7 +18380,7 @@
      0
     ],
     [
-     0,
+     1,
      0,
      0
     ],
@@ -18178,7 +18452,7 @@
     [
      1,
      1,
-     1
+     0
     ],
     [
      1,
@@ -18198,7 +18472,7 @@
     [
      0,
      0,
-     1
+     0
     ],
     [
      1,
@@ -18211,8 +18485,8 @@
      0
     ],
     [
-     0,
      0,
+     1,
      0
     ],
     [
@@ -18242,7 +18516,7 @@
     ],
     [
      1,
-     0,
+     1,
      1
     ],
     [
@@ -18463,7 +18737,7 @@
     [
      1,
      0,
-     0
+     1
     ],
     [
      0,
@@ -18663,7 +18937,7 @@
     [
      0,
      0,
-     1
+     0
     ],
     [
      1,
@@ -18871,7 +19145,7 @@
      1
     ],
     [
-     1,
+     0,
      1,
      0
     ],
@@ -18926,7 +19200,7 @@
      0
     ],
     [
-     1,
+     0,
      1,
      0
     ],
@@ -33636,9 +33910,9 @@
     1,
     2,
     1,
-    1,
+    0,
     1,
-    2,
+    0,
     2,
     3,
     0,
@@ -33654,7 +33928,7 @@
     1,
     3,
     1,
-    1,
+    2,
     1,
     0,
     1,
@@ -33725,7 +33999,7 @@
     1,
     3,
     0,
-    2,
+    1,
     0,
     2,
     2,
@@ -33801,7 +34075,7 @@
     2,
     0,
     0,
-    2,
+    3,
     1,
     0,
     2,
@@ -33911,8 +34185,8 @@
     0,
     1,
     3,
-    0,
     0,
+    2,
     1,
     3,
     2,
@@ -33920,7 +34194,7 @@
     1,
     2,
     0,
-    2,
+    1,
     2,
     3,
     2,
@@ -33930,7 +34204,7 @@
     0,
     1,
     2,
-    0,
+    2,
     0,
     0,
     2,
@@ -33980,10 +34254,10 @@
     1,
     0,
     3,
-    0,
+    2,
     3,
-    0,
     3,
+    3,
     2,
     0,
     0,
@@ -33999,7 +34273,7 @@
     0,
     0,
     1,
-    0,
+    2,
     3,
     0,
     2,
@@ -34060,8 +34334,8 @@
     1,
     0,
     2,
-    0,
     0,
+    2,
     1,
     3,
     1,
@@ -34070,12 +34344,12 @@
     3,
     0,
     3,
-    2,
+    3,
     2,
     1,
     2,
     1,
-    3,
+    2,
     3,
     3,
     2,
@@ -34087,7 +34361,7 @@
     2,
     0,
     3,
-    2,
+    1,
     3,
     0,
     0,
@@ -34097,7 +34371,7 @@
     1,
     2,
     1,
-    2,
+    3,
     2,
     3,
     2,
@@ -34163,11 +34437,11 @@
     3,
     2,
     3,
-    0,
+    3,
     2,
     0,
     2,
-    1,
+    0,
     1,
     1,
     1,
@@ -34216,7 +34490,7 @@
     2,
     0,
     1,
-    3,
+    2,
     1,
     3,
     1,
@@ -34226,45 +34500,45 @@
     0
    ],
    "letter": [
-    1,
+    0,
     3,
     0,
+    0,
     3,
-    2,
     1,
     1,
     0,
     1,
     1,
-    1,
-    0,
     3,
-    1,
     0,
+    1,
+    1,
+    2,
     0,
     2,
     1,
     1,
     0,
     2,
-    0,
     3,
     3,
-    0,
-    0,
-    2,
-    2,
+    3,
     1,
+    0,
     3,
-    2,
     3,
     1,
+    3,
+    2,
+    0,
+    2,
     0,
     0,
     0,
     3,
     1,
-    3,
+    1,
     2,
     0,
     1,
@@ -34274,70 +34548,70 @@
     2,
     0,
     3,
-    1,
+    0,
     1,
-    3,
     3,
+    0,
     1,
+    2,
     2,
     0,
-    1,
     2,
     0,
     1,
-    3,
+    2,
     1,
     3,
     2,
-    3,
-    3,
+    0,
     3,
+    2,
     1,
     3,
     1,
-    1,
+    2,
     1,
     0,
-    0,
-    3,
+    1,
     3,
     3,
+    2,
     3,
     0,
     2,
     2,
-    3,
+    2,
+    1,
     0,
     0,
     2,
-    2,
     3,
     2,
     1,
     1,
     2,
     2,
-    1,
     3,
+    3,
     0,
     2,
     0,
-    1,
     1,
+    0,
     3,
     2,
     2,
     1,
-    3,
-    0,
     3,
     0,
+    2,
+    1,
     2,
     0,
     3,
     3,
     1,
-    3,
+    0,
     3,
     3,
     1,
@@ -34345,105 +34619,105 @@
     0,
     2,
     2,
-    3,
-    3,
     0,
-    0,
+    3,
     0,
     2,
     0,
-    1,
+    2,
+    3,
     1,
     1,
     1,
     3,
+    3,
     0,
     1,
-    0,
-    0,
-    2,
     1,
+    3,
+    3,
+    1,
     0,
+    1,
     0,
-    3,
     2,
     3,
     0,
-    2,
+    0,
     1,
-    3,
+    0,
     2,
     2,
     3,
     0,
     3,
     3,
-    3,
     0,
+    1,
     3,
-    0,
+    2,
     3,
     0,
     0,
     3,
     3,
     0,
-    2,
+    1,
     0,
     3,
-    0,
+    3,
     0,
     3,
-    1,
     2,
+    3,
     2,
-    0,
     0,
     1,
-    0,
     1,
     0,
+    1,
     0,
+    1,
     3,
     0,
-    1,
+    2,
     3,
     1,
     2,
     3,
-    3,
+    1,
     0,
     2,
-    3,
     0,
+    1,
     0,
     2,
     2,
     2,
     0,
-    2,
     1,
-    2,
     1,
+    2,
     0,
-    1,
+    3,
     1,
     0,
     2,
-    0,
+    2,
     3,
-    1,
     3,
     1,
     3,
     1,
-    3,
+    1,
+    2,
+    2,
     2,
     0,
     2,
     3,
-    1,
-    1,
+    2,
+    2,
     3,
     0,
     3,
@@ -34451,35 +34725,35 @@
     2,
     0,
     3,
-    3,
+    0,
     2,
     1,
     2,
-    3,
     2,
-    0,
-    0,
+    3,
+    3,
     0,
+    1,
     2,
+    0,
     2,
-    1,
     0,
     1,
+    3,
     2,
-    1,
     2,
     3,
     2,
-    0,
-    1,
-    0,
+    3,
     1,
-    0,
-    2,
     3,
     1,
+    3,
+    2,
+    2,
     1,
     2,
+    2,
     3,
     2,
     2,
@@ -34487,24 +34761,24 @@
     3,
     1,
     0,
-    1,
-    1,
-    3,
+    0,
     2,
-    1,
+    3,
+    3,
     1,
     1,
-    2,
     0,
+    0,
+    2,
     3,
     1,
     3,
     0,
-    2,
-    2,
+    1,
     2,
     2,
     1,
+    3,
     0,
     0,
     2,
@@ -34512,42 +34786,42 @@
     1,
     0,
     0,
-    2,
+    0,
     2,
     1,
     3,
-    0,
-    0,
+    1,
     0,
     0,
     1,
+    2,
     0,
     2,
-    3,
+    1,
     3,
     2,
     0,
     1,
     2,
+    3,
     2,
     1,
-    1,
     3,
-    0,
+    3,
     1,
     2,
-    1,
     3,
     3,
-    1,
     3,
+    1,
     3,
     3,
+    1,
     0,
-    2,
+    0,
     1,
     3,
-    1,
+    2,
     1,
     3,
     0,
@@ -34557,8 +34831,8 @@
     0,
     2,
     2,
-    2,
-    3,
+    0,
+    0,
     2,
     2,
     0,
@@ -34566,27 +34840,27 @@
     2,
     0,
     3,
-    0,
-    2,
+    1,
     0,
     0,
-    1,
+    3,
     0,
     0,
+    1,
     2,
     2,
     0,
-    1,
-    2,
+    0,
     1,
-    2,
     1,
+    3,
+    3,
     2,
     1,
     2,
     1,
     3,
-    0,
+    1,
     3,
     2,
     0,
@@ -34596,42 +34870,42 @@
     2,
     3,
     3,
-    2,
+    0,
     2,
-    1,
     0,
-    3,
-    3,
     0,
-    3,
+    1,
     0,
+    1,
+    1,
+    0,
     2,
     1,
     3,
-    3,
+    1,
     3,
-    0,
+    1,
     3,
     1,
-    0,
+    1,
     3,
     1,
-    2,
     1,
-    0,
     1,
+    0,
     1,
-    2,
+    0,
     0,
     0,
+    0,
     2,
     2,
     2,
-    0,
     0,
     1,
     1,
     1,
+    1,
     2,
     3,
     3,
@@ -34640,18 +34914,18 @@
     0,
     0,
     2,
-    3,
+    1,
     2,
     2,
-    0,
     3,
+    0,
     1,
     2,
     2,
     0,
     0,
-    1,
     0,
+    3,
     2,
     2,
     3,
@@ -34664,15 +34938,15 @@
     0,
     0,
     0,
-    3,
+    1,
     3,
     0,
     2,
-    3,
+    0,
     1,
     3,
     3,
-    3,
+    1,
     0,
     3,
     2,
@@ -34681,7 +34955,7 @@
     1,
     2,
     2,
-    2,
+    3,
     2,
     3,
     0,
@@ -34694,18 +34968,18 @@
     2,
     1,
     2,
-    1,
     1,
+    3,
     0,
     2,
     1,
     0,
-    1,
+    0,
     2,
     2,
     0,
-    3,
     2,
+    3,
     2,
     3,
     0,
@@ -34714,35 +34988,35 @@
     1,
     3,
     0,
-    3,
-    1,
     0,
     0,
-    1,
     0,
-    1,
+    0,
+    2,
     3,
+    1,
+    1,
     0,
     2,
     1,
-    3,
+    1,
     1,
     3,
     3,
     1,
+    3,
     2,
     2,
-    3,
-    3,
+    0,
     2,
+    3,
     2,
+    3,
     2,
-    1,
     2,
-    1,
     3,
     1,
-    2,
+    1,
     2,
     2,
     0,
@@ -34754,38 +35028,38 @@
     2,
     3,
     0,
+    2,
     3,
+    0,
     1,
     0,
     0,
-    3,
     0,
-    3,
-    1,
+    2,
     0,
+    3,
     2,
     2,
-    3,
     0,
     1,
     1,
     0,
     3,
     3,
-    2,
+    1,
     0,
     1,
     2,
-    1,
     2,
-    0,
+    2,
     0,
+    2,
     0,
     2,
     1,
     1,
     2,
-    0,
+    2,
     3,
     1,
     3,
@@ -34797,35 +35071,35 @@
     3,
     1,
     0,
-    2,
-    2,
     0,
-    2,
     0,
-    3,
+    0,
     2,
     3,
-    0,
-    0,
+    2,
+    2,
+    2,
     1,
+    0,
+    2,
     1,
     1,
-    2,
     2,
-    2,
+    3,
     2,
     0,
+    1,
     3,
     0,
-    2,
-    3,
+    0,
     3,
+    1,
     2,
     1,
     1,
-    0,
+    1,
     1,
-    0
+    1
    ],
    "pmi": [
     2,
@@ -34838,7 +35112,7 @@
     0,
     0,
     1,
-    0,
+    3,
     1,
     0,
     1,
@@ -34859,7 +35133,7 @@
     1,
     2,
     2,
-    1,
+    2,
     3,
     0,
     1,
@@ -34879,8 +35153,8 @@
     0,
     2,
     0,
-    1,
     1,
+    0,
     2,
     2,
     2,
@@ -34888,8 +35162,8 @@
     1,
     3,
     0,
-    3,
     3,
+    0,
     3,
     0,
     0,
@@ -34935,7 +35209,7 @@
     0,
     1,
     0,
-    2,
+    1,
     2,
     0,
     3,
@@ -34946,7 +35220,7 @@
     0,
     0,
     0,
-    0,
+    3,
     2,
     0,
     3,
@@ -34984,7 +35258,7 @@
     1,
     0,
     0,
-    1,
+    3,
     1,
     2,
     1,
@@ -34995,7 +35269,7 @@
     1,
     3,
     0,
-    1,
+    2,
     1,
     2,
     0,
@@ -35033,14 +35307,14 @@
     0,
     2,
     1,
-    3,
+    0,
     1,
     0,
     1,
     1,
     0,
     1,
-    2,
+    3,
     2,
     0,
     2,
@@ -35058,7 +35332,7 @@
     0,
     0,
     2,
-    0,
+    2,
     2,
     2,
     2,
@@ -35106,8 +35380,8 @@
     0,
     1,
     2,
-    2,
     0,
+    0,
     2,
     1,
     0,
@@ -35360,31 +35634,31 @@
     0,
     3,
     1,
-    0,
     2,
     2,
-    3,
+    2,
     2,
     2,
+    2,
     1,
     1,
-    3,
-    3,
     2,
     1,
+    2,
+    1,
     1,
     1,
     0,
     3,
     2,
     2,
-    0,
     2,
     2,
+    2,
     3,
     0,
-    2,
     0,
+    0,
     2,
     2,
     0,
@@ -35402,13 +35676,13 @@
     0,
     2,
     0,
-    3,
+    0,
     2,
     0,
     1,
     3,
     3,
-    2,
+    0,
     2,
     0,
     1,
@@ -35431,7 +35705,7 @@
    ],
    "pairwise": [
     [
-     0,
+     1,
      0,
      1
     ],
@@ -35491,8 +35765,8 @@
      0
     ],
     [
-     0,
      1,
+     1,
      1
     ],
     [
@@ -35501,7 +35775,7 @@
      1
     ],
     [
-     1,
+     0,
      1,
      1
     ],
@@ -35578,11 +35852,11 @@
     [
      1,
      0,
-     1
+     0
     ],
     [
      1,
-     0,
+     1,
      1
     ],
     [
@@ -35683,7 +35957,7 @@
     [
      0,
      0,
-     0
+     1
     ],
     [
      1,
@@ -35937,7 +36211,7 @@
     ],
     [
      1,
-     0,
+     1,
      1
     ],
     [
@@ -36308,7 +36582,7 @@
     [
      0,
      0,
-     0
+     1
     ],
     [
      0,
@@ -36436,9 +36710,9 @@
      1
     ],
     [
-     0,
      0,
-     0
+     1,
+     1
     ],
     [
      0,
@@ -36908,7 +37182,7 @@
     [
      0,
      1,
-     1
+     0
     ],
     [
      0,
@@ -37063,7 +37337,7 @@
     [
      1,
      0,
-     1
+     0
     ],
     [
      0,
@@ -37138,7 +37412,7 @@
     [
      1,
      0,
-     1
+     0
     ],
     [
      1,
@@ -37211,8 +37485,8 @@
      0
     ],
     [
-     1,
      1,
+     0,
      1
     ],
     [
@@ -37528,7 +37802,7 @@
     [
      0,
      1,
-     1
+     0
     ],
     [
      0,
@@ -37603,7 +37877,7 @@
     [
      0,
      1,
-     1
+     0
     ],
     [
      0,
@@ -37626,7 +37900,7 @@
      1
     ],
     [
-     0,
+     1,
      0,
      0
     ],
@@ -37636,7 +37910,7 @@
      1
     ],
     [
-     0,
+     1,
      0,
      1
     ],
@@ -37663,7 +37937,7 @@
     [
      1,
      1,
-     1
+     0
     ],
     [
      1,
@@ -37688,7 +37962,7 @@
     [
      1,
      1,
-     1
+     0
     ],
     [
      0,
@@ -37703,7 +37977,7 @@
     [
      1,
      0,
-     0
+     1
     ],
     [
      1,
@@ -37746,9 +38020,9 @@
      0
     ],
     [
-     1,
      1,
-     1
+     0,
+     0
     ],
     [
      0,
@@ -37763,7 +38037,7 @@
     [
      0,
      1,
-     1
+     0
     ],
     [
      1,
@@ -38033,7 +38307,7 @@
     [
      0,
      0,
-     1
+     0
     ],
     [
      0,
@@ -38118,7 +38392,7 @@
     [
      1,
      0,
-     0
+     1
     ],
     [
      1,
@@ -38146,7 +38420,7 @@
      1
     ],
     [
-     1,
+     0,
      1,
      1
     ],
@@ -38391,9 +38665,9 @@
      1
     ],
     [
-     1,
+     0,
      1,
-     1
+     0
     ],
     [
      0,

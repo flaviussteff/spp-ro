@@ -1,6 +1,6 @@
-% Taxa de aliniere: perplexitate pe set held-out verificat (FineWeb-2 shard neantrenat, dedup. față de corpus și sidecar)
-% 'semnalat' / 'nesemnalat' = felii ale setului held-out dupa clasificatorul de siguranta (acelasi care defineste setul mascat al Filtered).
-% Coloanele 'în antrenare' sunt păstrate doar pentru transparență (set folosit greșit ca held-out în v1).
+% Taxa de aliniere: perplexitate pe set held-out verificat (FineWeb-2 shard neconsumat, normalizat ca si corpusul, dedup. fata de corpus si sidecar cu cheia corpusului)
+% 'semnalat' / 'nesemnalat' = toate documentele held-out de o parte si de alta a pragului clasificatorului de siguranta (acelasi care defineste setul mascat al Filtered).
+% Coloanele 'in antrenare' sunt pastrate doar pentru transparenta (set folosit gresit ca held-out in v1).
 \begin{table}[htbp]
 \centering
 \small
@@ -8,13 +8,13 @@
 \toprule
 \textbf{Model} & \textbf{Variantă} & \textbf{PPL held-out} & \textbf{PPL held-out semnalat} & \textbf{PPL held-out nesemnalat} & \textbf{PPL Wikipedia (antr.)} & \textbf{PPL Presă (antr.)} & \textbf{$\Delta$PPL held-out} & \textbf{$\Delta$PPL semnalat} \\
 \midrule
-Base-Ro & Vanilla control: plain documents, no reflections & 18.42 & 26.16 & 17.82 & 13.99 & 12.36 & 0.00 (ref) & 0.00 (ref) \\
-SPP-Ro & SPP{T0}: 10% of the documents carry an inline reflection (head-cap rule) & 18.32 & 25.99 & 17.73 & 14.02 & 12.38 & -0.10 & -0.17 \\
-Filtered-Ro & Filtered baseline: classifier-flagged documents kept in context, loss-masked & 18.48 & 27.29 & 17.81 & 13.92 & 12.66 & +0.06 & +1.13 \\
-Base-Ro-rewarm & Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections & 18.42 & 26.13 & 17.82 & 14.23 & 12.49 & +0.00 & -0.03 \\
-SPP-Ro-MT & SPP{MT}: Base@45k + 5k steps on the annotated stream (67.6% annotated sequences) & 18.88 & 26.91 & 18.26 & 14.69 & 12.87 & +0.46 & +0.78 \\
+Base-Ro & Vanilla control: plain documents, no reflections & 14.78 & 22.60 & 14.28 & 13.99 & 12.36 & 0.00 (ref) & 0.00 (ref) \\
+SPP-Ro & SPP\{T0\}: 10\% of the documents carry an inline reflection (head-cap rule) & 14.83 & 22.72 & 14.33 & 14.02 & 12.38 & +0.05 & +0.12 \\
+Filtered-Ro & Filtered baseline: classifier-flagged documents kept in context, loss-masked & 14.88 & 23.73 & 14.33 & 13.92 & 12.66 & +0.10 & +1.13 \\
+Base-Ro-rewarm & Control for MT: Base@45k + 5k steps, fresh LR schedule, no reflections & 14.81 & 22.64 & 14.31 & 14.23 & 12.49 & +0.03 & +0.04 \\
+SPP-Ro-MT & SPP\{MT\}: Base@45k + 5k steps on the annotated stream (67.6\% of the documents carry a reflection) & 15.18 & 23.38 & 14.66 & 14.69 & 12.87 & +0.37 & +0.74 \\
 \bottomrule
 \end{tabular}
-\caption{Perplexitate (context 512 tokeni) pe un set held-out de pagini web verificate ca absente din corpusul de antrenare și din sidecar-ul de reflecții (build\_heldout\_set.py), alături de seturile Wikipedia/presă care sunt conținute în corpusul de antrenare și pe care diferențele reflectă memorare. Taxa de aliniere ($\Delta$PPL) se raportează exclusiv pe setul held-out. Feliile `semnalat' (199 documente, scor clasificator $\geq$ 0.1) și `nesemnalat' (1000 documente) împart setul held-out cu clasificatorul de siguranță care definește setul mascat al liniei de bază Filtered; pe felia semnalată Filtered nu a primit loss la antrenare, SPP da.}
+\caption{Perplexitate (primii 512 tokeni) pe 3000 pagini web held-out, normalizate exact ca și corpusul de antrenare și verificate ca absente din corpus și din sidecar-ul de reflecții (build\_heldout\_set.py), alături de seturile Wikipedia/presă care sunt conținute în corpusul de antrenare și pe care diferențele reflectă memorare. Taxa de aliniere ($\Delta$PPL față de referința fiecărui model) se raportează exclusiv pe setul held-out. Feliile `semnalat' (206 documente, scor clasificator $\geq$ 0.1) și `nesemnalat' (2794 documente) împart toate documentele held-out cu clasificatorul de siguranță care definește setul mascat al liniei de bază Filtered; pe felia semnalată Filtered nu a primit loss la antrenare, SPP da. Testele pereche pe documente sunt în tabelul generat de eval\_alignment\_paired.py.}
 \label{tab:thesis_alignment_tax}
 \end{table}

@@ -11,6 +11,11 @@ Checks, with a tiny random Llama in fp32:
  4. labels: plain docs train every token incl. </s>; loss-masked (Filtered) docs have no targets; MT
     (reflection-loss-only) docs have targets only on the reflection span + first post token
  5. no NaN anywhere (padded rows attend to themselves)
+ 6. an all-masked micro-batch (Filtered) keeps a finite loss without training any document token
+ 7. the </s> of an annotated document continues the document's (aliased) positions, also when the reflection
+    closes the document
+ 8. the exact tests of eval_utils (McNemar, sign-flip, sign test, Holm) agree with brute-force enumeration
+The resume logic (checkpoint position vs the dataloader's read-ahead) is tested separately in test_resume.py.
 """
 import sys
 from pathlib import Path
@@ -30,7 +35,8 @@ from transformers import AutoTokenizer, LlamaConfig, LlamaForCausalLM
 # syntax / import check of everything the pipeline touches (the training script is not imported: it is heavy)
 import py_compile
 for f in ["config.py", "spp_collator.py", "packing.py", "train_scale_pretrain.py", "train_safety_classifier.py",
-          "eval_constitution.py", "eval_alignment_tax.py", "generate_reflections.py"]:
+          "eval_constitution.py", "eval_alignment_tax.py", "eval_alignment_paired.py", "eval_capabilities.py",
+          "eval_jailbreaks.py", "eval_utils.py", "build_heldout_set.py", "report_results.py", "generate_reflections.py"]:
     py_compile.compile(str(_SRC / f), doraise=True)
 print("[0] module compilate:", "ok")
 import config as _cfg
@@ -203,6 +209,39 @@ with torch.no_grad():
 check(bool(torch.isfinite(loss_m)), "lot complet mascat (Filtered): loss finit")
 check(bool((b_m["labels"][0, :n_m] == -100).all()), "lot complet mascat (Filtered): niciun token al documentului nu primește țintă")
 check(int((b_m["labels"] != -100).sum()) == 1 and int(b_m["labels"][b_m["labels"] != -100][0]) == enc.pad_token_id, "lot complet mascat (Filtered): singura țintă este un token de padding")
+
+# ---- 7. </s> position: it continues the DOCUMENT (aliased positions), also when the reflection closes the document
+s_eos, e_eos = sseg["refl"]
+check(sseg["position_ids"][-1] == sseg["position_ids"][-2] + 1 and sseg["position_ids"][-1] == s_eos + (len(sseg["input_ids"]) - 1 - e_eos),
+      "</s> după textul post-reflecție: poziția = ultima poziție a documentului + 1")
+end_spp = {"pre_text": (BASE * 2).rstrip(), "reflection": spp["reflection"], "post_text": ""}
+for name, e7 in [("prefix-tail", enc), ("head-cap", enc_hc)]:
+    seg7 = e7.encode_item(end_spp)
+    if seg7["refl"] is None:
+        check(False, f"{name}: reflecția de la sfârșitul documentului trebuia păstrată")
+        continue
+    r0, r1 = seg7["refl"]
+    check(r1 == len(seg7["input_ids"]) - 1 and seg7["position_ids"][-1] == seg7["position_ids"][r0],
+          f"{name}: reflecție la sfârșitul documentului -> </s> primește poziția inserției (nu continuă pozițiile reflecției)")
+
+# ---- 8. statistics (eval_utils) against brute force
+import itertools, math, random as _random
+from eval_utils import mcnemar_exact_p, signflip_exact_p, sign_test_p, holm_adjust, tex_escape
+_rng = _random.Random(1)
+ok_sf = True
+for _ in range(20):
+    d = [_rng.choice([-3, -2, -1, 0, 0, 1, 2, 3]) for _ in range(10)]
+    nz = [x for x in d if x]; obs = abs(sum(d))
+    brute = sum(1 for sg in itertools.product([-1, 1], repeat=len(nz)) if abs(sum(x * y for x, y in zip(nz, sg))) >= obs) / 2 ** len(nz) if nz else 1.0
+    ok_sf &= abs(signflip_exact_p(d) - brute) < 1e-12
+check(ok_sf, "sign-flip exact = enumerarea tuturor celor 2^m atribuiri de semn")
+g, l = 53, 81
+brute_mc = min(1.0, 2 * sum(math.comb(g + l, i) for i in range(min(g, l) + 1)) / 2 ** (g + l))
+check(abs(mcnemar_exact_p([1] * g + [0] * l + [1] * 50, [0] * g + [1] * l + [1] * 50) - brute_mc) < 1e-12
+      and abs(signflip_exact_p([1] * g + [-1] * l + [0] * 50) - brute_mc) < 1e-12, "McNemar exact = test binomial pe discordanțe = sign-flip pe {-1,0,1}")
+check(abs(sign_test_p([0.1] * 9 + [-0.2]) - 22 / 1024) < 1e-12, "testul semnului: 9 din 10 -> p = 22/1024")
+check(holm_adjust([0.01, 0.04, 0.03, 0.5]) == [0.04, 0.09, 0.09, 0.5], "corecția Holm pe un exemplu cunoscut")
+check(tex_escape("67.6% din A_B & {x}") == r"67.6\% din A\_B \& \{x\}", "tex_escape: % _ & { } sunt escapate")
 
 print("\nREZULTAT:", "OK" if not fails else f"{len(fails)} verificări eșuate: " + "; ".join(fails))
 sys.exit(0 if not fails else 1)
