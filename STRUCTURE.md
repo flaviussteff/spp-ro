@@ -37,7 +37,7 @@ evaluation (run_fixes.bat): held-out perplexity (all / flagged / unflagged, per-
 
 ## The results
 
-All numbers are generated: `evals/RESULTS.md` and the Summary / Results sections of `README.md` are written by `src/report_results.py` from the reports in `evals/` (`run_fixes.bat` runs it last). The numbers previously listed here were computed on a held-out set normalised differently from the corpus and with unpaired tests, and are withdrawn; see the README, section *Corrections (16 November 2026)*.
+All numbers are generated: `evals/RESULTS.md` and the Summary / Results sections of `README.md` are written by `src/report_results.py` from the reports in `evals/` (`run_fixes.bat` runs it last). The numbers previously listed here were computed on a held-out set normalised differently from the corpus and with unpaired tests, and are withdrawn.
 
 ## Repository root
 
@@ -75,7 +75,7 @@ All numbers are generated: `evals/RESULTS.md` and the Summary / Results sections
 | `build_adversarial_prefix.py` | builds the adversarial-prefix probe set (`data/eval/adversarial_prefix_ro.jsonl`) with the benchmark's recipe: generation per article, structural validation, blind gate by a second model, balanced selection |
 | `eval_jailbreaks.py` | the adversarial-prefix probe: stereotype rate under a neutral and an adversarial prefix, margin shift, bootstrap CIs, McNemar / sign tests against the reference, per-article breakdown |
 | `eval_capabilities.py`, `eval_utils.py` | held-out cloze (exact McNemar against the reference); scoring utilities, exact tests (McNemar, sign-flip, sign test, Holm), `tex_escape` |
-| `report_results.py` | `evals/RESULTS.md` + the Summary / Results sections of `README.md`, generated from the reports, with warnings when a report is older than the corrections |
+| `report_results.py` | `evals/RESULTS.md` + the Summary / Results sections of `README.md`, generated from the reports, with warnings when a report was produced by an older version of the evaluation scripts |
 | `build_heldout_set.py` | the held-out set: cleaned with the corpus function (`prepare_scale_corpus.clean_text_content`), checked against the corpus with its deduplication key (first 64 characters) and MD5; reads the raw shard from `data/raw/fineweb_shards/` or `archive/raw_corpus/fineweb_shards/` |
 | `download_corpus.py`, `clean_corpus.py`, `prepare_scale_corpus.py`, `train_tokenizer.py` | the corpus and the tokenizer (kept for reproduction) |
 | `upload_to_hf.py` | publishing on Hugging Face (`HF_RELEASES` = repo → folder map; model cards generated from the reports, same wording as the README) |
