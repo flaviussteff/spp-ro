@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluare umană · benchmark SPP-Ro</title>
+<!-- Generated page: edit human_eval/template.html, then run  python human_eval/build_interface.py -->
+<style>
+:root {
+  --bg: #1f2124; --fg: #d6d4cf; --muted: #9b9fa6; --line: #3a3d42; --soft: #2b2e32;
+  --accent: #8ea6ba; --accent-fg: #17191c; --warn: #d0a272;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); }
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+       font-size: 18px; line-height: 1.65; }
+main { max-width: 46rem; margin: 0 auto; padding: 2rem 1.25rem 2.5rem; }
+h1 { font-size: 1.4rem; line-height: 1.3; font-weight: 600; margin: 0 0 1rem; }
+h2 { font-size: 1.12rem; font-weight: 600; margin: 0 0 .9rem; }
+p { margin: 0 0 1rem; }
+.muted { color: var(--muted); }
+.small { font-size: 15px; }
+.warn { color: var(--warn); }
+
+.bar { position: sticky; top: 0; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--line); }
+.bar-in { max-width: 46rem; margin: 0 auto; padding: .5rem 1.25rem; display: flex; align-items: center;
+          gap: 1rem; font-size: 15px; color: var(--muted); }
+.bar-in .who { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.clock { color: var(--fg); font-variant-numeric: tabular-nums; }
+.progress { height: 2px; background: var(--line); }
+.progress span { display: block; height: 100%; background: var(--accent); }
+
+.scenario { white-space: pre-line; margin-bottom: 1.4rem; }
+.opts { list-style: none; margin: 0 0 1.6rem; padding: 0; }
+.opts li { display: flex; gap: .6rem; padding: .5rem .75rem; margin: 0 -.75rem; border-radius: 6px; }
+.opts li + li { margin-top: .2rem; }
+.opts .L { flex: none; width: 1.6rem; font-weight: 600; color: var(--muted); }
+.opts li.chosen { background: var(--soft); }
+.opts li.chosen .L { color: var(--fg); }
+
+.form { border-top: 1px solid var(--line); padding-top: 1.2rem; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 2rem; margin-bottom: .9rem; }
+label { cursor: pointer; }
+label.block { display: block; margin-bottom: .35rem; }
+select, input[type=text], textarea { font: inherit; color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: .35rem .6rem; }
+select { min-width: 7rem; margin-left: .4rem; }
+input[type=text] { width: 100%; max-width: 24rem; }
+input[type=checkbox] { width: 1.1rem; height: 1.1rem; margin: 0 0 0 .45rem; vertical-align: -2px; accent-color: var(--accent); }
+textarea { width: 100%; min-height: 6.5rem; resize: vertical; line-height: 1.5; }
+.note { font-size: 15px; color: var(--muted); margin: 0 0 1.1rem; }
+button { font: inherit; font-size: 16px; cursor: pointer; border-radius: 6px; padding: .5rem 1.05rem;
+  border: 1px solid var(--line); background: transparent; color: var(--fg); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+button:disabled { opacity: .45; cursor: default; }
+button.link { border: 0; padding: 0; background: none; color: var(--accent); text-decoration: underline; font-size: inherit; }
+ul.rules { padding-left: 1.2rem; margin: 0 0 1.6rem; }
+ul.rules li { margin-bottom: .5rem; }
+.center { text-align: center; padding-top: 4rem; }
+footer { max-width: 46rem; margin: 0 auto; padding: 1rem 1.25rem 2rem; border-top: 1px solid var(--line);
+  font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript><main><p>Pagina are nevoie de JavaScript.</p></main></noscript>
+<script>
+'use strict';
+const ITEMS = /*__ITEMS__*/null;   // [{n, text, options:[A,B,C,D]}], embedded by build_interface.py
+const BENCH = /*__BENCH__*/null;   // {source, n, hash}
+
+const KEY = 'sppHumanEval:v1';     // localStorage: the whole session, rewritten at every step
+const TICK_MS = 500;               // the running clock is folded into the saved state at every tick
+const GAP_MS = 10000;              // a longer gap between ticks = computer asleep / page frozen: not counted
+const CSV_COLS = ['evaluator', 'item', 'raspuns', 'sigur', 'timp_secunde', 'mentiuni', 'data_ora'];
+const LETTERS = ['A', 'B', 'C', 'D'];
+const HAS_DOM = typeof document !== 'undefined';
+
+let st = null;          // the saved session
+let runStart = null;    // performance.now() of the last fold while the clock runs; null = clock stopped
+let blocked = false;    // another tab took the session over
+let mismatch = false;   // the saved session belongs to another version of the items
+let storageOk = true;
+let pendingName = '';
+
+/* ---------- formatting ---------- */
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function pad2(n) { return String(n).padStart(2, '0'); }
+function fmtDur(ms) {
+  const t = Math.floor(Math.max(0, ms) / 1000), h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
+  return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${pad2(m)}:${pad2(s)}`;
+}
+function stamp(d) {
+  d = d || new Date();
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+}
+function fileBase(name) {
+  const a = String(name).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  return 'raspunsuri_' + (a || 'evaluator');
+}
+function totalMs(rows) { return rows.reduce((a, r) => a + r.timp_ms, 0); }
+function nItems() { return ITEMS ? ITEMS.length : 0; }
+
+/* ---------- CSV: one row per item, the evaluator's name on every row (the files of several raters concatenate) ---------- */
+function csvCell(v) {
+  v = v == null ? '' : String(v);
+  return /[",\r\n]/.test(v) || /^\s|\s$/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+function csvText(s) {
+  const lines = [CSV_COLS.join(',')];
+  for (const r of s.rows) {
+    lines.push([s.name, r.item, r.raspuns, r.sigur ? 'da' : 'nu', (r.timp_ms / 1000).toFixed(1), r.mentiuni, r.data_ora].map(csvCell).join(','));
+  }
+  return '﻿' + lines.join('\r\n') + '\r\n';   // BOM: Excel then reads the diacritics as UTF-8
+}
+
+/* ---------- DOCX: a minimal WordprocessingML package, stored (uncompressed) zip ---------- */
+const CRC_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+  return t;
+})();
+function crc32(b) { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC_TABLE[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files) {
+  const enc = new TextEncoder(), d = new Date();
+  const time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+  const date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  const parts = [], central = [];
+  let offset = 0;
+  for (const f of files) {
+    const name = enc.encode(f.name), data = typeof f.data === 'string' ? enc.encode(f.data) : f.data, crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, time, true); lh.setUint16(12, date, true); lh.setUint32(14, crc, true);
+    lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), name, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true);
+    ch.setUint16(10, 0, true); ch.setUint16(12, time, true); ch.setUint16(14, date, true); ch.setUint32(16, crc, true);
+    ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true);
+    ch.setUint16(30, 0, true); ch.setUint16(32, 0, true); ch.setUint16(34, 0, true); ch.setUint16(36, 0, true);
+    ch.setUint32(38, 0, true); ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), name);
+    offset += 30 + name.length + data.length;
+  }
+  const cdSize = central.reduce((a, b) => a + b.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(4, 0, true); end.setUint16(6, 0, true);
+  end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+  end.setUint32(12, cdSize, true); end.setUint32(16, offset, true); end.setUint16(20, 0, true);
+  const all = [...parts, ...central, new Uint8Array(end.buffer)];
+  const out = new Uint8Array(all.reduce((a, b) => a + b.length, 0));
+  let p = 0;
+  for (const a of all) { out.set(a, p); p += a.length; }
+  return out;
+}
+function xesc(s) {
+  return String(s == null ? '' : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F￾￿]/g, '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function wRun(text, o) {
+  o = o || {};
+  const rpr = o.b || o.color || o.sz ? '<w:rPr>' + (o.b ? '<w:b/>' : '') + (o.color ? `<w:color w:val="${o.color}"/>` : '') +
+    (o.sz ? `<w:sz w:val="${o.sz}"/><w:szCs w:val="${o.sz}"/>` : '') + '</w:rPr>' : '';
+  return '<w:r>' + rpr + String(text == null ? '' : text).split(/\r\n|\r|\n/)
+    .map((t, i) => (i ? '<w:br/>' : '') + `<w:t xml:space="preserve">${xesc(t)}</w:t>`).join('') + '</w:r>';
+}
+function wPara(runs, o) {
+  o = o || {};
+  const ppr = o.style || o.after != null || o.jc ? '<w:pPr>' + (o.style ? `<w:pStyle w:val="${o.style}"/>` : '') +
+    (o.after != null ? `<w:spacing w:before="${o.before || 0}" w:after="${o.after}"/>` : '') + (o.jc ? `<w:jc w:val="${o.jc}"/>` : '') + '</w:pPr>' : '';
+  return '<w:p>' + ppr + runs + '</w:p>';
+}
+function wCell(text, width, o) {
+  o = o || {};
+  return `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>` + (o.fill ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.fill}"/>` : '') +
+    '</w:tcPr>' + wPara(wRun(text, { b: o.b }), { before: 40, after: 40, jc: o.jc }) + '</w:tc>';
+}
+function docxBytes(s) {
+  const COLS = [['Item', 700, 'center'], ['Răspuns', 1000, 'center'], ['Sigur', 800, 'center'], ['Timp', 1000, 'center'], ['Mențiuni', 6138, null]];
+  const rows = s.rows, n = nItems(), sure = rows.filter(r => r.sigur).length;
+  let body = wPara(wRun('Benchmark SPP-Ro: răspunsurile evaluatorului'), { style: 'Title' });
+  body += wPara(wRun('Evaluator: ', { b: true }) + wRun(s.name));
+  body += wPara(wRun('Început: ', { b: true }) + wRun(s.startedAt) +
+    (s.finishedAt ? wRun('   Terminat: ', { b: true }) + wRun(s.finishedAt) : wRun('   În lucru: ', { b: true }) + wRun(`${rows.length} din ${n} de itemi`)));
+  body += wPara(wRun('Timp total de răspuns: ', { b: true }) + wRun(`${fmtDur(totalMs(rows))} (fără pauze și fără timpul de la Mențiuni)`) +
+    wRun('   Sigur: ', { b: true }) + wRun(`${sure} din ${rows.length}`));
+  body += wPara(wRun(`Set: ${BENCH ? BENCH.source : ''} · ${n} de itemi · versiune ${BENCH ? BENCH.hash : ''}`, { color: '777777', sz: 18 }), { after: 200 });
+  const border = t => `<w:${t} w:val="single" w:sz="4" w:space="0" w:color="A6A6A6"/>`;
+  const head = '<w:tr><w:trPr><w:tblHeader/></w:trPr>' + COLS.map(c => wCell(c[0], c[1], { b: true, fill: 'EDEDED', jc: c[2] })).join('') + '</w:tr>';
+  const trs = rows.map(r => '<w:tr><w:trPr><w:cantSplit/></w:trPr>' +
+    [r.item, r.raspuns, r.sigur ? 'da' : 'nu', fmtDur(r.timp_ms), r.mentiuni].map((v, i) => wCell(v, COLS[i][1], { jc: COLS[i][2] })).join('') + '</w:tr>').join('');
+  const table = '<w:tbl><w:tblPr><w:tblW w:w="9638" w:type="dxa"/><w:tblBorders>' +
+    ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(border).join('') +
+    '</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="80" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr>' +
+    '<w:tblGrid>' + COLS.map(c => `<w:gridCol w:w="${c[1]}"/>`).join('') + '</w:tblGrid>' + head + trs + '</w:tbl>';
+  const W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
+  const xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  const document_ = xml + `<w:document ${W}><w:body>${body}${table}${wPara('')}` +
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="709" w:footer="709" w:gutter="0"/></w:sectPr>' +
+    '</w:body></w:document>';
+  const styles = xml + `<w:styles ${W}><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:eastAsia="Calibri" w:cs="Calibri"/>` +
+    '<w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="ro-RO"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="264" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>' +
+    '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>' +
+    '<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:spacing w:after="200"/></w:pPr><w:rPr><w:b/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr></w:style>' +
+    '<w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:name w:val="Normal Table"/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="108" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="108" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style>' +
+    '</w:styles>';
+  const types = xml + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+    '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>' +
+    '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+    '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>';
+  const R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+  const rels = xml + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+    `<Relationship Id="rId1" Type="${R}/officeDocument" Target="word/document.xml"/></Relationships>`;
+  const docRels = xml + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+    `<Relationship Id="rId1" Type="${R}/styles" Target="styles.xml"/></Relationships>`;
+  return zipStore([
+    { name: '[Content_Types].xml', data: types }, { name: '_rels/.rels', data: rels },
+    { name: 'word/document.xml', data: document_ }, { name: 'word/_rels/document.xml.rels', data: docRels },
+    { name: 'word/styles.xml', data: styles },
+  ]);
+}
+
+/* ---------- session ---------- */
+function newCur(item) { return { item, phase: 'answer', elapsedMs: 0, raspuns: '', sigur: false, mentiuni: '', confirmedAt: null }; }
+function save() {
+  if (!st || blocked || mismatch) return;
+  try { localStorage.setItem(KEY, JSON.stringify(st)); storageOk = true; } catch (e) { storageOk = false; }
+}
+function loadState() { try { const s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+function clockShouldRun() { return !!(st && !blocked && !mismatch && !st.finishedAt && !st.paused && st.cur && st.cur.phase === 'answer'); }
+
+/* ---------- clock: only from the item's appearance to "Confirmă răspunsul"; never while paused, hidden or closed ---------- */
+function elapsed() { return st.cur.elapsedMs + (runStart === null ? 0 : performance.now() - runStart); }
+function startClock() { if (runStart === null) runStart = performance.now(); }
+function stopClock() {
+  if (runStart !== null && st && st.cur) st.cur.elapsedMs += performance.now() - runStart;
+  runStart = null;
+}
+function tick() {
+  if (runStart !== null && st && st.cur) {
+    const now = performance.now(), gap = now - runStart;
+    if (gap > GAP_MS) { runStart = null; pause('gap'); return; }   // the gap itself is not counted
+    st.cur.elapsedMs += gap; runStart = now; save();
+  }
+  paintClock();
+}
+function pause(reason) {
+  if (!st || !st.cur || st.paused || st.finishedAt || blocked || mismatch) return;
+  stopClock(); st.paused = true; st.pauseReason = reason; save(); render();
+}
+
+/* ---------- files: produced once, after item 100 ---------- */
+function download(name, data, type) {
+  const url = URL.createObjectURL(new Blob([data], { type }));
+  const a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 4000);
+}
+function downloadCsv() { download(st.base + '.csv', csvText(st), 'text/csv;charset=utf-8'); }
+function downloadDocx() { download(st.base + '.docx', docxBytes(st), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'); }
+
+/* ---------- screens ---------- */
+function optsHtml(it, chosen) {
+  return '<ol class="opts">' + it.options.map((o, i) =>
+    `<li class="${LETTERS[i] === chosen ? 'chosen' : ''}"><span class="L">${LETTERS[i]})</span><span>${esc(o)}</span></li>`).join('') + '</ol>';
+}
+function barHtml() {
+  const n = st.cur ? st.cur.item : nItems(), pct = 100 * st.rows.length / nItems();
+  const live = !st.paused && st.cur;
+  return `<div class="bar"><div class="bar-in"><span class="who">${esc(st.name)} · itemul ${n} din ${nItems()}</span>` +
+    (live ? '<span class="clock" id="clock"></span><button data-act="pause">Pauză</button>' : '') +
+    `</div><div class="progress"><span style="width:${pct.toFixed(1)}%"></span></div></div>`;
+}
+function footHtml() {
+  const warn = storageOk ? '' : ' <span class="warn">Atenție: browserul nu permite salvarea progresului, așa că o închidere a paginii îl pierde. Folosiți Chrome sau Edge, într-o fereastră obișnuită.</span>';
+  return `<footer>Progresul se salvează automat în acest browser după fiecare pas. Fișierele cu rezultate se descarcă la final, după itemul ${nItems()}.${warn}</footer>`;
+}
+
+function screenStart() {
+  const n = nItems();
+  return `<main>
+<h1>Evaluare umană: benchmark SPP-Ro, ${n} de itemi</h1>
+<p>Fiecare dintre cei ${n} de itemi descrie o situație și patru acțiuni posibile, A–D. Citiți situația și alegeți acțiunea pe care o considerați cea mai bună, după propria judecată. Itemii apar exact cum îi primesc modelele evaluate.</p>
+<h2>Cum funcționează</h2>
+<ul class="rules">
+<li>Itemii apar pe rând, de la 1 la ${n}. La <b>Răspuns</b> alegeți o singură literă (A, B, C sau D), chiar dacă două variante vi se par la fel de bune. Bifați <b>Sigur</b> doar dacă sunteți sigur(ă) de alegere.</li>
+<li>După ce apăsați <b>Confirmă răspunsul</b>, răspunsul se blochează: nu mai poate fi schimbat și nu vă mai puteți întoarce la acel item.</li>
+<li>Apoi itemul apare din nou, cu câmpul <b>Mențiuni</b>, unde puteți nota, opțional, observații despre formularea situației sau a variantelor (de exemplu „B și D la fel de bune”, „niciuna nu e potrivită”, „text neclar”). Nu corectați textul: eventualele greșeli de exprimare fac parte din item.</li>
+<li>Se măsoară timpul de la apariția itemului până la confirmarea răspunsului. Timpul petrecut la Mențiuni nu se numără.</li>
+<li>Puteți apăsa oricând <b>Pauză</b>: timpul se oprește, iar itemul se ascunde până reveniți. Pauza se pune și singură dacă schimbați tab-ul, dați refresh sau închideți pagina; la redeschidere continuați de la itemul la care ați rămas.</li>
+<li>La final, după itemul ${n}, se descarcă două fișiere cu răspunsurile: un CSV și un document Word.</li>
+</ul>
+<div class="form">
+<p><label class="block" for="name">Nume și prenume</label><input type="text" id="name" autocomplete="name" value="${esc(pendingName)}"></p>
+<p class="note">Folosiți o fereastră obișnuită de browser, nu una privată (incognito): acolo progresul se pierde la închidere.</p>
+${storageOk ? '' : '<p class="warn">Acest browser nu permite salvarea progresului. Deschideți pagina în Chrome sau Edge.</p>'}
+<button class="primary" id="start" data-act="start" disabled>Începe</button>
+</div>
+</main>`;
+}
+
+function screenAnswer() {
+  const c = st.cur, it = ITEMS[c.item - 1];
+  return barHtml() + `<main><article>
+<h2>Itemul ${c.item}</h2>
+<p class="scenario">${esc(it.text)}</p>
+<p class="muted">Opțiuni:</p>
+${optsHtml(it, null)}
+<div class="form">
+<div class="row">
+<label>Răspuns:<select id="ans"><option value="">alegeți</option>${LETTERS.map(l => `<option value="${l}"${c.raspuns === l ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
+<label>Sigur:<input type="checkbox" id="sure"${c.sigur ? ' checked' : ''}></label>
+</div>
+<p class="note">După ce apăsați „Confirmă răspunsul”, răspunsul nu mai poate fi schimbat și nu vă mai puteți întoarce la acest item.</p>
+<button class="primary" id="confirm" data-act="confirm"${c.raspuns ? '' : ' disabled'}>Confirmă răspunsul</button>
+</div>
+</article></main>` + footHtml();
+}
+
+function screenMentions() {
+  const c = st.cur, it = ITEMS[c.item - 1], last = c.item === nItems();
+  return barHtml() + `<main><article>
+<h2>Itemul ${c.item} · Mențiuni</h2>
+<p class="scenario">${esc(it.text)}</p>
+<p class="muted">Opțiuni:</p>
+${optsHtml(it, c.raspuns)}
+<div class="form">
+<p>Răspuns: <b>${esc(c.raspuns)}</b> &nbsp;·&nbsp; Sigur: <b>${c.sigur ? 'da' : 'nu'}</b> &nbsp;·&nbsp; Timp: <b>${fmtDur(c.elapsedMs)}</b> <span class="muted small">(răspunsul e blocat)</span></p>
+<label class="block" for="men">Mențiuni:</label>
+<p><textarea id="men" placeholder="Opțional: observații despre formularea situației sau a variantelor.">${esc(c.mentiuni)}</textarea></p>
+<p class="note">Timpul petrecut aici nu se adaugă la timpul de răspuns.</p>
+<button class="primary" data-act="next">${last ? 'Salvează și termină' : `Salvează și treci la itemul ${c.item + 1}`}</button>
+</div>
+</article></main>` + footHtml();
+}
+
+function screenPaused() {
+  const c = st.cur, r = st.pauseReason, t = fmtDur(c.elapsedMs);
+  const clockNote = c.phase === 'answer' ? `Timpul la acest item e oprit la ${t} și pornește din nou când apăsați Continuă.` : 'Răspunsul la acest item e deja confirmat; urmează Mențiuni.';
+  let title, msg;
+  if (r === 'reopen') {
+    title = `Bine ați revenit, ${esc(st.name)}`;
+    msg = `Ați terminat ${st.rows.length} din ${nItems()} de itemi și continuați cu itemul ${c.item}. ${clockNote}`;
+  } else if (r === 'auto') {
+    title = 'Pauză automată';
+    msg = `Pagina nu a mai fost vizibilă (ați schimbat tab-ul sau ați închis-o). ${clockNote}`;
+  } else if (r === 'gap') {
+    title = 'Pauză automată';
+    msg = `Calculatorul pare să fi intrat în repaus. ${clockNote}`;
+  } else {
+    title = 'Pauză';
+    msg = clockNote;
+  }
+  return barHtml() + `<main class="center">
+<h1>${title}</h1>
+<p>${msg}</p>
+<p class="muted">Itemul rămâne ascuns cât timp aplicația e în pauză.</p>
+<p><button class="primary" data-act="resume">Continuă</button></p>
+${r === 'reopen' ? `<p class="small" style="margin-top:2.5rem"><button class="link" data-act="newsession">Nu sunteți ${esc(st.name)}? Începeți o sesiune nouă</button></p>` : ''}
+</main>` + footHtml();
+}
+
+function screenEnd() {
+  const rows = st.rows, n = rows.length, t = totalMs(rows), sure = rows.filter(r => r.sigur).length, men = rows.filter(r => r.mentiuni).length;
+  return `<main>
+<h1>Gata. Mulțumesc, ${esc(st.name)}!</h1>
+<p>Ați răspuns la toți cei ${n} de itemi. Timp total de răspuns: <b>${fmtDur(t)}</b> (în medie ${fmtDur(n ? t / n : 0)} pe item, fără pauze și fără Mențiuni). Itemi marcați „sigur”: ${sure} din ${n}. Itemi cu mențiuni: ${men}.</p>
+<p>Fișierele <b>${esc(st.base)}.csv</b> și <b>${esc(st.base)}.docx</b> s-au descărcat (de obicei în folderul Descărcări / Downloads). Dacă nu le găsiți, descărcați-le din nou:</p>
+<p><button class="primary" data-act="dlcsv">Descarcă CSV</button> &nbsp; <button class="primary" data-act="dldocx">Descarcă Word</button></p>
+<p>Trimiteți cele două fișiere persoanei care v-a dat chestionarul.</p>
+<p class="small muted" style="margin-top:2.5rem">Răspunsurile rămân în acest browser până începeți o sesiune nouă. <button class="link" data-act="newsession">Sesiune nouă</button></p>
+</main>`;
+}
+
+function screenBlocked() {
+  return `<main class="center"><h1>Aplicația e deschisă în altă fereastră</h1>
+<p>Ca să nu se amestece răspunsurile, continuați în fereastra deschisă cel mai recent și închideți-o pe aceasta.</p>
+<p><button data-act="takeover">Continuă aici</button></p></main>`;
+}
+
+function screenMismatch() {
+  return `<main><h1>Setul de itemi s-a schimbat</h1>
+<p>În acest browser e salvată o sesiune (${esc(st.name)}, ${st.rows.length} itemi) făcută cu altă versiune a itemilor. Descărcați-i răspunsurile înainte să începeți una nouă.</p>
+<p><button data-act="dlcsv">Descarcă CSV</button> &nbsp; <button data-act="dldocx">Descarcă Word</button></p>
+<p><button class="primary" data-act="newsession">Începe o sesiune nouă</button></p></main>`;
+}
+
+function render() {
+  if (!HAS_DOM) return;
+  let html;
+  if (blocked) html = screenBlocked();
+  else if (mismatch) html = screenMismatch();
+  else if (!st) html = screenStart();
+  else if (st.finishedAt) html = screenEnd();
+  else if (st.paused) html = screenPaused();
+  else if (st.cur.phase === 'answer') html = screenAnswer();
+  else html = screenMentions();
+  document.getElementById('app').innerHTML = html;
+  if (clockShouldRun()) startClock(); else stopClock();
+  paintClock();
+  const s = document.getElementById('start');
+  if (s) s.disabled = pendingName.trim().length < 2;
+}
+function paintClock() {
+  const el = HAS_DOM && document.getElementById('clock');
+  if (!el || !st || !st.cur) return;
+  el.textContent = st.cur.phase === 'answer' ? `Timp: ${fmtDur(elapsed())}` : `Timp: ${fmtDur(st.cur.elapsedMs)} · oprit`;
+}
+
+/* ---------- actions ---------- */
+const ACTS = {
+  start() {
+    const name = pendingName.trim().replace(/\s+/g, ' ');
+    if (name.length < 2) return;
+    st = { v: 1, bench: BENCH.hash, name, base: fileBase(name), startedAt: stamp(), finishedAt: null,
+           rows: [], cur: newCur(1), paused: false, pauseReason: null };
+    save(); render(); window.scrollTo(0, 0);
+  },
+  pause() { pause('manual'); },
+  resume() { st.paused = false; st.pauseReason = null; save(); render(); window.scrollTo(0, 0); },
+  confirm() {
+    const c = st.cur;
+    if (!c || c.phase !== 'answer' || st.paused) return;
+    c.raspuns = document.getElementById('ans').value;
+    c.sigur = document.getElementById('sure').checked;
+    if (!LETTERS.includes(c.raspuns)) return;
+    stopClock();
+    c.elapsedMs = Math.round(c.elapsedMs); c.phase = 'mentions'; c.confirmedAt = stamp();
+    save(); render(); window.scrollTo(0, 0);
+  },
+  next(btn) {
+    const c = st.cur;
+    if (!c || c.phase !== 'mentions' || st.paused) return;
+    const last = st.rows[st.rows.length - 1];
+    if (last && last.item >= c.item) return;   // double click
+    btn.disabled = true;
+    const m = document.getElementById('men');
+    if (m) c.mentiuni = m.value;
+    st.rows.push({ item: c.item, raspuns: c.raspuns, sigur: !!c.sigur, timp_ms: Math.round(c.elapsedMs),
+                   mentiuni: c.mentiuni.trim(), data_ora: c.confirmedAt || stamp() });
+    if (c.item >= nItems()) { st.cur = null; st.finishedAt = stamp(); }
+    else st.cur = newCur(c.item + 1);
+    save();
+    if (st.finishedAt) { downloadCsv(); downloadDocx(); }
+    render(); window.scrollTo(0, 0);
+  },
+  dlcsv() { downloadCsv(); },
+  dldocx() { downloadDocx(); },
+  newsession() {
+    stopClock(); save();   // the time spent in the confirm dialog is not counted
+    const msg = st && st.rows.length && !st.finishedAt
+      ? `Sesiunea lui ${st.name} (${st.rows.length} itemi terminați) se va șterge din acest browser. Continuați?`
+      : 'Începeți o sesiune nouă? Sesiunea salvată în acest browser se șterge.';
+    if (!confirm(msg)) { render(); return; }
+    try { localStorage.removeItem(KEY); } catch (e) { /* nothing saved anyway */ }
+    st = null; mismatch = false; runStart = null; pendingName = '';
+    render(); window.scrollTo(0, 0);
+  },
+  takeover() { location.reload(); },
+};
+
+function init() {
+  if (!Array.isArray(ITEMS) || !BENCH) {
+    document.getElementById('app').innerHTML = '<main><h1>Lipsesc itemii</h1><p>Pagina se generează cu <code>python human_eval/build_interface.py</code>.</p></main>';
+    return;
+  }
+  try { localStorage.setItem(KEY + ':test', '1'); localStorage.removeItem(KEY + ':test'); } catch (e) { storageOk = false; }
+  const saved = loadState();
+  if (saved && saved.bench !== BENCH.hash) { st = saved; mismatch = true; }
+  else if (saved) {
+    st = saved;
+    // a refresh or a closed tab always comes back paused: the item stays hidden and the clock stopped until "Continuă"
+    if (!st.finishedAt) { st.paused = true; st.pauseReason = 'reopen'; save(); }
+  }
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]');
+    if (!b || b.disabled || !ACTS[b.dataset.act]) return;
+    e.preventDefault();
+    ACTS[b.dataset.act](b);
+  });
+  document.addEventListener('change', e => {
+    if (!st || !st.cur) return;
+    if (e.target.id === 'ans') {
+      st.cur.raspuns = e.target.value; save();
+      const b = document.getElementById('confirm');
+      if (b) b.disabled = !LETTERS.includes(e.target.value);
+    } else if (e.target.id === 'sure') { st.cur.sigur = e.target.checked; save(); }
+  });
+  document.addEventListener('input', e => {
+    if (e.target.id === 'name') {
+      pendingName = e.target.value;
+      const s = document.getElementById('start');
+      if (s) s.disabled = pendingName.trim().length < 2;
+    } else if (e.target.id === 'men' && st && st.cur) { st.cur.mentiuni = e.target.value; save(); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.id === 'name') { e.preventDefault(); ACTS.start(); }
+  });
+  // hidden = another tab, a refresh, a closed tab or browser (a smaller window or another app beside it stays visible: no pause)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') { if (clockShouldRun()) pause('auto'); else save(); }
+  });
+  window.addEventListener('pagehide', () => { if (clockShouldRun()) pause('auto'); else save(); });
+  window.addEventListener('storage', e => {
+    if (e.key !== KEY || blocked) return;
+    runStart = null; blocked = true; render();
+  });
+  render();
+  setInterval(tick, TICK_MS);
+}
+if (HAS_DOM) init();
+</script>
+</body>
+</html>

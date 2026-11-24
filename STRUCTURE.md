@@ -105,6 +105,13 @@ The five models of the table above + `safety_clf_ro/`. Each model folder: `model
 | `ConstitutionEval-Ro_benchmark.docx` | all 600 items, for my supervisor |
 | `training_states/` | `trainer_state.json` of each of the five trainings |
 
+## `human_eval/` — the human answers to the 100-item benchmark (see `human_eval/README.md`)
+
+| File | Role |
+|---|---|
+| `index.html` | the page sent to the raters: one self-contained file with the 100 items of `evals/benchmark spp 100 items (fara 2.1).docx`, opened with a double-click (Chrome/Edge). Name, then items 1–100 in order: Răspuns A–D + Sigur, then the item again with Mențiuni; the answer is locked once confirmed. Time per item = from display to confirmation, without pauses and without Mențiuni; changing tab, refreshing or closing pauses it, and the rater resumes at the same item. Progress lives in the browser; after item 100 it downloads `raspunsuri_<name>.csv` (one row per item: `evaluator,item,raspuns,sigur,timp_secunde,mentiuni,data_ora`) and `raspunsuri_<name>.docx` |
+| `template.html`, `build_interface.py` | the page source and its generator: `python human_eval/build_interface.py` re-reads the docx (standard library only), checks 100 items × 4 options and rewrites `index.html` |
+
 ## `logs/` (git-ignored)
 
 `pipeline.log` (the five trainings and the first evaluations, run with `archive/launchers/run_v3_pipeline.bat`), `fixes.log` (`run_fixes.bat`), `expand.log` (sidecar expansion), `evals_and_upload.log`, `generate_data.log` (the data), the benchmark build logs.
